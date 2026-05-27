@@ -6,11 +6,21 @@ import Autoplay from "embla-carousel-autoplay";
 import { MapPin, Palmtree } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigation } from "@/lib/store";
-import { heroImages } from "@/lib/data";
+import { heroImages as fallbackHero } from "@/lib/data";
+import { useSiteContent } from "@/lib/use-site-content";
+import { useQuery } from "@tanstack/react-query";
+import { fetchHeroImages } from "@/lib/api";
 
 export function HeroSection() {
   const { navigate } = useNavigation();
+  const { content } = useSiteContent();
+  const hero = content.hero;
   const [selectedIndex, setSelectedIndex] = useState(0);
+
+  const { data: heroImages = fallbackHero } = useQuery({
+    queryKey: ["hero-images"],
+    queryFn: fetchHeroImages,
+  });
 
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [
     Autoplay({ delay: 5000, stopOnInteraction: false }),
@@ -61,39 +71,38 @@ export function HeroSection() {
           <div className="flex items-center justify-center gap-2 mb-4 sm:mb-6 animate-in fade-in duration-500" style={{ animationDelay: "200ms", animationFillMode: "both" }}>
             <Palmtree className="w-4 h-4 text-white/70" />
             <span className="text-white/70 text-sm sm:text-base font-medium tracking-wider uppercase">
-              Vive Travel
+              {hero.brandLabel}
             </span>
           </div>
 
           <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-4 sm:mb-6 leading-tight" style={{ textShadow: "0 2px 8px rgba(0,0,0,0.28)" }}>
-            Descubre el{" "}
+            {hero.title}{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-ocean-light">
-              Atlántico
+              {hero.titleHighlight}
             </span>
           </h1>
 
           <p className="text-white/80 text-sm sm:text-lg md:text-xl max-w-2xl mx-auto mb-6 sm:mb-10 leading-relaxed">
-            Experiencias únicas en el departamento del Atlántico, Colombia.
-            Playas, naturaleza, aventura y cultura caribeña te esperan.
+            {hero.subtitle}
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center animate-in fade-in slide-in-from-bottom-2 duration-500" style={{ animationDelay: "500ms", animationFillMode: "both" }}>
             <Button
               size="lg"
-              onClick={() => navigate("plans", "pasadias")}
+              onClick={() => navigate("plans")}
               className="bg-ocean hover:bg-ocean-dark text-white px-6 sm:px-8 py-4 sm:py-6 text-sm sm:text-lg rounded-xl shadow-lg shadow-ocean/30 transition-all duration-200 hover:scale-105 min-h-[44px]"
             >
               <MapPin className="w-5 h-5 mr-2" />
-              Experiencias y viajes
+              {hero.ctaPlans}
             </Button>
             <Button
               size="lg"
               variant="outline"
-              onClick={() => navigate("cabins")}
+              onClick={() => navigate("contact")}
               className="border-white/40 text-white hover:bg-white/15 backdrop-blur-sm px-6 sm:px-8 py-4 sm:py-6 text-sm sm:text-lg rounded-xl transition-all duration-200 hover:scale-105 bg-transparent gap-2 min-h-[44px]"
             >
               <Palmtree className="w-5 h-5" />
-              Ver Cabañas
+              {hero.ctaCabins}
             </Button>
           </div>
         </div>

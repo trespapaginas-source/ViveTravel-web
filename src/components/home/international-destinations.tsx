@@ -4,50 +4,32 @@ import { ArrowRight } from "lucide-react";
 import { useNavigation } from "@/lib/store";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
-
-const internationalDestinations = [
-  {
-    name: "Cancún",
-    eyebrow: "Escapadas al Caribe mexicano",
-    image:
-      "https://images.unsplash.com/photo-1552074284-5e88ef1aef18?w=900&h=1125&fit=crop&q=80",
-  },
-  {
-    name: "Punta Cana",
-    eyebrow: "Playas, descanso y resorts",
-    image:
-      "https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?w=900&h=1125&fit=crop&q=80",
-  },
-  {
-    name: "San Andrés",
-    eyebrow: "Mar de siete colores",
-    image:
-      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=900&h=1125&fit=crop&q=80",
-  },
-];
+import { useSiteContent } from "@/lib/use-site-content";
 
 export function InternationalDestinations() {
   const { navigate } = useNavigation();
+  const { content } = useSiteContent();
+  const international = content.international;
 
   // Duplicar elementos para simular bucle infinito en móvil
-  const carouselItems = [...internationalDestinations, ...internationalDestinations];
+  const carouselItems = [...international.destinations, ...international.destinations];
 
   return (
     <section className="py-16 sm:py-20 lg:py-24 content-visibility-auto contain-intrinsic-size-auto overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-10 sm:mb-12">
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground">
-            Explora destinos{" "}
-            <span className="text-ocean">internacionales</span>
+            {international.title}{" "}
+            <span className="text-ocean">{international.titleHighlight}</span>
           </h2>
           <p className="mt-3 text-muted-foreground text-sm sm:text-base max-w-lg mx-auto">
-            Descubre escapadas inolvidables fuera de Colombia
+            {international.subtitle}
           </p>
         </div>
 
         <div className="flex gap-4 sm:grid overflow-x-auto sm:overflow-visible sm:grid-cols-2 lg:grid-cols-3 sm:gap-6 snap-x snap-mandatory scroll-smooth pb-4 sm:pb-0 px-4 sm:px-0 -mx-4 sm:mx-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           {carouselItems.map((destination, index) => {
-            const isDuplicate = index >= internationalDestinations.length;
+            const isDuplicate = index >= international.destinations.length;
             return (
               <motion.article
                 key={`${destination.name}-${index}`}

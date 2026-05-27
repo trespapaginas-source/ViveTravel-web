@@ -15,6 +15,9 @@ import { TravelCarousel } from "@/components/home/travel-carousel";
 import { GroupTrips } from "@/components/home/group-trips";
 import { CustomTrips } from "@/components/home/custom-trips";
 import { Testimonials } from "@/components/home/testimonials";
+import { InfluencerAuthority } from "@/components/home/influencer-authority";
+import { TeamSection } from "@/components/team/team-section";
+import { useSiteContent } from "@/lib/use-site-content";
 
 // Lazy load all non-home views — these are NOT needed on initial page load
 const PlansList = lazy(() =>
@@ -38,25 +41,44 @@ const PoliciesSection = lazy(() =>
 const FavoritesSection = lazy(() =>
   import("@/components/favorites/favorites-section").then((m) => ({ default: m.FavoritesSection }))
 );
-const TeamSection = lazy(() =>
-  import("@/components/team/team-section").then((m) => ({ default: m.TeamSection }))
-);
+
 
 
 
 function HomeView() {
+  const { content } = useSiteContent();
+  const { order = [], active = {} } = content.homeConfig || {};
+
+  const componentsRegistry: Record<string, React.ReactNode> = {
+    hero: <HeroSection key="hero" />,
+    influencer: <InfluencerAuthority key="influencer" />,
+    plans: <FeaturedPlans key="plans" />,
+    gallery: <DestinationsGallery key="gallery" />,
+    international: <InternationalDestinations key="international" />,
+    stats: <TravelCarousel key="stats" />,
+    groups: <GroupTrips key="groups" />,
+    custom: <CustomTrips key="custom" />,
+    testimonials: <Testimonials key="testimonials" />,
+    team: <TeamSection key="team" />,
+  };
+
   return (
     <>
-      <HeroSection />
-      <VideoShowcase />
-
-      <FeaturedPlans />
-      <DestinationsGallery />
-      <InternationalDestinations />
-      <TravelCarousel />
-      <Testimonials />
-      <GroupTrips />
-      <CustomTrips />
+      {content.campaign?.active && (
+        <div className="bg-ocean text-white py-2.5 px-4 text-center text-xs font-semibold animate-in slide-in-from-top duration-300 relative z-50">
+          {content.campaign.bannerText}{" "}
+          <span className="underline ml-1 cursor-pointer hover:text-white/90">
+            {content.campaign.ctaText}
+          </span>
+        </div>
+      )}
+      
+      {order.map((sectionKey) => {
+        if (active[sectionKey] && componentsRegistry[sectionKey]) {
+          return componentsRegistry[sectionKey];
+        }
+        return null;
+      })}
     </>
   );
 }
@@ -112,11 +134,7 @@ function ViewRouter() {
         </Suspense>
       );
     case "team":
-      return (
-        <Suspense fallback={<ViewSkeleton />}>
-          <TeamSection />
-        </Suspense>
-      );
+      return <TeamSection />;
     case "favorites":
       return (
         <Suspense fallback={<ViewSkeleton />}>

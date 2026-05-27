@@ -98,6 +98,8 @@ export function PlanDetail() {
   
   const isBookingStyle = plan?.category === "Nacional" || plan?.category === "Internacional";
   const isGrupal = plan?.category === "Grupal";
+  const sectionId = plan ? getPlanExperienceSection(plan) : "";
+  const isBookingGallery = sectionId === "pasadias" || sectionId === "grupales" || sectionId === "tours";
 
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
@@ -152,16 +154,15 @@ export function PlanDetail() {
     const total = formatPrice(guests * plan.price);
     const pricePerPerson = formatPrice(plan.price);
     const message = [
-      `🌴 *RESERVA VIVE TRAVEL*`,
+      `🌴 *CONSULTA VIVE TRAVEL*`,
       ``,
       `📋 *Plan:* ${plan.name}`,
       `📍 *Destino:* ${plan.location}`,
-      `📅 *Salida:* ${plan.fecha_salida || (selectedDate ? format(selectedDate, "d MMM yyyy", { locale: es }) : "Por definir")}`,
-      `👥 *Personas:* ${guests}`,
-      `💰 *Precio por persona:* ${pricePerPerson}`,
+      `👥 *Viajeros:* ${guests} persona${guests > 1 ? "s" : ""}`,
+      `📅 *Fecha de viaje:* ${plan.fecha_salida || (selectedDate ? format(selectedDate, "d MMM yyyy", { locale: es }) : "Por definir")}`,
       `💵 *Total estimado:* ${total}`,
       ``,
-      `¿Podrían confirmarme disponibilidad y detalles de pago?`
+      `Hola, acabo de cotizar esta experiencia en su sitio web. ¿Podrían confirmarme disponibilidad de cupos y opciones de pago?`
     ].join("\n");
     window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, "_blank");
   }, [plan, guests, selectedDate]);
@@ -255,13 +256,14 @@ export function PlanDetail() {
           <PropertyGallery
             images={plan.images}
             title={plan.name}
+            variant={isBookingGallery ? "booking" : "default"}
             className="mb-0" />
         </div>
 
         {/* Main Content + Sticky Price Card */}
-        <div className={`flex flex-col ${!isBookingStyle ? "lg:flex-row" : ""} gap-8 lg:gap-12`}>
+        <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
           {/* Left Content */}
-          <div className={`flex-1 min-w-0 ${isBookingStyle ? "max-w-4xl mx-auto w-full" : ""}`}>
+          <div className="flex-1 min-w-0">
             {/* Title Section */}
             <div>
               <div className="flex flex-wrap items-start gap-3 mb-3">
@@ -542,8 +544,7 @@ export function PlanDetail() {
 
           
           {/* Right Sticky Reservation Flow */}
-          {!isBookingStyle && (
-            <aside className="w-full lg:w-[380px] shrink-0">
+          <aside className="w-full lg:w-[380px] shrink-0">
               <div className="lg:sticky lg:top-24">
                 <Card className="border-border/50 shadow-xl py-0 gap-0">
                   <CardContent className="p-6 space-y-5">
@@ -646,14 +647,12 @@ export function PlanDetail() {
                   </CardContent>
                 </Card>
               </div>
-            </aside>
-          )}
+          </aside>
         </div>
       </div>
 
       {/* Mobile Sticky CTA Bar */}
-      {!isBookingStyle && (
-        <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-border/50 px-5 py-3 safe-area-bottom">
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-border/50 px-5 py-3 safe-area-bottom">
           <div className="flex items-center justify-between gap-3">
             <div onClick={() => !isGrupal && setSummaryModalOpen(true)} className={!isGrupal ? "cursor-pointer" : ""}>
               <p className="text-lg font-bold text-foreground underline decoration-foreground/30 underline-offset-4 mb-0.5">
@@ -683,7 +682,6 @@ export function PlanDetail() {
             )}
           </div>
         </div>
-      )}
 
       {/* Share Dialog */}
       <ShareDialog

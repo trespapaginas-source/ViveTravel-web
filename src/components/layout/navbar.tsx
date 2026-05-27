@@ -14,6 +14,7 @@ import {
 import { EXPERIENCE_SECTIONS, type ExperienceSectionId } from "@/lib/experience-sections";
 import { ChevronDown, Menu, Phone, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useSiteContent } from "@/lib/use-site-content";
 
 const navItems = [
   { key: "home" as const, label: "Inicio" },
@@ -33,6 +34,7 @@ function isItemActive(itemKey: string, currentView: ViewType): boolean {
 
 export function Navbar() {
   const { currentView, navigate } = useNavigation();
+  const { content } = useSiteContent();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const tickingRef = useRef(false);
@@ -94,7 +96,8 @@ export function Navbar() {
   return (
     <header
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-colors duration-300",
+        "fixed left-0 right-0 z-50 transition-all duration-300",
+        content.campaign?.active && isHome && !scrolled ? "top-[36px]" : "top-0",
         showOpaque
           ? "bg-white/95 backdrop-blur-md shadow-sm border-b border-border/50"
           : "bg-transparent"
@@ -117,12 +120,48 @@ export function Navbar() {
 
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-0.5 lg:gap-1">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
+            {content.navbar.navItems.map((item) => {
+              if (item.key === "plans") {
+                return (
+                  <DropdownMenu key="plans">
+                    <DropdownMenuTrigger asChild>
+                      <button
+                        className={cn(
+                          "px-2.5 lg:px-4 py-2 rounded-full text-xs lg:text-sm font-medium transition-colors duration-200 flex items-center gap-1.5",
+                          isItemActive("plans", currentView)
+                            ? showOpaque
+                              ? "bg-ocean text-white"
+                              : "bg-white/20 backdrop-blur-sm text-white"
+                            : showOpaque
+                            ? "text-muted-foreground hover:bg-muted hover:text-ocean-dark"
+                            : "text-white/70 hover:bg-white/10 hover:text-white"
+                        )}
+                      >
+                        {item.label}
+                        <ChevronDown className="w-3.5 h-3.5" />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="center" className="min-w-52">
+                      {EXPERIENCE_SECTIONS.map((section) => (
+                        <DropdownMenuItem
+                          key={section.id}
+                          onClick={() => handleExperienceNav(section.id)}
+                          className="cursor-pointer"
+                        >
+                          {section.label}
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                );
+              }
+              return (
                 <button
+                  key={item.key}
+                  onClick={() => handleNav(item.key as any)}
                   className={cn(
-                    "px-2.5 lg:px-4 py-2 rounded-full text-xs lg:text-sm font-medium transition-colors duration-200 flex items-center gap-1.5",
-                    isItemActive("plans", currentView)
+                    "px-2.5 lg:px-4 py-2 rounded-full text-xs lg:text-sm font-medium transition-colors duration-200",
+                    isItemActive(item.key, currentView)
                       ? showOpaque
                         ? "bg-ocean text-white"
                         : "bg-white/20 backdrop-blur-sm text-white"
@@ -131,40 +170,10 @@ export function Navbar() {
                       : "text-white/70 hover:bg-white/10 hover:text-white"
                   )}
                 >
-                  Experiencias y viajes
-                  <ChevronDown className="w-3.5 h-3.5" />
+                  {item.label}
                 </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="center" className="min-w-52">
-                {EXPERIENCE_SECTIONS.map((section) => (
-                  <DropdownMenuItem
-                    key={section.id}
-                    onClick={() => handleExperienceNav(section.id)}
-                    className="cursor-pointer"
-                  >
-                    {section.label}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-            {navItems.map((item) => (
-              <button
-                key={item.key}
-                onClick={() => handleNav(item.key)}
-                className={cn(
-                  "px-2.5 lg:px-4 py-2 rounded-full text-xs lg:text-sm font-medium transition-colors duration-200",
-                  isItemActive(item.key, currentView)
-                    ? showOpaque
-                      ? "bg-ocean text-white"
-                      : "bg-white/20 backdrop-blur-sm text-white"
-                    : showOpaque
-                    ? "text-muted-foreground hover:bg-muted hover:text-ocean-dark"
-                    : "text-white/70 hover:bg-white/10 hover:text-white"
-                )}
-              >
-                {item.label}
-              </button>
-            ))}
+              );
+            })}
           </nav>
 
           {/* CTA + Favorites + Mobile */}
@@ -203,7 +212,7 @@ export function Navbar() {
               )}
             >
               <Phone className="w-4 h-4" />
-              Reservar
+              {content.navbar.ctaButton}
             </Button>
 
             {/* Mobile menu */}
@@ -233,7 +242,7 @@ export function Navbar() {
                   </div>
                   <nav className="flex flex-col p-4 gap-1.5 overflow-y-auto">
                     <div className="px-4 pt-2 pb-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                      Experiencias y viajes
+                      {content.navbar.navItems.find(i => i.key === "plans")?.label || "Experiencias y viajes"}
                     </div>
                     {EXPERIENCE_SECTIONS.map((section) => (
                       <button
@@ -244,10 +253,10 @@ export function Navbar() {
                         {section.label}
                       </button>
                     ))}
-                    {navItems.map((item) => (
+                    {content.navbar.navItems.filter(i => i.key !== "plans").map((item) => (
                       <button
                         key={item.key}
-                        onClick={() => handleNav(item.key)}
+                        onClick={() => handleNav(item.key as any)}
                         className={cn(
                           "px-4 py-3.5 rounded-xl text-left text-sm font-medium transition-colors duration-150 min-h-[44px] flex items-center",
                           isItemActive(item.key, currentView)
@@ -280,7 +289,7 @@ export function Navbar() {
                       className="w-full bg-ocean hover:bg-ocean-dark text-white rounded-full"
                     >
                       <Phone className="w-4 h-4 mr-2" />
-                      Reservar ahora
+                      {content.navbar.ctaButtonMobile}
                     </Button>
                   </div>
                 </div>

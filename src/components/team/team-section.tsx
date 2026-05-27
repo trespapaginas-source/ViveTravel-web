@@ -4,6 +4,7 @@ import { Code2, Star, TrendingUp, Heart, Users, Globe, Sparkles, ArrowRight } fr
 import { SectionHeader } from "@/components/shared/section-header";
 import { Button } from "@/components/ui/button";
 import { useNavigation } from "@/lib/store";
+import { useSiteContent } from "@/lib/use-site-content";
 
 const teamMembers = [
   {
@@ -60,6 +61,8 @@ const stats = [
 
 export function TeamSection() {
   const { navigate } = useNavigation();
+  const { content } = useSiteContent();
+  const teamConfig = content.team;
 
   return (
     <section className="py-16 sm:py-20 lg:py-28 relative overflow-hidden content-visibility-auto contain-intrinsic-size-auto">
@@ -73,8 +76,8 @@ export function TeamSection() {
         {/* Header — CSS animation */}
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
           <SectionHeader
-            title="Nuestro Equipo"
-            subtitle="Tres amigos, una pasión: conectar al mundo con la magia del Atlántico colombiano" />
+            title={teamConfig.title}
+            subtitle={teamConfig.subtitle} />
         </div>
 
         {/* Story intro — CSS animation with delay */}
@@ -83,9 +86,7 @@ export function TeamSection() {
           style={{ animationDelay: "100ms", animationFillMode: "both" }}
         >
           <p className="text-muted-foreground text-base sm:text-lg leading-relaxed">
-            Lo que comenzó como un sueño entre tres amigos se convirtió en una agencia
-            que transforma la manera de vivir el Caribe colombiano. Cada uno aporta su
-            talento único para que tu experiencia sea extraordinaria.
+            {teamConfig.description}
           </p>
           {/* Decorative line */}
           <div className="mt-6 flex items-center justify-center gap-3">

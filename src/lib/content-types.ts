@@ -136,6 +136,67 @@ export interface CabinsListContent {
   contactButton: string;
 }
 
+export interface InfluencerContent {
+  name: string;
+  role: string;
+  quote: string;
+  imageUrl: string;
+  instagramUrl: string;
+  instagramLabel: string;
+  statsLabel: string;
+}
+
+export interface TeamContent {
+  title: string;
+  subtitle: string;
+  description: string;
+}
+
+export interface GalleryDestination {
+  id: string;
+  title: string;
+  subtitle: string;
+  image: string;
+}
+
+export interface GalleryContent {
+  title: string;
+  titleHighlight: string;
+  subtitle: string;
+  destinations: GalleryDestination[];
+}
+
+export interface InternationalDestinationItem {
+  name: string;
+  eyebrow: string;
+  image: string;
+}
+
+export interface InternationalContent {
+  title: string;
+  titleHighlight: string;
+  subtitle: string;
+  destinations: InternationalDestinationItem[];
+}
+
+export interface HomeSectionConfig {
+  order: string[];
+  active: Record<string, boolean>;
+}
+
+export interface PromoCampaignConfig {
+  active: boolean;
+  bannerText: string;
+  ctaText: string;
+  ctaUrl: string;
+}
+
+export interface SEOConfig {
+  metaTitle: string;
+  metaDescription: string;
+  openGraphImage: string;
+}
+
 export interface SiteContentData {
   hero: HeroContent;
   featuredPlans: FeaturedPlansContent;
@@ -149,6 +210,13 @@ export interface SiteContentData {
   navbar: NavbarContent;
   plansList: PlansListContent;
   cabinsList: CabinsListContent;
+  influencer: InfluencerContent;
+  team: TeamContent;
+  gallery: GalleryContent;
+  international: InternationalContent;
+  homeConfig: HomeSectionConfig;
+  campaign: PromoCampaignConfig;
+  seo: SEOConfig;
 }
 
 export type SectionKey = keyof SiteContentData;

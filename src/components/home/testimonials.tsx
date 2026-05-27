@@ -3,18 +3,28 @@
 import { useState, useEffect, useCallback } from "react";
 import { ChevronLeft, ChevronRight, Quote, Star } from "lucide-react";
 import { SectionHeader } from "@/components/shared/section-header";
-import { testimonials } from "@/lib/data";
+import { testimonials as fallbackTestimonials } from "@/lib/data";
+import { useSiteContent } from "@/lib/use-site-content";
+import { useQuery } from "@tanstack/react-query";
+import { fetchTestimonials } from "@/lib/api";
 
 export function Testimonials() {
   const [current, setCurrent] = useState(0);
+  const { content } = useSiteContent();
+  const testConfig = content.testimonials;
+
+  const { data: testimonials = fallbackTestimonials } = useQuery({
+    queryKey: ["testimonials"],
+    queryFn: fetchTestimonials,
+  });
 
   const next = useCallback(() => {
     setCurrent((c) => (c + 1) % testimonials.length);
-  }, []);
+  }, [testimonials.length]);
 
   const prev = useCallback(() => {
     setCurrent((c) => (c - 1 + testimonials.length) % testimonials.length);
-  }, []);
+  }, [testimonials.length]);
 
   useEffect(() => {
     const timer = setInterval(next, 6000);
@@ -27,8 +37,8 @@ export function Testimonials() {
     <section className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 content-visibility-auto contain-intrinsic-size-auto">
       <div className="max-w-4xl mx-auto">
         <SectionHeader
-          title="Lo que dicen nuestros viajeros"
-          subtitle="Historias reales de quienes ya vivieron la experiencia Vive Travel" />
+          title={testConfig.title}
+          subtitle={testConfig.subtitle} />
 
         <div className="relative">
           <div className="bg-card rounded-3xl shadow-sm border border-border/50 p-8 sm:p-12 relative overflow-hidden">

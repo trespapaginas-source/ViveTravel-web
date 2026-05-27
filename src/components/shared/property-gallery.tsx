@@ -10,7 +10,7 @@ interface PropertyGalleryProps {
   images: string[];
   title?: string;
   className?: string;
-  variant?: "default" | "cabin";
+  variant?: "default" | "cabin" | "booking";
 }
 
 // ─── Desktop Gallery: Booking.com style ────────────────────────────────────────
@@ -184,6 +184,73 @@ function CabinDesktopGallery({
   );
 }
 
+// ─── Desktop Gallery: Booking.com Exact Style ────────────────────────────────
+// 4 columns, 2 rows: Left spans 2 cols & 2 rows (50% wide, 100% tall)
+// Center/Right columns have 2 rows of smaller images (25% wide, 50% tall each)
+// Total 5 visible images, keeping a symmetric and photographic 3:2 aspect ratio.
+
+function BookingDesktopGallery({
+  images,
+  onImageClick,
+}: {
+  images: string[];
+  onImageClick: (index: number) => void;
+}) {
+  const count = images.length;
+  const visibleImages = images.slice(0, 5);
+  const extraCount = count > 5 ? count - 5 : 0;
+
+  return (
+    <div className="grid grid-cols-4 gap-2 h-[380px] lg:h-[420px] w-full rounded-2xl overflow-hidden">
+      {/* Columna Izquierda (Grande, 2 cols, 2 rows) */}
+      <div
+        className="relative col-span-2 row-span-2 cursor-pointer group overflow-hidden"
+        onClick={() => onImageClick(0)}
+      >
+        <GalleryImage src={visibleImages[0]} alt="Imagen principal" priority />
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+      </div>
+
+      {/* Columna Central - Superior */}
+      <div
+        className="relative cursor-pointer group overflow-hidden"
+        onClick={() => onImageClick(1)}
+      >
+        <GalleryImage src={visibleImages[1]} alt="Imagen 2" priority />
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+      </div>
+
+      {/* Columna Derecha - Superior */}
+      <div
+        className="relative cursor-pointer group overflow-hidden"
+        onClick={() => onImageClick(2)}
+      >
+        <GalleryImage src={visibleImages[2]} alt="Imagen 3" priority />
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+      </div>
+
+      {/* Columna Central - Inferior */}
+      <div
+        className="relative cursor-pointer group overflow-hidden"
+        onClick={() => onImageClick(3)}
+      >
+        <GalleryImage src={visibleImages[3]} alt="Imagen 4" priority={false} />
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+      </div>
+
+      {/* Columna Derecha - Inferior */}
+      <div
+        className="relative cursor-pointer group overflow-hidden"
+        onClick={() => onImageClick(4)}
+      >
+        <GalleryImage src={visibleImages[4]} alt="Imagen 5" priority={false} />
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+        {extraCount > 0 && <MorePhotosOverlay count={extraCount} />}
+      </div>
+    </div>
+  );
+}
+
 // ─── Mobile Gallery: 2x2 grid, 4:3 aspect ─────────────────────────────────────
 
 function MobileGallery({
@@ -249,9 +316,12 @@ function GalleryImage({
 
 function MorePhotosOverlay({ count }: { count: number }) {
   return (
-    <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-      <span className="text-white font-semibold text-base">
-        +{count} foto{count !== 1 ? "s" : ""}
+    <div className="absolute inset-0 bg-black/55 backdrop-blur-[2px] flex flex-col items-center justify-center transition-all duration-300 group-hover:bg-black/65">
+      <span className="text-white font-bold text-lg tracking-wide">
+        +{count} fotos
+      </span>
+      <span className="text-white/80 text-xs font-semibold mt-1">
+        Ver todas
       </span>
     </div>
   );
@@ -416,14 +486,43 @@ export function PropertyGallery({ images, title, className, variant = "default" 
     setLightboxOpen(false);
   }, []);
 
+  // Fill with example images if variant is "booking"
+  let galleryImages = images;
+  if (variant === "booking") {
+    const defaultExamples = [
+      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&h=600&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1506929562872-bb421503ef21?w=800&h=600&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1473116763249-2faaef81ccda?w=800&h=600&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1519046904884-53103b34b206?w=800&h=600&fit=crop&q=80"
+    ];
+    const filled = [...images];
+    
+    // Add all placeholder images that aren't already present, ensuring total length > 5
+    defaultExamples.forEach((img) => {
+      if (!filled.includes(img)) {
+        filled.push(img);
+      }
+    });
+
+    // Make sure we have at least 6 elements to guarantee showing "+1" or more remaining photos
+    while (filled.length < 6) {
+      filled.push(defaultExamples[filled.length % defaultExamples.length]);
+    }
+    
+    galleryImages = filled;
+  }
+
   return (
     <div className={cn("relative", className)}>
       {/* Desktop Gallery */}
       <div className="hidden sm:block">
         {variant === "cabin" ? (
-          <CabinDesktopGallery images={images} onImageClick={handleImageClick} />
+          <CabinDesktopGallery images={galleryImages} onImageClick={handleImageClick} />
+        ) : variant === "booking" ? (
+          <BookingDesktopGallery images={galleryImages} onImageClick={handleImageClick} />
         ) : (
-          <DesktopGallery images={images} onImageClick={handleImageClick} />
+          <DesktopGallery images={galleryImages} onImageClick={handleImageClick} />
         )}
       </div>
 
@@ -436,7 +535,7 @@ export function PropertyGallery({ images, title, className, variant = "default" 
       {lightboxOpen && (
         <Lightbox
           key={lightboxIndex}
-          images={images}
+          images={galleryImages}
           initialIndex={lightboxIndex}
           onClose={handleCloseLightbox}
           title={title} />
@@ -444,3 +543,4 @@ export function PropertyGallery({ images, title, className, variant = "default" 
     </div>
   );
 }
+

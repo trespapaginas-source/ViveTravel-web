@@ -9,8 +9,6 @@ export function useSiteContent() {
   const { data, isLoading, error } = useQuery<SiteContentData>({
     queryKey: ["site-content"],
     queryFn: fetchSiteContent,
-    staleTime: 1000 * 60 * 5,
-    initialData: defaultSiteContent,
   });
 
   return {

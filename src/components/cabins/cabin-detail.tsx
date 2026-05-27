@@ -84,74 +84,69 @@ function formatPrice(price: number): string {
 // Map amenity keywords to icons
 function getAmenityIcon(amenity: string) {
   const lower = amenity.toLowerCase();
-  if (lower.includes("piscina") || lower.includes("jacuzzi")) return Waves;
-  if (lower.includes("aire") || lower.includes("ventilador")) return Wind;
-  if (lower.includes("wifi")) return Wifi;
-  if (lower.includes("estacionamiento") || lower.includes("parqueo")) return Car;
-  if (lower.includes("tv") || lower.includes("smart")) return Tv;
-  if (lower.includes("cocina")) return UtensilsCrossed;
-  if (lower.includes("parrilla") || lower.includes("bbq") || lower.includes("barbacoa")) return Flame;
-  if (lower.includes("hamaca") || lower.includes("hamaca")) return Tent;
-  if (lower.includes("desayuno") || lower.includes("café") || lower.includes("coffee")) return Coffee;
-  if (lower.includes("vino") || lower.includes("copa")) return Wine;
-  if (lower.includes("binoculares") || lower.includes("avistamiento")) return Binoculars;
-  if (lower.includes("kayak")) return Sailboat;
-  if (lower.includes("ducha") || lower.includes("agua caliente")) return ShowerHead;
-  if (lower.includes("solar") || lower.includes("energía")) return Sun;
-  if (lower.includes("seguridad") || lower.includes("seguro")) return Shield;
-  if (lower.includes("muelle")) return TreePalm;
-  if (lower.includes("terraza") || lower.includes("balcón")) return Eye;
-  if (lower.includes("jardín") || lower.includes("bosque")) return TreeDeciduous;
-  if (lower.includes("toalla")) return ShowerHead;
-  if (lower.includes("vela") || lower.includes("romántic")) return Heart;
-  if (lower.includes("mosquitero")) return Home;
-  if (lower.includes("lavadora")) return ShowerHead;
-  if (lower.includes("silla") || lower.includes("sillas")) return Sun;
-  if (lower.includes("cama")) return BedDouble;
-  if (lower.includes("música")) return Music;
-  if (lower.includes("candado") || lower.includes("cerradura")) return Lock;
+  if (lower.includes("piscina") || lower.includes("alberca") || lower.includes("charco") || lower.includes("jacuzzi") || lower.includes("tina")) return Waves;
+  if (lower.includes("aire") || lower.includes("ventilador") || lower.includes("clima") || lower.includes("ac")) return Wind;
+  if (lower.includes("wifi") || lower.includes("internet") || lower.includes("satelital") || lower.includes("conexi") || lower.includes("red")) return Wifi;
+  if (lower.includes("estacionamiento") || lower.includes("parqueo") || lower.includes("parqueadero") || lower.includes("garaje") || lower.includes("carro") || lower.includes("vehículo")) return Car;
+  if (lower.includes("tv") || lower.includes("smart") || lower.includes("televis") || lower.includes("pantalla") || lower.includes("netflix") || lower.includes("cable")) return Tv;
+  if (lower.includes("cocina") || lower.includes("estufa") || lower.includes("nevera") || lower.includes("licuadora") || lower.includes("vajilla") || lower.includes("horno") || lower.includes("microondas")) return UtensilsCrossed;
+  if (lower.includes("parrilla") || lower.includes("bbq") || lower.includes("barbacoa") || lower.includes("asador") || lower.includes("fogata") || lower.includes("chimenea") || lower.includes("fuego") || lower.includes("leña")) return Flame;
+  if (lower.includes("hamaca") || lower.includes("chinchorro")) return Tent;
+  if (lower.includes("desayuno") || lower.includes("café") || lower.includes("coffee") || lower.includes("cafetera") || lower.includes("té")) return Coffee;
+  if (lower.includes("vino") || lower.includes("copa") || lower.includes("cerveza") || lower.includes("trago") || lower.includes("cóctel") || lower.includes("bar")) return Wine;
+  if (lower.includes("binoculares") || lower.includes("telescopio") || lower.includes("avistamiento") || lower.includes("aves") || lower.includes("pájaro")) return Binoculars;
+  if (lower.includes("kayak") || lower.includes("canoa") || lower.includes("tabla") || lower.includes("bote")) return Sailboat;
+  if (lower.includes("ducha") || lower.includes("agua caliente") || lower.includes("terma") || lower.includes("lavamanos") || lower.includes("baño")) return ShowerHead;
+  if (lower.includes("solar") || lower.includes("energía") || lower.includes("sol") || lower.includes("fotovoltaico")) return Sun;
+  if (lower.includes("seguridad") || lower.includes("cámara") || lower.includes("vigilancia") || lower.includes("alarma")) return Shield;
+  if (lower.includes("muelle") || lower.includes("embarcadero") || lower.includes("mar") || lower.includes("playa") || lower.includes("palmera") || lower.includes("orilla")) return TreePalm;
+  if (lower.includes("terraza") || lower.includes("balcón") || lower.includes("mirador") || lower.includes("vista") || lower.includes("panorá")) return Eye;
+  if (lower.includes("jardín") || lower.includes("bosque") || lower.includes("senderos") || lower.includes("árboles") || lower.includes("naturaleza") || lower.includes("vegetación")) return TreeDeciduous;
+  if (lower.includes("toalla") || lower.includes("sábana") || lower.includes("lavadora") || lower.includes("secadora") || lower.includes("ropa")) return ShowerHead;
+  if (lower.includes("vela") || lower.includes("romántic") || lower.includes("pareja")) return Heart;
+  if (lower.includes("mosquitero") || lower.includes("malla") || lower.includes("toldo") || lower.includes("mosquitos")) return Home;
+  if (lower.includes("silla") || lower.includes("sillas") || lower.includes("tumbona") || lower.includes("asiento")) return Sun;
+  if (lower.includes("cama") || lower.includes("habitación") || lower.includes("dormitorio") || lower.includes("almohada")) return BedDouble;
+  if (lower.includes("música") || lower.includes("parlante") || lower.includes("sonido") || lower.includes("altavoz") || lower.includes("bluetooth")) return Music;
+  if (lower.includes("candado") || lower.includes("cerradura") || lower.includes("clave") || lower.includes("caja fuerte")) return Lock;
   return Check;
 }
 
 // Map rule keywords to icons
 function getRuleIcon(rule: string) {
   const lower = rule.toLowerCase();
-  if (lower.includes("fiesta") || lower.includes("evento")) return Music;
-  if (lower.includes("fumar") || lower.includes("cigarrillo")) return Cigarette;
-  if (lower.includes("mascota")) return PawPrint;
-  if (lower.includes("niño") || lower.includes("adulto") || lower.includes("18")) return Baby;
-  if (lower.includes("silencio") || lower.includes("ruido") || lower.includes("música alta")) return Volume2;
-  if (lower.includes("huésped") || lower.includes("máximo")) return Users;
-  if (lower.includes("check-in") || lower.includes("check-out") || lower.includes("llegada") || lower.includes("salida")) return Clock;
-  if (lower.includes("fauna") || lower.includes("naturaleza")) return TreeDeciduous;
-  if (lower.includes("norma") || lower.includes("complejo")) return Shield;
-  if (lower.includes("material") || lower.includes("cuidar")) return Home;
+  if (lower.includes("fiesta") || lower.includes("evento") || lower.includes("celebración") || lower.includes("reunión")) return Music;
+  if (lower.includes("fumar") || lower.includes("cigarrillo") || lower.includes("tabaco") || lower.includes("vape") || lower.includes("humo")) return Cigarette;
+  if (lower.includes("mascota") || lower.includes("perro") || lower.includes("gato") || lower.includes("animal")) return PawPrint;
+  if (lower.includes("niño") || lower.includes("adulto") || lower.includes("18") || lower.includes("edad") || lower.includes("bebé") || lower.includes("menor")) return Baby;
+  if (lower.includes("silencio") || lower.includes("ruido") || lower.includes("música alta") || lower.includes("volumen") || lower.includes("horas de descanso") || lower.includes("parlantes")) return Volume2;
+  if (lower.includes("huésped") || lower.includes("máximo") || lower.includes("capacidad") || lower.includes("personas")) return Users;
+  if (lower.includes("check-in") || lower.includes("check-out") || lower.includes("llegada") || lower.includes("salida") || lower.includes("horario") || lower.includes("hora")) return Clock;
+  if (lower.includes("fauna") || lower.includes("naturaleza") || lower.includes("flora") || lower.includes("plantas") || lower.includes("animales") || lower.includes("medio ambiente") || lower.includes("basura") || lower.includes("reciclar")) return TreeDeciduous;
+  if (lower.includes("norma") || lower.includes("complejo") || lower.includes("reglamento") || lower.includes("ley")) return Shield;
+  if (lower.includes("material") || lower.includes("cuidar") || lower.includes("instalaciones") || lower.includes("dañar") || lower.includes("propiedad")) return Home;
   return AlertCircle;
 }
 
 // Map highlight keywords to icons
 function getHighlightIcon(highlight: string) {
   const lower = highlight.toLowerCase();
-  if (lower.includes("mar") || lower.includes("frente")) return Waves;
-  if (lower.includes("piscina")) return Waves;
-  if (lower.includes("sostenible") || lower.includes("eco")) return TreeDeciduous;
-  if (lower.includes("manglar")) return TreePalm;
-  if (lower.includes("muelle")) return Sailboat;
-  if (lower.includes("ave") || lower.includes("observación")) return Binoculars;
-  if (lower.includes("familia") || lower.includes("familiar")) return Users;
-  if (lower.includes("habitación")) return BedDouble;
-  if (lower.includes("juego")) return Baby;
-  if (lower.includes("seguridad")) return Shield;
-  if (lower.includes("jacuzzi")) return ShowerHead;
-  if (lower.includes("romántic") || lower.includes("bohem")) return Heart;
-  if (lower.includes("desayuno")) return Coffee;
-  if (lower.includes("atardecer")) return Sun;
-  if (lower.includes("auténtic") || lower.includes("costeñ")) return TreePalm;
-  if (lower.includes("palma") || lower.includes("techo")) return TreePalm;
-  if (lower.includes("económica")) return Badge;
-  if (lower.includes("jardín")) return TreeDeciduous;
-  if (lower.includes("caribe") || lower.includes("diseño")) return Sparkles;
-  if (lower.includes("playa") || lower.includes("acceso")) return Waves;
+  if (lower.includes("mar") || lower.includes("frente") || lower.includes("playa") || lower.includes("acceso") || lower.includes("costa")) return Waves;
+  if (lower.includes("piscina") || lower.includes("alberca") || lower.includes("jacuzzi") || lower.includes("charco")) return Waves;
+  if (lower.includes("sostenible") || lower.includes("eco") || lower.includes("ecológico") || lower.includes("huella") || lower.includes("jardín") || lower.includes("bosque")) return TreeDeciduous;
+  if (lower.includes("manglar") || lower.includes("palma") || lower.includes("techo") || lower.includes("auténtic") || lower.includes("costeñ")) return TreePalm;
+  if (lower.includes("muelle") || lower.includes("embarcadero") || lower.includes("puerto")) return Sailboat;
+  if (lower.includes("ave") || lower.includes("observación") || lower.includes("avistamiento") || lower.includes("pájaro") || lower.includes("fauna")) return Binoculars;
+  if (lower.includes("familia") || lower.includes("familiar") || lower.includes("niños") || lower.includes("amigos") || lower.includes("grupo")) return Users;
+  if (lower.includes("habitación") || lower.includes("cama") || lower.includes("dormitorio") || lower.includes("alojamiento")) return BedDouble;
+  if (lower.includes("juego") || lower.includes("parque") || lower.includes("infantil")) return Baby;
+  if (lower.includes("seguridad") || lower.includes("vigilancia") || lower.includes("tranquil") || lower.includes("privad")) return Shield;
+  if (lower.includes("jacuzzi") || lower.includes("tina") || lower.includes("spa")) return ShowerHead;
+  if (lower.includes("romántic") || lower.includes("bohem") || lower.includes("pareja") || lower.includes("amor")) return Heart;
+  if (lower.includes("desayuno") || lower.includes("cena") || lower.includes("comida") || lower.includes("café")) return Coffee;
+  if (lower.includes("atardecer") || lower.includes("amanecer") || lower.includes("sol") || lower.includes("vista")) return Sun;
+  if (lower.includes("económica") || lower.includes("barato") || lower.includes("precio") || lower.includes("oferta")) return Badge;
+  if (lower.includes("caribe") || lower.includes("diseño") || lower.includes("lujo") || lower.includes("premium") || lower.includes("exclusivo")) return Sparkles;
   return Sparkles;
 }
 
@@ -497,7 +492,7 @@ export function CabinDetail() {
                       >
                         <div className="w-full h-[110px] rounded-xl overflow-hidden mb-2 relative">
                           <img 
-                            src={bedroom.image} 
+                            src={bedroom.image || "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"} 
                             alt={bedroom.title} 
                             className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
                            onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"; e.currentTarget.onerror = null; }} />
@@ -752,7 +747,7 @@ export function CabinDetail() {
                   <p className="text-sm text-muted-foreground mt-0.5">{room.beds}</p>
                 </div>
                 <div className="aspect-[4/3] sm:aspect-video rounded-xl overflow-hidden relative border border-border/30 shadow-sm">
-                  <img                     src={room.image}
+                  <img                     src={room.image || "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"}
                     alt={room.title}
                     className="object-cover w-full h-full"
                    onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"; e.currentTarget.onerror = null; }} />

@@ -3,12 +3,12 @@ import type { SiteContentData } from "./content-types";
 export const defaultSiteContent: SiteContentData = {
   hero: {
     brandLabel: "Vive Travel",
-    title: "Descubre Colombia",
-    titleHighlight: "desde la costa",
+    title: "Viaja por el",
+    titleHighlight: "mundo",
     subtitle:
-      "Planes turísticos para todo el país, con la costa Caribe como casa. Playa, mar, sol y los mejores destinos nacionales.",
-    ctaPlans: "Experiencias y viajes",
-    ctaCabins: "Ver alojamientos",
+      "Experiencias únicas diseñadas y respaldadas por Luisito el viajero y su equipo. Vuelos, alojamiento y diversión garantizada.",
+    ctaPlans: "Ver planes turísticos",
+    ctaCabins: "Personalizar mi viaje",
   },
 
   featuredPlans: {
@@ -74,7 +74,7 @@ export const defaultSiteContent: SiteContentData = {
     title: "Viajes",
     titleHighlight: "personalizados",
     description:
-      "No encuentras lo que buscas? Nosotros te ayudamos a crear el viaje perfecto. Cuéntanos tu idea y la hacemos realidad.",
+      "¿No encuentras lo que buscas? Nosotros te ayudamos a crear el viaje perfecto. Cuéntanos tu idea y la hacemos realidad en cualquier destino.",
     benefits: [
       {
         title: "Flexibilidad total",
@@ -91,7 +91,7 @@ export const defaultSiteContent: SiteContentData = {
     ],
     ctaTitle: "¿Listo para crear tu viaje ideal?",
     ctaDescription:
-      "Cuéntanos qué experiencia buscas, cuántos días tienes y tu presupuesto. Nosotros nos encargamos del resto.",
+      "Cuéntanos qué experiencia buscas, cuántos días tienes y tu presupuesto. Nosotros nos encargamos del resto. ¡Es momento de viajar a tu manera!",
     ctaContact: "Contáctanos",
     ctaPlans: "Ver experiencias",
   },
@@ -103,13 +103,13 @@ export const defaultSiteContent: SiteContentData = {
     subtitle:
       "Estamos aquí para ayudarte a planear el viaje perfecto. Escríbenos y te responderemos pronto.",
     formTitle: "Envíanos un mensaje",
-    whatsapp: "+57 300 123 4567",
+    whatsapp: "+57 320 934 4964",
     email: "info@vivetravel.co",
     location: "Barranquilla, Atlántico, Colombia",
     hours: "Lun - Sáb: 8:00 AM - 6:00 PM\nDom: 9:00 AM - 1:00 PM",
     instagramUrl: "#",
     facebookUrl: "#",
-    whatsappUrl: "https://wa.me/573001234567",
+    whatsappUrl: "https://wa.me/573209344964",
     socialLabel: "Síguenos",
     chatTitle: "¿Prefieres chatear?",
     chatDescription: "Escríbenos por WhatsApp y recibe atención inmediata.",
@@ -267,10 +267,10 @@ Se consideran fuerza mayor: desastres naturales, epidemias, declaraciones de eme
       "Planes turísticos para toda Colombia, con la costa Caribe como casa. Tu próxima aventura empieza aquí.",
     instagramUrl: "#",
     facebookUrl: "#",
-    whatsappUrl: "https://wa.me/573001234567",
+    whatsappUrl: "https://wa.me/573209344964",
     exploreTitle: "Explorar",
     contactTitle: "Contacto",
-    phone: "+57 300 123 4567",
+    phone: "+57 320 934 4964",
     email: "info@vivetravel.co",
     location: "Barranquilla, Atlántico, Colombia",
     helpTitle: "¿Necesitas ayuda?",
@@ -288,6 +288,7 @@ Se consideran fuerza mayor: desastres naturales, epidemias, declaraciones de eme
       { key: "home", label: "Inicio" },
       { key: "plans", label: "Experiencias y viajes" },
       { key: "cabins", label: "Alojamientos" },
+      { key: "team", label: "Equipo" },
       { key: "contact", label: "Contacto" },
       { key: "policies", label: "Políticas" },
     ],
@@ -312,4 +313,113 @@ Se consideran fuerza mayor: desastres naturales, epidemias, declaraciones de eme
       "Contáctanos y te ayudamos a encontrar el alojamiento ideal.",
     contactButton: "Contáctanos",
   },
+
+  influencer: {
+    name: "Luis Méndez",
+    role: "Fundador y Viajero",
+    quote: "Mi propósito no es solo venderte un viaje, sino asegurarme de que vivas la misma experiencia increíble que yo descubrí He recorrido cada uno de estos destinos para garantizarte calidad, seguridad y recuerdos inolvidables.",
+    imageUrl: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=800&h=1000&fit=crop&q=80",
+    instagramUrl: "https://instagram.com/luismendez",
+    instagramLabel: "Sigue mis viajes",
+    statsLabel: "+500 viajeros felices",
+  },
+
+  team: {
+    title: "Nuestro Equipo",
+    subtitle: "Tres amigos, una pasión: conectar al mundo con la magia del Atlántico colombiano",
+    description: "Lo que comenzó como un sueño entre tres amigos se convirtió en una agencia que transforma la manera de vivir el Caribe colombiano. Cada uno aporta su talento único para que tu experiencia sea extraordinaria.",
+  },
+
+  gallery: {
+    title: "Explora destinos",
+    titleHighlight: "nacionales",
+    subtitle: "Descubre los mejores tours y experiencias en los destinos más emblemáticos del Caribe colombiano",
+    destinations: [
+      {
+        id: "dest-baru",
+        title: "Cartagena",
+        subtitle: "Historia, cultura y encanto colonial",
+        image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1400&h=600&fit=crop&q=80",
+      },
+      {
+        id: "dest-pasadias",
+        title: "Santa Marta",
+        subtitle: "Naturaleza viva donde la sierra abraza el mar",
+        image: "https://images.unsplash.com/photo-1540541338287-41700207dee6?w=1400&h=600&fit=crop&q=80",
+      },
+      {
+        id: "dest-rosario",
+        title: "Quindío",
+        subtitle: "La verdadera esencia y tradición cafetera",
+        image: "https://images.unsplash.com/photo-1473116763249-2faaef81ccda?w=1400&h=600&fit=crop&q=80",
+      },
+      {
+        id: "dest-bahia",
+        title: "Más de Colombia",
+        subtitle: "Descubre otras joyas y destinos inexplorados",
+        image: "https://images.unsplash.com/photo-1506929562872-bb421503ef21?w=1400&h=600&fit=crop&q=80",
+      },
+    ],
+  },
+
+  international: {
+    title: "Explora destinos",
+    titleHighlight: "internacionales",
+    subtitle: "Descubre escapadas inolvidables fuera de Colombia",
+    destinations: [
+      {
+        name: "Cancún",
+        eyebrow: "Escapadas al Caribe mexicano",
+        image: "https://images.unsplash.com/photo-1552074284-5e88ef1aef18?w=900&h=1125&fit=crop&q=80",
+      },
+      {
+        name: "Punta Cana",
+        eyebrow: "Playas, descanso y resorts",
+        image: "https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?w=900&h=1125&fit=crop&q=80",
+      },
+      {
+        name: "San Andrés",
+        eyebrow: "Mar de siete colores",
+        image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=900&h=1125&fit=crop&q=80",
+      },
+    ],
+  },
+
+  homeConfig: {
+    order: [
+      "hero",
+      "influencer",
+      "plans",
+      "gallery",
+      "international",
+      "stats",
+      "groups",
+      "custom",
+      "testimonials",
+      "team"
+    ],
+    active: {
+      hero: true,
+      influencer: true,
+      plans: true,
+      gallery: true,
+      international: true,
+      stats: true,
+      groups: true,
+      custom: true,
+      testimonials: true,
+      team: true
+    }
+  },
+  campaign: {
+    active: false,
+    bannerText: "¡Aprovecha nuestro descuento especial de temporada! Reserva ahora tu plan nacional con vuelos.",
+    ctaText: "Ver ofertas",
+    ctaUrl: "plans"
+  },
+  seo: {
+    metaTitle: "Vive Travel | Agencia de Viajes y Turismo en Colombia",
+    metaDescription: "Planes turísticos nacionales e internacionales diseñados por Luisito el viajero. Vuelos, alojamiento y experiencias inolvidables en un solo lugar.",
+    openGraphImage: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&h=630&fit=crop&q=80"
+  }
 };

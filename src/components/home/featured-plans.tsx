@@ -11,6 +11,7 @@ import { fetchPlans } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import { motion } from "framer-motion";
+import { useSiteContent } from "@/lib/use-site-content";
 
 function formatPrice(price: number) {
   return new Intl.NumberFormat("es-CO", {
@@ -84,6 +85,8 @@ const PlanCard = memo(function PlanCard({
 
 export function FeaturedPlans() {
   const { navigate } = useNavigation();
+  const { content } = useSiteContent();
+  const featured = content.featuredPlans;
   const { data: allPlans = [], isLoading } = useQuery({
     queryKey: ["plans"],
     queryFn: fetchPlans,
@@ -99,8 +102,8 @@ export function FeaturedPlans() {
       <section className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <SectionHeader
-            title="Planes turísticos destacados"
-            subtitle="Descubre nuestras experiencias más populares en Colombia"
+            title={featured.title}
+            subtitle={featured.subtitle}
           />
           <div className="mt-8 flex sm:grid overflow-x-auto sm:overflow-visible sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 snap-x snap-mandatory scroll-smooth pb-4 sm:pb-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             {Array.from({ length: 4 }).map((_, i) => (
@@ -128,8 +131,8 @@ export function FeaturedPlans() {
     <section className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 content-visibility-auto contain-intrinsic-size-auto overflow-hidden">
       <div className="max-w-7xl mx-auto">
         <SectionHeader
-          title="Planes turísticos destacados"
-          subtitle="Descubre nuestras experiencias más populares en Colombia"
+          title={featured.title}
+          subtitle={featured.subtitle}
         />
 
         <div className="flex gap-4 sm:grid overflow-x-auto sm:overflow-visible sm:grid-cols-2 lg:grid-cols-4 sm:gap-6 snap-x snap-mandatory scroll-smooth pb-4 sm:pb-0 px-4 sm:px-0 -mx-4 sm:mx-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
@@ -162,10 +165,10 @@ export function FeaturedPlans() {
           <Button
             variant="outline"
             size="lg"
-            onClick={() => navigate("plans", "pasadias")}
+            onClick={() => navigate("plans")}
             className="border-ocean text-ocean hover:bg-ocean hover:text-white transition-colors duration-300 px-8 rounded-xl font-semibold shadow-sm"
           >
-            Ver todas las experiencias
+            {featured.viewAll}
             <ArrowRight className="w-5 h-5 ml-2" />
           </Button>
         </div>

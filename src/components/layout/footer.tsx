@@ -4,9 +4,12 @@ import { useNavigation } from "@/lib/store";
 import { Mail, Phone, MapPin, Instagram, Facebook, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { useSiteContent } from "@/lib/use-site-content";
 
 export function Footer() {
   const { navigate, currentView } = useNavigation();
+  const { content } = useSiteContent();
+  const f = content.footer;
 
   if (currentView === "plan-detail" || currentView === "cabin-detail") return null;
 
@@ -18,27 +21,25 @@ export function Footer() {
           {/* Brand */}
           <div className="space-y-3">
             <img               src="/logos/vive-travel-white.png"
-              alt="Vive Travel"
+              alt={f.brandName}
               className="h-10 w-auto"
              onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"; e.currentTarget.onerror = null; }} />
             <p className="text-sm text-white/40 leading-relaxed">
-              Tu agencia de viajes en el Atlántico, Colombia. Te conectamos con
-              las mejores experiencias turísticas y alojamientos del Caribe
-              colombiano.
+              {f.description}
             </p>
             <div className="flex gap-4">
               {[
-                { icon: Instagram, href: "#", label: "Instagram" },
-                { icon: Facebook, href: "#", label: "Facebook" },
-                { icon: MessageCircle, href: "https://wa.me/573001234567", label: "WhatsApp" },
+                { icon: Instagram, href: f.instagramUrl, label: "Instagram" },
+                { icon: Facebook, href: f.facebookUrl, label: "Facebook" },
+                { icon: MessageCircle, href: f.whatsappUrl, label: "WhatsApp" },
               ].map((social) => (
                 <a
                   key={social.label}
                   href={social.href}
                   className="flex items-center justify-center text-white/50 hover:text-white hover:scale-110 transition-all duration-200"
                   aria-label={social.label}
-                  target={social.href.startsWith("http") ? "_blank" : undefined}
-                  rel={social.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                  target={social.href.startsWith("http") || social.href.startsWith("https") ? "_blank" : undefined}
+                  rel={social.href.startsWith("http") || social.href.startsWith("https") ? "noopener noreferrer" : undefined}
                 >
                   <social.icon className="w-5 h-5" />
                 </a>
@@ -49,7 +50,7 @@ export function Footer() {
           {/* Quick Links */}
           <div className="space-y-3">
             <h3 className="font-semibold text-sm uppercase tracking-wider text-white/60">
-              Explorar
+              {f.exploreTitle}
             </h3>
             <ul className="space-y-1.5">
               {[
@@ -75,20 +76,20 @@ export function Footer() {
           {/* Contact */}
           <div className="space-y-3">
             <h3 className="font-semibold text-sm uppercase tracking-wider text-white/60">
-              Contacto
+              {f.contactTitle}
             </h3>
             <ul className="space-y-2">
               <li className="flex items-center gap-2 text-sm text-white/40">
                 <Phone className="w-3.5 h-3.5 text-white/30 shrink-0" />
-                <span>+57 300 123 4567</span>
+                <span>{f.phone}</span>
               </li>
               <li className="flex items-center gap-2 text-sm text-white/40 break-all">
                 <Mail className="w-3.5 h-3.5 text-white/30 shrink-0" />
-                <span>info@vivetravel.co</span>
+                <span>{f.email}</span>
               </li>
               <li className="flex items-start gap-2 text-sm text-white/40">
                 <MapPin className="w-3.5 h-3.5 text-white/30 mt-0.5 shrink-0" />
-                <span>Barranquilla, Atlántico, Colombia</span>
+                <span>{f.location}</span>
               </li>
             </ul>
           </div>
@@ -96,22 +97,22 @@ export function Footer() {
           {/* WhatsApp CTA */}
           <div className="space-y-3">
             <h3 className="font-semibold text-sm uppercase tracking-wider text-white/60">
-              ¿Necesitas ayuda?
+              {f.helpTitle}
             </h3>
             <p className="text-sm text-white/40">
-              Escríbenos por WhatsApp y te ayudamos a planear tu viaje ideal.
+              {f.helpDescription}
             </p>
             <Button
               asChild
               className="w-full bg-white/10 hover:bg-white/20 text-white border-0 rounded-full h-10"
             >
               <a
-                href="https://wa.me/573001234567"
+                href={f.whatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 <MessageCircle className="w-4 h-4 mr-2" />
-                Chatear ahora
+                {f.chatButton}
               </a>
             </Button>
           </div>
@@ -122,11 +123,10 @@ export function Footer() {
         {/* Bottom Bar */}
         <div className="py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-xs text-white/30 text-center sm:text-left">
-            © {new Date().getFullYear()} Vive Travel Atlántico. Todos los
-            derechos reservados.
+            {f.copyright.replace("{year}", new Date().getFullYear().toString())}
           </p>
           <p className="text-xs text-white/30">
-            Hecho en el Caribe Colombiano
+            {f.madeWith}
           </p>
         </div>
       </div>

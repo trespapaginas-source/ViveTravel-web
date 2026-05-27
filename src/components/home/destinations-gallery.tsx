@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { useNavigation } from "@/lib/store";
+import { useSiteContent } from "@/lib/use-site-content";
 
 interface Destination {
   id: string;
@@ -10,37 +11,6 @@ interface Destination {
   subtitle: string;
   image: string;
 }
-
-const destinations: Destination[] = [
-  {
-    id: "dest-baru",
-    title: "Cartagena",
-    subtitle: "Historia, cultura y encanto colonial",
-    image:
-      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1400&h=600&fit=crop&q=80",
-  },
-  {
-    id: "dest-pasadias",
-    title: "Santa Marta",
-    subtitle: "Naturaleza viva donde la sierra abraza el mar",
-    image:
-      "https://images.unsplash.com/photo-1540541338287-41700207dee6?w=1400&h=600&fit=crop&q=80",
-  },
-  {
-    id: "dest-rosario",
-    title: "Quindío",
-    subtitle: "La verdadera esencia y tradición cafetera",
-    image:
-      "https://images.unsplash.com/photo-1473116763249-2faaef81ccda?w=1400&h=600&fit=crop&q=80",
-  },
-  {
-    id: "dest-bahia",
-    title: "Más de Colombia",
-    subtitle: "Descubre otras joyas y destinos inexplorados",
-    image:
-      "https://images.unsplash.com/photo-1506929562872-bb421503ef21?w=1400&h=600&fit=crop&q=80",
-  },
-];
 
 const cardVariants: any = {
   hidden: { opacity: 0, y: 30 },
@@ -111,6 +81,8 @@ function DestinationCard({
 
 export function DestinationsGallery() {
   const { navigate } = useNavigation();
+  const { content } = useSiteContent();
+  const gallery = content.gallery;
 
   return (
     <section className="py-16 sm:py-20 lg:py-24 content-visibility-auto contain-intrinsic-size-auto">
@@ -118,17 +90,17 @@ export function DestinationsGallery() {
         {/* Section Header */}
         <div className="text-center mb-10 sm:mb-12">
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground">
-            Explora destinos{" "}
-            <span className="text-ocean">nacionales</span>
+            {gallery.title}{" "}
+            <span className="text-ocean">{gallery.titleHighlight}</span>
           </h2>
           <p className="mt-3 text-muted-foreground text-sm sm:text-base max-w-lg mx-auto">
-            Descubre los mejores tours y experiencias en los destinos más emblemáticos del Caribe colombiano
+            {gallery.subtitle}
           </p>
         </div>
 
         {/* Destination Cards Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
-          {destinations.map((dest, i) => (
+          {gallery.destinations.map((dest, i) => (
             <DestinationCard
               key={dest.id}
               destination={dest}

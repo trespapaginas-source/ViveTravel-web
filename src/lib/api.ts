@@ -76,3 +76,21 @@ function safeParse(val: unknown): string[] {
   }
   return [];
 }
+
+export async function fetchHeroImages(): Promise<Array<{ id: string; url: string; caption: string }>> {
+  const res = await fetch(`${API_BASE}/hero-images`);
+  if (!res.ok) throw new Error("Error fetching hero images");
+  return res.json();
+}
+
+export async function fetchTripImages(): Promise<Array<{ id: string; url: string; caption: string }>> {
+  const res = await fetch(`${API_BASE}/trip-images`);
+  if (!res.ok) throw new Error("Error fetching trip images");
+  return res.json();
+}
+
+export async function fetchTestimonials(): Promise<Array<{ id: string; name: string; avatar: string; location: string; text: string; rating: number; tripName: string }>> {
+  const res = await fetch(`${API_BASE}/testimonials`);
+  if (!res.ok) throw new Error("Error fetching testimonials");
+  return res.json();
+}

@@ -4,9 +4,20 @@ import { useCallback } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { SectionHeader } from "@/components/shared/section-header";
-import { pastTripImages } from "@/lib/data";
+import { pastTripImages as fallbackTrips } from "@/lib/data";
+import { useSiteContent } from "@/lib/use-site-content";
+import { useQuery } from "@tanstack/react-query";
+import { fetchTripImages } from "@/lib/api";
 
 export function TravelCarousel() {
+  const { content } = useSiteContent();
+  const carousel = content.carousel;
+
+  const { data: pastTripImages = fallbackTrips } = useQuery({
+    queryKey: ["trip-images"],
+    queryFn: fetchTripImages,
+  });
+
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: true,
     align: "start",
@@ -21,8 +32,8 @@ export function TravelCarousel() {
     <section className="py-16 sm:py-20 lg:py-24 bg-muted/30 content-visibility-auto contain-intrinsic-size-auto">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeader
-          title="Viajes Realizados"
-          subtitle="Nuestros viajeros ya lo vivieron" />
+          title={carousel.title}
+          subtitle={carousel.subtitle} />
 
         <div className="relative">
           {/* Carousel */}
@@ -47,7 +58,7 @@ export function TravelCarousel() {
                     {/* Caption on hover */}
                     <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
                       <p className="text-white/60 text-xs font-medium mb-0.5">
-                        Vive Travel
+                        {carousel.brandHover}
                       </p>
                       <p className="text-white text-sm font-medium leading-snug">
                         {trip.caption}
@@ -85,11 +96,7 @@ export function TravelCarousel() {
 
         {/* Stats */}
         <div className="mt-10 sm:mt-12 flex flex-wrap justify-center gap-6 sm:gap-12">
-          {[
-            { value: "500+", label: "Viajeros felices" },
-            { value: "50+", label: "Viajes realizados" },
-            { value: "6", label: "Destinos del Atlántico" },
-          ].map((stat) => (
+          {carousel.stats.map((stat) => (
             <div key={stat.label} className="text-center">
               <p className="text-2xl sm:text-3xl font-bold text-foreground">
                 {stat.value}
