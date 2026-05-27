@@ -170,6 +170,7 @@ export interface InternationalDestinationItem {
   name: string;
   eyebrow: string;
   image: string;
+  description?: string;
 }
 
 export interface InternationalContent {

@@ -1,11 +1,16 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { heroImages as fallbackHero } from "@/lib/data";
+import { readFromCache, writeToCache } from "@/lib/cache";
 
 export async function GET() {
   try {
     const supabase = await createClient();
-    if (!supabase) return NextResponse.json(fallbackHero);
+    if (!supabase) {
+      console.warn("[Hero-Images API] Supabase client offline. Serviendo caché local...");
+      const cached = await readFromCache<any[]>("hero_images", fallbackHero);
+      return NextResponse.json(cached);
+    }
 
     const { data, error } = await supabase
       .from("hero_images")
@@ -13,8 +18,9 @@ export async function GET() {
       .order("sort_order", { ascending: true });
 
     if (error || !data || data.length === 0) {
-      console.warn("No hero images found in Supabase, using fallback");
-      return NextResponse.json(fallbackHero);
+      console.warn("[Hero-Images API] Error o sin imágenes en Supabase, usando caché:", error);
+      const cached = await readFromCache<any[]>("hero_images", fallbackHero);
+      return NextResponse.json(cached);
     }
 
     const mapped = data.map((h: any) => ({
@@ -23,11 +29,13 @@ export async function GET() {
       caption: h.caption || ""
     }));
 
+    // Actualizar caché persistente en disco
+    await writeToCache("hero_images", mapped);
+
     return NextResponse.json(mapped);
   } catch (err) {
-    console.error("Error in hero-images API:", err);
-    return NextResponse.json(fallbackHero);
+    console.error("[Hero-Images API] Error inesperado, usando caché:", err);
+    const cached = await readFromCache<any[]>("hero_images", fallbackHero);
+    return NextResponse.json(cached);
   }
 }
-
-export const runtime = 'edge';

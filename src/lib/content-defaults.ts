@@ -371,16 +371,19 @@ Se consideran fuerza mayor: desastres naturales, epidemias, declaraciones de eme
         name: "Cancún",
         eyebrow: "Escapadas al Caribe mexicano",
         image: "https://images.unsplash.com/photo-1552074284-5e88ef1aef18?w=900&h=1125&fit=crop&q=80",
+        description: "Escapadas espectaculares al Caribe mexicano. Disfruta de playas de arena blanca, una vibrante vida nocturna y fascinantes tours arqueológicos."
       },
       {
         name: "Punta Cana",
         eyebrow: "Playas, descanso y resorts",
         image: "https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?w=900&h=1125&fit=crop&q=80",
+        description: "El escape perfecto con todo incluido en República Dominicana. Relájate frente a aguas cristalinas con servicios premium y descanso total."
       },
       {
         name: "San Andrés",
         eyebrow: "Mar de siete colores",
         image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=900&h=1125&fit=crop&q=80",
+        description: "Descubre el mar de los siete colores en Colombia. Un destino caribeño lleno de vida, arrecifes de coral y hermosas playas tropicales."
       },
     ],
   },

@@ -1,14 +1,17 @@
 import { NextResponse } from "next/server";
 import { tourPlans } from "@/lib/data";
 import { createClient } from "@/lib/supabase/server";
+import { readFromCache, writeToCache } from "@/lib/cache";
 
 export async function GET() {
   try {
     const supabase = await createClient();
     
-    // Si Supabase no está configurado (retorna null), hacemos fallback a datos estáticos
+    // Si Supabase no está configurado (retorna null), hacemos fallback a la caché local
     if (!supabase) {
-      return NextResponse.json(tourPlans);
+      console.warn("[Plans API] Supabase client offline. Serviendo caché local...");
+      const cached = await readFromCache<any[]>("plans", tourPlans);
+      return NextResponse.json(cached);
     }
 
     const { data, error } = await supabase
@@ -24,8 +27,9 @@ export async function GET() {
       .order("sort_order", { ascending: true });
 
     if (error || !data) {
-      console.error("Error al obtener planes de Supabase, usando fallback:", error);
-      return NextResponse.json(tourPlans);
+      console.error("[Plans API] Error al obtener planes de Supabase, usando caché:", error);
+      const cached = await readFromCache<any[]>("plans", tourPlans);
+      return NextResponse.json(cached);
     }
 
     // Mapear los datos de Supabase para que coincidan exactamente con la estructura esperada por el frontend
@@ -74,9 +78,13 @@ export async function GET() {
       };
     });
 
+    // Actualizar caché persistente en disco
+    await writeToCache("plans", mappedPlans);
+
     return NextResponse.json(mappedPlans);
   } catch (err) {
-    console.error("Error en API de planes, usando fallback:", err);
-    return NextResponse.json(tourPlans);
+    console.error("[Plans API] Error inesperado, usando caché:", err);
+    const cached = await readFromCache<any[]>("plans", tourPlans);
+    return NextResponse.json(cached);
   }
 }

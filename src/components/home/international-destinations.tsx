@@ -68,6 +68,11 @@ export function InternationalDestinations() {
                   <h3 className="text-white text-3xl sm:text-4xl font-bold leading-tight drop-shadow-sm">
                     {destination.name}
                   </h3>
+                  {destination.description && (
+                    <p className="text-white/80 text-xs sm:text-sm mt-2 line-clamp-3 sm:line-clamp-4 drop-shadow-sm">
+                      {destination.description}
+                    </p>
+                  )}
                   <div className="mt-5 inline-flex items-center self-start gap-2 rounded-full bg-white/20 backdrop-blur-md px-5 py-2.5 text-sm font-semibold text-white border border-white/30 transition-colors duration-300 group-hover:bg-white group-hover:text-ocean">
                     Ver destino
                     <ArrowRight className="w-4 h-4" />

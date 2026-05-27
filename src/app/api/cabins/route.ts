@@ -1,15 +1,19 @@
 import { NextResponse } from "next/server";
 import { cabins } from "@/lib/data";
 import { createClient } from "@/lib/supabase/server";
+import { readFromCache, writeToCache } from "@/lib/cache";
 
 export async function GET() {
+  const localFallback = [...cabins].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+
   try {
     const supabase = await createClient();
     
-    // Si Supabase no está configurado, usamos fallback local ordenado
+    // Si Supabase no está configurado, usamos fallback local ordenado desde la caché
     if (!supabase) {
-      const sorted = [...cabins].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-      return NextResponse.json(sorted);
+      console.warn("[Cabins API] Supabase client offline. Serviendo caché local...");
+      const cached = await readFromCache<any[]>("cabins", localFallback);
+      return NextResponse.json(cached);
     }
 
     const { data, error } = await supabase
@@ -24,9 +28,9 @@ export async function GET() {
       .order("sort_order", { ascending: true });
 
     if (error || !data) {
-      console.error("Error al obtener cabañas de Supabase, usando fallback:", error);
-      const sorted = [...cabins].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-      return NextResponse.json(sorted);
+      console.error("[Cabins API] Error al obtener cabañas de Supabase, usando caché:", error);
+      const cached = await readFromCache<any[]>("cabins", localFallback);
+      return NextResponse.json(cached);
     }
 
     // Mapear los datos de Supabase para que coincidan con la estructura esperada por el frontend
@@ -78,10 +82,13 @@ export async function GET() {
       };
     });
 
+    // Actualizar caché persistente en disco
+    await writeToCache("cabins", mappedCabins);
+
     return NextResponse.json(mappedCabins);
   } catch (err) {
-    console.error("Error en API de cabañas, usando fallback:", err);
-    const sorted = [...cabins].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-    return NextResponse.json(sorted);
+    console.error("[Cabins API] Error inesperado en API de cabañas, usando caché:", err);
+    const cached = await readFromCache<any[]>("cabins", localFallback);
+    return NextResponse.json(cached);
   }
 }
