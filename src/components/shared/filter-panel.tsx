@@ -104,7 +104,10 @@ export function getCityForLocation(loc: string): string {
   return loc;
 }
 
-export function cleanLocationName(loc: string): string {
+export function cleanLocationName(loc: string, city?: string): string {
+  if (city && loc.startsWith(city + ", ")) {
+    return loc.slice(city.length + 2);
+  }
   if (loc === "Manglar de Mallorquín - Puerto Colombia") return "Manglar de Mallorquín";
   if (loc === "Islas del Rosario - Cartagena") return "Islas del Rosario";
   return loc;
@@ -140,7 +143,7 @@ export function buildPlanFilters(plans: TourPlan[]): FilterSection[] {
       const subzoneOptions = Object.entries(data.subzones)
         .sort(([, a], [, b]) => b - a)
         .map(([loc, count]) => ({
-          label: cleanLocationName(loc),
+          label: cleanLocationName(loc, city),
           value: loc,
           count
         }));
@@ -224,7 +227,7 @@ export function buildCabinFilters(cabins: Cabin[]): FilterSection[] {
       const subzoneOptions = Object.entries(data.subzones)
         .sort(([, a], [, b]) => b - a)
         .map(([loc, count]) => ({
-          label: cleanLocationName(loc),
+          label: cleanLocationName(loc, city),
           value: loc,
           count
         }));

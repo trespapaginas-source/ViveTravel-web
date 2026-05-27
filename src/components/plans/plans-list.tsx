@@ -118,7 +118,7 @@ const PlanCardHorizontal = memo(function PlanCardHorizontal({
         })()}
 
         {/* Date Badge for Grupales — top left */}
-        {plan.category === "Grupal" && plan.fecha_salida && (
+        {getPlanExperienceSection(plan) === "grupales" && plan.fecha_salida && (
           <div className="absolute top-3 left-3 z-10 flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold text-slate-700"
             style={{ background: "rgba(255,255,255,0.88)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)", boxShadow: "0 1px 4px rgba(0,0,0,0.10)" }}>
             <Calendar className="w-3 h-3 shrink-0 text-slate-600" />
@@ -127,7 +127,7 @@ const PlanCardHorizontal = memo(function PlanCardHorizontal({
         )}
 
         {/* Cupos Limitados Badge */}
-        {plan.category === "Grupal" && plan.maxGuests && (
+        {getPlanExperienceSection(plan) === "grupales" && plan.maxGuests && (
           <div className="absolute bottom-3 left-3 z-10 bg-red-500/90 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 animate-[pulse_2s_ease-in-out_infinite] shadow-sm">
             <Users className="w-2.5 h-2.5" />
             Solo {plan.maxGuests} cupos
@@ -170,10 +170,12 @@ const PlanCardHorizontal = memo(function PlanCardHorizontal({
               <MapPin className="w-3.5 h-3.5" />
               <span className="line-clamp-1">{formatShortLocation(plan.location)}</span>
             </div>
-            <div className="flex items-center gap-1.5">
-              <Users className="w-3.5 h-3.5" />
-              <span>Máx. {plan.maxGuests}</span>
-            </div>
+            {getPlanExperienceSection(plan) === "grupales" && (
+              <div className="flex items-center gap-1.5">
+                <Users className="w-3.5 h-3.5" />
+                <span>Máx. {plan.maxGuests}</span>
+              </div>
+            )}
           </div>
         </div>
 
@@ -264,7 +266,7 @@ const PlanCardVertical = memo(function PlanCardVertical({
         })()}
 
         {/* Date Badge for Grupales — top left */}
-        {plan.category === "Grupal" && plan.fecha_salida && (
+        {getPlanExperienceSection(plan) === "grupales" && plan.fecha_salida && (
           <div className="absolute top-3 left-3 z-10 flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-semibold text-slate-800"
             style={{ background: "rgba(255,255,255,0.85)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)", boxShadow: "0 1px 4px rgba(0,0,0,0.12)" }}>
             <Calendar className="w-3 h-3 shrink-0 text-slate-600" />
@@ -273,7 +275,7 @@ const PlanCardVertical = memo(function PlanCardVertical({
         )}
 
         {/* Cupos Limitados Badge */}
-        {plan.category === "Grupal" && plan.maxGuests && (
+        {getPlanExperienceSection(plan) === "grupales" && plan.maxGuests && (
           <div className="absolute bottom-3 left-3 z-10 bg-red-500/90 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 animate-[pulse_2s_ease-in-out_infinite] shadow-sm">
             <Users className="w-2.5 h-2.5" />
             Solo {plan.maxGuests} cupos
@@ -318,10 +320,12 @@ const PlanCardVertical = memo(function PlanCardVertical({
             <MapPin className="w-3 h-3" />
             <span className="line-clamp-1">{formatShortLocation(plan.location)}</span>
           </div>
-          <div className="flex items-center gap-1">
-            <Users className="w-3 h-3" />
-            <span>Máx. {plan.maxGuests}</span>
-          </div>
+          {getPlanExperienceSection(plan) === "grupales" && (
+            <div className="flex items-center gap-1">
+              <Users className="w-3 h-3" />
+              <span>Máx. {plan.maxGuests}</span>
+            </div>
+          )}
         </div>
 
         {/* Bottom: Price */}

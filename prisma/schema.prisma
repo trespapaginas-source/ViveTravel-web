@@ -18,6 +18,8 @@ model TourPlan {
   priceRange       String
   duration         String
   location         String
+  city             String?
+  subLocation      String?
   category         String
   includes         String   // JSON string array
   excludes         String   // JSON string array
@@ -44,6 +46,8 @@ model Cabin {
   pricePerNight      Int
   priceRange         String
   location           String
+  city               String?
+  subLocation        String?
   capacity           Int      @default(2)
   bedrooms           Int      @default(1)
   bathrooms          Int      @default(1)

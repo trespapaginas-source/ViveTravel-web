@@ -24,6 +24,7 @@ import { useState, useCallback } from "react";
 import { toggleFavorite } from "@/lib/favorites";
 import { toast } from "sonner";
 import { type Cabin, type TourPlan } from "@/lib/data";
+import { getPlanExperienceSection } from "@/lib/experience-sections";
 
 function formatPrice(price: number): string {
   return new Intl.NumberFormat("es-CO", {
@@ -256,11 +257,15 @@ function FavoritePlanCard({
               <Clock className="w-3 h-3" />
               <span>{formatShortDuration(plan.duration)}</span>
             </div>
-            <span className="mx-1.5 text-muted-foreground">·</span>
-            <div className="flex items-center gap-1">
-              <Users className="w-3 h-3" />
-              <span>Máx. {plan.maxGuests}</span>
-            </div>
+            {getPlanExperienceSection(plan) === "grupales" && (
+              <>
+                <span className="mx-1.5 text-muted-foreground">·</span>
+                <div className="flex items-center gap-1">
+                  <Users className="w-3 h-3" />
+                  <span>Máx. {plan.maxGuests}</span>
+                </div>
+              </>
+            )}
           </div>
 
           <div className="flex items-center justify-end pt-2 border-t border-border/30 mt-2">

@@ -97,7 +97,7 @@ export function PlanDetail() {
   const [showWhatsApp, setShowWhatsApp] = useState(false);
   
   const isBookingStyle = plan?.category === "Nacional" || plan?.category === "Internacional";
-  const isGrupal = plan?.category === "Grupal";
+  const isGrupal = plan ? getPlanExperienceSection(plan) === "grupales" : false;
   const sectionId = plan ? getPlanExperienceSection(plan) : "";
   const isBookingGallery = sectionId === "pasadias" || sectionId === "grupales" || sectionId === "tours";
 
@@ -354,12 +354,16 @@ export function PlanDetail() {
                     <span className="text-base text-foreground font-normal hidden md:inline">{plan.duration}</span>
                     <span className="text-sm text-foreground font-normal md:hidden">{getShortDuration(plan.duration)}</span>
                   </div>
-                  <div className="hidden md:block w-px h-5 bg-border/40" />
-                  <div className="flex items-center gap-3">
-                    <Users className="w-5 h-5 text-foreground shrink-0" strokeWidth={1.5} />
-                    <span className="text-base text-foreground font-normal hidden md:inline">Máx. {plan.maxGuests} personas</span>
-                    <span className="text-sm text-foreground font-normal md:hidden">{plan.maxGuests} PAX</span>
-                  </div>
+                  {isGrupal && (
+                    <>
+                      <div className="hidden md:block w-px h-5 bg-border/40" />
+                      <div className="flex items-center gap-3">
+                        <Users className="w-5 h-5 text-foreground shrink-0" strokeWidth={1.5} />
+                        <span className="text-base text-foreground font-normal hidden md:inline">Máx. {plan.maxGuests} personas</span>
+                        <span className="text-sm text-foreground font-normal md:hidden">{plan.maxGuests} PAX</span>
+                      </div>
+                    </>
+                  )}
                 </div>
                 <Separator className="my-5" />
               </>
@@ -605,7 +609,7 @@ export function PlanDetail() {
                           <button className="w-full rounded-xl border border-border p-3 text-left hover:border-ocean/50 focus:outline-none focus:ring-2 focus:ring-ocean/30">
                             <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Personas</label>
                             <p className="text-sm font-medium text-foreground mt-0.5">
-                              {guests} persona{guests > 1 ? "s" : ""} (máx. {plan.maxGuests})
+                              {guests} persona{guests > 1 ? "s" : ""}{isGrupal ? ` (máx. ${plan.maxGuests})` : ""}
                             </p>
                           </button>
                         </PopoverTrigger>
@@ -613,12 +617,12 @@ export function PlanDetail() {
                           <div className="flex items-center justify-between">
                             <div>
                               <p className="text-sm font-medium text-foreground">Personas</p>
-                              <p className="text-xs text-muted-foreground">Máximo {plan.maxGuests}</p>
+                              {isGrupal && <p className="text-xs text-muted-foreground">Máximo {plan.maxGuests}</p>}
                             </div>
                             <div className="flex items-center gap-3">
                               <Button variant="outline" size="icon" className="h-8 w-8 rounded-full" onClick={() => setGuests(g => Math.max(1, g - 1))} disabled={guests <= 1}><Minus className="w-4 h-4" /></Button>
                               <span className="w-6 text-center text-sm font-semibold">{guests}</span>
-                              <Button variant="outline" size="icon" className="h-8 w-8 rounded-full" onClick={() => setGuests(g => Math.min(plan.maxGuests, g + 1))} disabled={guests >= plan.maxGuests}><Plus className="w-4 h-4" /></Button>
+                              <Button variant="outline" size="icon" className="h-8 w-8 rounded-full" onClick={() => setGuests(g => isGrupal ? Math.min(plan.maxGuests, g + 1) : g + 1)} disabled={isGrupal ? guests >= plan.maxGuests : false}><Plus className="w-4 h-4" /></Button>
                             </div>
                           </div>
                         </PopoverContent>
