@@ -76,11 +76,11 @@ export function CustomTrips() {
               </p>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 shrink-0">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-center sm:items-stretch shrink-0">
               <Button
                 size="lg"
                 onClick={() => navigate("contact")}
-                className="bg-ocean text-white hover:bg-ocean-dark px-6 sm:px-8 py-5 sm:py-6 text-base rounded-xl shadow-lg transition-all duration-200 hover:scale-105"
+                className="w-full max-w-[260px] sm:w-auto bg-ocean text-white hover:bg-ocean-dark px-6 sm:px-8 py-5 sm:py-6 text-base rounded-xl shadow-lg transition-all duration-200 hover:scale-105"
               >
                 <MessageCircle className="w-5 h-5 mr-2" />
                 {custom.ctaContact}
@@ -89,12 +89,13 @@ export function CustomTrips() {
                 size="lg"
                 variant="outline"
                 onClick={() => navigate("plans")}
-                className="border-gray-200 text-foreground hover:bg-gray-100 px-6 py-5 sm:py-6 text-base rounded-xl transition-colors duration-200 bg-transparent"
+                className="w-full max-w-[260px] sm:w-auto border-gray-200 text-foreground hover:bg-gray-100 px-6 py-5 sm:py-6 text-base rounded-xl transition-colors duration-200 bg-transparent"
               >
                 {custom.ctaPlans}
                 <ArrowRight className="w-5 h-5 ml-2" />
               </Button>
             </div>
+
           </div>
         </div>
       </div>

@@ -86,11 +86,11 @@ export function HeroSection() {
             {hero.subtitle}
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center animate-in fade-in slide-in-from-bottom-2 duration-500" style={{ animationDelay: "500ms", animationFillMode: "both" }}>
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center sm:items-stretch animate-in fade-in slide-in-from-bottom-2 duration-500" style={{ animationDelay: "500ms", animationFillMode: "both" }}>
             <Button
               size="lg"
               onClick={() => navigate("plans")}
-              className="bg-ocean hover:bg-ocean-dark text-white px-6 sm:px-8 py-4 sm:py-6 text-sm sm:text-lg rounded-xl shadow-lg shadow-ocean/30 transition-all duration-200 hover:scale-105 min-h-[44px]"
+              className="w-full max-w-[260px] sm:w-auto bg-ocean hover:bg-ocean-dark text-white px-6 sm:px-8 py-4 sm:py-6 text-sm sm:text-lg rounded-xl shadow-lg shadow-ocean/30 transition-all duration-200 hover:scale-105 min-h-[44px]"
             >
               <MapPin className="w-5 h-5 mr-2" />
               {hero.ctaPlans}
@@ -99,12 +99,13 @@ export function HeroSection() {
               size="lg"
               variant="outline"
               onClick={() => navigate("contact")}
-              className="border-white/40 text-white hover:bg-white/15 backdrop-blur-sm px-6 sm:px-8 py-4 sm:py-6 text-sm sm:text-lg rounded-xl transition-all duration-200 hover:scale-105 bg-transparent gap-2 min-h-[44px]"
+              className="w-full max-w-[260px] sm:w-auto border-white/40 text-white hover:bg-white/15 backdrop-blur-sm px-6 sm:px-8 py-4 sm:py-6 text-sm sm:text-lg rounded-xl transition-all duration-200 hover:scale-105 bg-transparent gap-2 min-h-[44px]"
             >
               <Palmtree className="w-5 h-5" />
               {hero.ctaCabins}
             </Button>
           </div>
+
         </div>
       </div>
 

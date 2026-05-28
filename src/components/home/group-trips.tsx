@@ -36,11 +36,11 @@ export function GroupTrips() {
               {groupTrips.description}
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-center sm:items-stretch">
               <Button
                 size="lg"
                 onClick={() => navigate("contact")}
-                className="bg-ocean text-white hover:bg-ocean-dark px-6 sm:px-8 py-5 sm:py-6 text-base rounded-xl shadow-lg transition-all duration-200 hover:scale-105"
+                className="w-full max-w-[260px] sm:w-auto bg-ocean text-white hover:bg-ocean-dark px-6 sm:px-8 py-5 sm:py-6 text-base rounded-xl shadow-lg transition-all duration-200 hover:scale-105"
               >
                 {groupTrips.ctaQuote}
                 <ArrowRight className="w-5 h-5 ml-2" />
@@ -49,11 +49,12 @@ export function GroupTrips() {
                 size="lg"
                 variant="outline"
                 onClick={() => navigate("plans", "grupales")}
-                className="border-gray-200 text-foreground hover:bg-gray-100 backdrop-blur-sm px-6 py-5 sm:py-6 text-base rounded-xl transition-colors duration-200 bg-transparent"
+                className="w-full max-w-[260px] sm:w-auto border-gray-200 text-foreground hover:bg-gray-100 backdrop-blur-sm px-6 py-5 sm:py-6 text-base rounded-xl transition-colors duration-200 bg-transparent"
               >
                 {groupTrips.ctaPlans}
               </Button>
             </div>
+
 
             {/* Quick stats */}
             <div className="mt-8 flex flex-wrap gap-4 sm:gap-8">

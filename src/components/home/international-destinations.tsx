@@ -10,9 +10,7 @@ export function InternationalDestinations() {
   const { navigate } = useNavigation();
   const { content } = useSiteContent();
   const international = content.international;
-
-  // Duplicar elementos para simular bucle infinito en móvil
-  const carouselItems = [...international.destinations, ...international.destinations];
+  const destinations = international.destinations || [];
 
   return (
     <section className="py-16 sm:py-20 lg:py-24 content-visibility-auto contain-intrinsic-size-auto overflow-hidden">
@@ -27,9 +25,8 @@ export function InternationalDestinations() {
           </p>
         </div>
 
-        <div className="flex gap-4 sm:grid overflow-x-auto sm:overflow-visible sm:grid-cols-2 lg:grid-cols-3 sm:gap-6 snap-x snap-mandatory scroll-smooth pb-4 sm:pb-0 px-4 sm:px-0 -mx-4 sm:mx-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-          {carouselItems.map((destination, index) => {
-            const isDuplicate = index >= international.destinations.length;
+        <div className="flex gap-4 sm:grid overflow-x-auto sm:overflow-visible sm:grid-cols-2 lg:grid-cols-3 sm:gap-6 scroll-smooth pb-4 sm:pb-0 px-4 sm:px-0 -mx-4 sm:mx-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] touch-pan-y">
+          {destinations.map((destination, index) => {
             return (
               <motion.article
                 key={`${destination.name}-${index}`}
@@ -39,12 +36,9 @@ export function InternationalDestinations() {
                 transition={{
                   duration: 0.7,
                   ease: [0.16, 1, 0.3, 1],
-                  delay: isDuplicate ? 0 : index * 0.1,
+                  delay: index * 0.1,
                 }}
-                className={cn(
-                  "group relative w-[85vw] max-w-[320px] sm:w-auto sm:max-w-none h-[400px] sm:h-auto sm:aspect-[4/5] overflow-hidden rounded-3xl cursor-pointer bg-muted border border-zinc-100 flex-none snap-center",
-                  isDuplicate ? "block sm:hidden" : "block"
-                )}
+                className="group relative w-[80vw] max-w-[290px] sm:w-auto sm:max-w-none h-[400px] sm:h-auto sm:aspect-[4/5] overflow-hidden overflow-x-hidden touch-pan-y rounded-3xl cursor-pointer bg-muted border border-zinc-100 flex-none"
                 onClick={() => navigate("plans", "internacionales")}
               >
                 <img
@@ -61,7 +55,7 @@ export function InternationalDestinations() {
                   }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent transition-opacity duration-300" />
-                <div className="absolute bottom-0 left-0 w-full p-6 sm:p-7 flex flex-col justify-end">
+                <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-7 flex flex-col justify-end">
                   <p className="text-white/90 text-sm font-medium mb-2 drop-shadow-sm">
                     {destination.eyebrow}
                   </p>
@@ -82,7 +76,9 @@ export function InternationalDestinations() {
             );
           })}
         </div>
+
       </div>
     </section>
   );
 }
+

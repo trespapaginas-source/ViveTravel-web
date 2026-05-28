@@ -483,11 +483,11 @@ export function CabinDetail() {
                   <h2 className="text-2xl md:text-[28px] font-bold tracking-tight text-foreground mb-4">
                     ¿Dónde vas a dormir?
                   </h2>
-                  <div className="flex overflow-x-auto gap-4 pb-4 snap-x scrollbar-hide">
+                  <div className="flex overflow-x-auto gap-4 pb-4 scrollbar-hide touch-pan-y">
                     {displayRooms.map((bedroom: any) => (
                       <div 
                         key={bedroom.id} 
-                        className="w-[160px] flex-none snap-start group cursor-pointer"
+                        className="w-[160px] flex-none group cursor-pointer overflow-hidden overflow-x-hidden touch-pan-y"
                         onClick={() => setRoomsModalOpen(true)}
                       >
                         <div className="w-full h-[110px] rounded-xl overflow-hidden mb-2 relative">
@@ -502,6 +502,7 @@ export function CabinDetail() {
                       </div>
                     ))}
                   </div>
+
                 </div>
                 <Separator className="my-6" />
               </>

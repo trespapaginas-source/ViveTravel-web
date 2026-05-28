@@ -31,7 +31,7 @@ const PlanCard = memo(function PlanCard({
 }) {
   return (
     <Card
-      className="group w-[85vw] max-w-[320px] sm:w-auto sm:max-w-none flex-none snap-center flex flex-col cursor-pointer overflow-hidden rounded-2xl border border-zinc-100 hover:border-zinc-200 bg-white transition-all duration-300 hover:-translate-y-1 shadow-none"
+      className="group w-[80vw] max-w-[290px] sm:w-auto sm:max-w-none flex-none flex flex-col cursor-pointer overflow-hidden overflow-x-hidden touch-pan-y rounded-2xl border border-zinc-100 hover:border-zinc-200 bg-white transition-all duration-300 hover:-translate-y-1 shadow-none"
       onClick={() => onNavigate(plan.id)}
     >
       {/* Image */}
@@ -105,10 +105,10 @@ export function FeaturedPlans() {
             title={featured.title}
             subtitle={featured.subtitle}
           />
-          <div className="mt-8 flex sm:grid overflow-x-auto sm:overflow-visible sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 snap-x snap-mandatory scroll-smooth pb-4 sm:pb-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+          <div className="mt-8 flex sm:grid overflow-x-auto sm:overflow-visible sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 scroll-smooth pb-4 sm:pb-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] touch-pan-y">
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="flex-none snap-center">
-                <Card className="w-[85vw] max-w-[320px] sm:w-auto sm:max-w-none flex flex-col overflow-hidden rounded-2xl shadow-none border border-zinc-100">
+              <div key={i} className="flex-none">
+                <Card className="w-[80vw] max-w-[290px] sm:w-auto sm:max-w-none flex flex-col overflow-hidden rounded-2xl shadow-none border border-zinc-100">
                   <Skeleton className="h-[220px] w-full" />
                   <CardContent className="p-4 space-y-3">
                     <Skeleton className="h-5 w-3/4" />
@@ -125,7 +125,6 @@ export function FeaturedPlans() {
   }
 
   const featuredPlans = allPlans.filter((p) => p.published !== false).slice(0, 4);
-  const carouselItems = [...featuredPlans, ...featuredPlans];
 
   return (
     <section className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 content-visibility-auto contain-intrinsic-size-auto overflow-hidden">
@@ -135,9 +134,8 @@ export function FeaturedPlans() {
           subtitle={featured.subtitle}
         />
 
-        <div className="flex gap-4 sm:grid overflow-x-auto sm:overflow-visible sm:grid-cols-2 lg:grid-cols-4 sm:gap-6 snap-x snap-mandatory scroll-smooth pb-4 sm:pb-0 px-4 sm:px-0 -mx-4 sm:mx-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-          {carouselItems.map((plan, index) => {
-            const isDuplicate = index >= featuredPlans.length;
+        <div className="flex gap-4 sm:grid overflow-x-auto sm:overflow-visible sm:grid-cols-2 lg:grid-cols-4 sm:gap-6 scroll-smooth pb-4 sm:pb-0 px-4 sm:px-0 -mx-4 sm:mx-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] touch-pan-y">
+          {featuredPlans.map((plan, index) => {
             return (
               <motion.div
                 key={`${plan.id}-${index}`}
@@ -147,18 +145,17 @@ export function FeaturedPlans() {
                 transition={{
                   duration: 0.7,
                   ease: [0.16, 1, 0.3, 1],
-                  delay: isDuplicate ? 0 : index * 0.1,
+                  delay: index * 0.1,
                 }}
-                className={cn(
-                  "flex-none snap-center flex",
-                  isDuplicate ? "block sm:hidden" : "block"
-                )}
+                className="flex-none flex w-full sm:block"
               >
                 <PlanCard plan={plan} onNavigate={handleNavigate} />
               </motion.div>
             );
           })}
         </div>
+
+
 
         {/* View all plans CTA */}
         <div className="mt-10 sm:mt-12 text-center">

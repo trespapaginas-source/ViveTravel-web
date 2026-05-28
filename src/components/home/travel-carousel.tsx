@@ -38,13 +38,14 @@ export function TravelCarousel() {
         <div className="relative">
           {/* Carousel */}
           <div className="overflow-hidden" ref={emblaRef}>
-            <div className="flex gap-4 sm:gap-5">
+            <div className="flex -ml-4 sm:-ml-5">
               {pastTripImages.map((trip) => (
                 <div
                   key={trip.id}
-                  className="flex-[0_0_70%] sm:flex-[0_0_45%] lg:flex-[0_0_30%] min-w-0"
+                  className="flex-[0_0_70%] sm:flex-[0_0_45%] lg:flex-[0_0_30%] min-w-0 pl-4 sm:pl-5"
                 >
                   <div className="group relative overflow-hidden rounded-2xl aspect-square cursor-pointer">
+
                     <img                       src={trip.url}
                       alt={trip.caption}
                       loading="lazy"
