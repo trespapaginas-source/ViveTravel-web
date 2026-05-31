@@ -186,7 +186,7 @@
       },
       {
         "key": "cabins",
-        "label": "Alojamientos"
+        "label": "Cabañas"
       },
       {
         "key": "team",
@@ -351,8 +351,8 @@
     }
   },
   "campaign": {
-    "active": true,
-    "bannerText": "🎉 ¡Descuento de temporada activo!",
+    "active": false,
+    "bannerText": "🎉 ¡Descuento de activo!",
     "ctaText": "Ver Planes",
     "ctaUrl": "#"
   },

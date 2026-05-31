@@ -287,7 +287,7 @@ Se consideran fuerza mayor: desastres naturales, epidemias, declaraciones de eme
     navItems: [
       { key: "home", label: "Inicio" },
       { key: "plans", label: "Experiencias y viajes" },
-      { key: "cabins", label: "Alojamientos" },
+      { key: "cabins", label: "Cabañas" },
       { key: "team", label: "Equipo" },
       { key: "contact", label: "Contacto" },
       { key: "policies", label: "Políticas" },

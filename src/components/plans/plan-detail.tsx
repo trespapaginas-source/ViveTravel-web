@@ -39,6 +39,7 @@ import { isFavorite, toggleFavorite } from "@/lib/favorites";
 import { ShareDialog } from "@/components/shared/share-dialog";
 import { ExpandableSection } from "@/components/shared/expandable-section";
 import { useState, useCallback, useEffect } from "react";
+import { cn } from "@/lib/utils";
 import { format, addDays } from "date-fns";
 import { es } from "date-fns/locale";
 import { Calendar as CalendarUI } from "@/components/ui/calendar";
@@ -73,8 +74,50 @@ function getShortDuration(duration: string): string {
   return match ? `${match[1]} HORAS` : duration;
 }
 
+function getVariantDetails(planName: string, location: string, variantKey: "3d2n" | "4d3n" | "5d4n") {
+  const locClean = location.split(",")[0].trim();
+  switch (variantKey) {
+    case "3d2n":
+      return {
+        label: "3 días / 2 noches",
+        hotel: `Hotel ${locClean} Standard o similar`,
+        description: "Estadía ideal de fin de semana para explorar lo esencial.",
+      };
+    case "4d3n":
+      return {
+        label: "4 días / 3 noches",
+        hotel: `Hotel ${locClean} Confort o similar`,
+        description: "La duración favorita de los viajeros. Confort y paseos incluidos.",
+      };
+    case "5d4n":
+    default:
+      return {
+        label: "5 días / 4 noches",
+        hotel: `Hotel ${locClean} Premium Resort o similar`,
+        description: "Experiencia completa premium. Todo el itinerario y relax.",
+      };
+  }
+}
+
+const getMultiplier = (v: "3d2n" | "4d3n" | "5d4n") => {
+  if (v === "3d2n") return 0.85;
+  if (v === "4d3n") return 0.92;
+  return 1.0;
+};
+
 export function PlanDetail() {
-  const { selectedItemId, navigate, searchAdults, searchChildren, searchDate, searchOrigin, searchRoomsDetail } = useNavigation();
+  const {
+    selectedItemId,
+    navigate,
+    searchAdults,
+    searchChildren,
+    searchDate,
+    searchOrigin,
+    searchRoomsDetail,
+    searchSelectedVariant,
+    setSearchSelectedVariant,
+    setSearchPriceFrom,
+  } = useNavigation();
   const { data: plan, isLoading } = useQuery({
     queryKey: ["plan", selectedItemId],
     queryFn: () => fetchPlan(selectedItemId!),
@@ -111,6 +154,30 @@ export function PlanDetail() {
   const isGrupal = plan ? getPlanExperienceSection(plan) === "grupales" : false;
   const sectionId = plan ? getPlanExperienceSection(plan) : "";
   const isBookingGallery = sectionId === "pasadias" || sectionId === "grupales" || sectionId === "tours";
+
+  const showVariants = plan ? (sectionId === "internacionales" || sectionId === "nacionales" || sectionId === "circuitos") : false;
+
+  const [selectedVariant, setSelectedVariant] = useState<"3d2n" | "4d3n" | "5d4n">(() => {
+    if (searchSelectedVariant === "3d2n" || searchSelectedVariant === "4d3n" || searchSelectedVariant === "5d4n") {
+      return searchSelectedVariant;
+    }
+    return "5d4n";
+  });
+
+  const currentPrice = plan ? (showVariants ? Math.round(plan.price * getMultiplier(selectedVariant)) : plan.price) : 0;
+  const totalPlanPrice = guests * currentPrice;
+
+  useEffect(() => {
+    if (plan) {
+      if (showVariants) {
+        setSearchPriceFrom(currentPrice);
+        setSearchSelectedVariant(selectedVariant);
+      } else {
+        setSearchPriceFrom(plan.price);
+        setSearchSelectedVariant(null);
+      }
+    }
+  }, [selectedVariant, plan, showVariants, currentPrice, setSearchPriceFrom, setSearchSelectedVariant]);
 
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
@@ -158,12 +225,11 @@ export function PlanDetail() {
   
   const today = new Date();
   today.setHours(0,0,0,0);
-  const totalPlanPrice = guests * (plan?.price || 0);
 
   const handleWhatsAppRedirect = useCallback(() => {
     if (!plan) return;
-    const total = formatPrice(guests * plan.price);
-    const pricePerPerson = formatPrice(plan.price);
+    const variantDetails = showVariants ? getVariantDetails(plan.name, plan.location, selectedVariant) : null;
+    const total = formatPrice(guests * currentPrice);
 
     let roomsBreakdown = "";
     if (searchRoomsDetail) {
@@ -180,11 +246,12 @@ export function PlanDetail() {
     const message = [
       `🌴 *CONSULTA VIVE TRAVEL*`,
       ``,
-      `📋 *Plan:* ${plan.name}`,
+      `📋 *Plan:* ${plan.name}${variantDetails ? ` (${variantDetails.label})` : ""}`,
       `📍 *Destino:* ${plan.location}`,
       searchOrigin ? `🛫 *Origen:* ${searchOrigin}` : "",
+      variantDetails ? `🏨 *Hospedaje:* ${variantDetails.hotel}` : "",
       `👥 *Viajeros:* ${guests} persona${guests > 1 ? "s" : ""}`,
-      roomsBreakdown ? `🏨 *Alojamiento:* ${roomsBreakdown}` : "",
+      roomsBreakdown ? `🛏️ *Habitaciones:* ${roomsBreakdown}` : "",
       `📅 *Fecha de viaje:* ${plan.fecha_salida || (selectedDate ? format(selectedDate, "d MMM yyyy", { locale: es }) : "Por definir")}`,
       `💵 *Total estimado:* ${total}`,
       ``,
@@ -192,7 +259,7 @@ export function PlanDetail() {
     ].filter(Boolean).join("\n");
     
     window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, "_blank");
-  }, [plan, guests, selectedDate, searchOrigin, searchRoomsDetail]);
+  }, [plan, guests, selectedDate, searchOrigin, searchRoomsDetail, showVariants, selectedVariant, currentPrice]);
 
   const handleToggleFavorite = useCallback(() => {
     if (!selectedItemId) return;
@@ -338,6 +405,58 @@ export function PlanDetail() {
             </div>
 
             <Separator className="my-5" />
+
+            {/* Durations and Variant Selection */}
+            {showVariants && (
+              <div className="mb-8 animate-in fade-in duration-350">
+                <h3 className="text-sm font-bold uppercase tracking-wider text-zinc-500 mb-4 flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-ocean" />
+                  Opciones de duración y hospedaje
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {(["3d2n", "4d3n", "5d4n"] as const).map((v) => {
+                    const details = getVariantDetails(plan.name, plan.location, v);
+                    const price = Math.round(plan.price * getMultiplier(v));
+                    const isSelected = selectedVariant === v;
+                    return (
+                      <div
+                        key={v}
+                        onClick={() => setSelectedVariant(v)}
+                        className={cn(
+                          "cursor-pointer rounded-2xl border-2 p-4 transition-all duration-300 relative flex flex-col justify-between hover:shadow-md",
+                          isSelected
+                            ? "border-ocean bg-ocean/5 shadow-sm"
+                            : "border-zinc-200 bg-white hover:border-zinc-300"
+                        )}
+                      >
+                        {isSelected && (
+                          <div className="absolute -top-3 right-4 bg-ocean text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+                            Seleccionado
+                          </div>
+                        )}
+                        <div>
+                          <p className="text-base font-extrabold text-foreground">{details.label}</p>
+                          <p className="text-xs text-muted-foreground mt-1 min-h-[32px]">{details.description}</p>
+                          
+                          <div className="mt-3 bg-zinc-50 rounded-xl p-2.5 border border-zinc-100 flex items-start gap-2">
+                            <MapPin className="w-3.5 h-3.5 text-zinc-400 shrink-0 mt-0.5" />
+                            <div className="flex flex-col">
+                              <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Hospedaje</span>
+                              <span className="text-xs font-semibold text-zinc-700 leading-tight">{details.hotel}</span>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="mt-4 pt-3 border-t border-zinc-100 flex items-baseline justify-between">
+                          <span className="text-xs text-muted-foreground">Desde</span>
+                          <span className="text-base font-black text-ocean-dark">{formatPrice(price)}</span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
 
             {/* Info Section */}
             {isBookingStyle ? (
@@ -585,7 +704,7 @@ export function PlanDetail() {
                     <div>
                       <div className="flex items-baseline gap-2">
                         <span className="text-2xl sm:text-3xl font-bold text-foreground">
-                          {formatPrice(plan.price)}
+                          {formatPrice(currentPrice)}
                         </span>
                         {plan.priceRange && plan.priceRange.includes("-") && (
                           <span className="text-sm text-muted-foreground line-through">
@@ -734,6 +853,11 @@ export function PlanDetail() {
              
              <div>
                <h3 className="font-bold text-lg text-foreground">{plan.name}</h3>
+               {showVariants && (
+                 <p className="text-sm font-semibold text-ocean mt-0.5">
+                   Opción: {getVariantDetails(plan.name, plan.location, selectedVariant).label}
+                 </p>
+               )}
                <p className="text-sm text-muted-foreground mt-1">{plan.location}</p>
              </div>
 
@@ -759,7 +883,7 @@ export function PlanDetail() {
              </div>
 
              <div className="flex justify-between items-center text-base">
-               <span className="font-normal">{formatPrice(plan.price)} x {guests} persona{guests > 1 ? "s" : ""}</span>
+               <span className="font-normal">{formatPrice(currentPrice)} x {guests} persona{guests > 1 ? "s" : ""}</span>
                <span className="font-medium">{formatPrice(totalPlanPrice)}</span>
              </div>
              

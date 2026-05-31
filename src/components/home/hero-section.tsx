@@ -11,8 +11,9 @@ import { cn } from "@/lib/utils";
 import { format, addDays, isBefore } from "date-fns";
 import { es } from "date-fns/locale";
 import { getPlanExperienceSection } from "@/lib/experience-sections";
+import { detectUserCity } from "@/lib/geolocation";
 
-type SearchTab = "internacionales" | "nacionales" | "pasadias" | "tours" | "alojamientos" | "grupales";
+type SearchTab = "internacionales" | "nacionales" | "circuitos" | "pasadias" | "grupales" | "alojamientos" | "tours";
 
 type RoomDetail = {
   adults: number;
@@ -42,6 +43,33 @@ const CITIES = [
   "Punta Cana",
 ];
 
+const POPULAR_DESTINATIONS: Record<Exclude<SearchTab, "grupales">, { featured: string[]; optional: string[] }> = {
+  internacionales: {
+    featured: ["Punta Cana", "Cancún", "Panamá", "Brasil", "Curazao"],
+    optional: ["Aruba", "Miami", "Orlando", "Madrid", "París"],
+  },
+  nacionales: {
+    featured: ["San Andrés", "Cartagena", "Eje Cafetero", "Santa Marta", "Medellín"],
+    optional: ["Guatapé", "Barichara", "Caño Cristales", "Amazonas", "Nuquí"],
+  },
+  circuitos: {
+    featured: ["Eurotrip Clásico", "España y Portugal", "Italia Completa", "Japón Esencial", "Turquía y Dubái"],
+    optional: ["Egipto y Turquía", "Grecia e Islas Griegas", "Sudeste Asiático", "Reino Unido e Irlanda", "Escandinavia"],
+  },
+  pasadias: {
+    featured: ["Playa Blanca", "Barú", "Islas del Rosario", "Santa Verónica", "Minca"],
+    optional: ["Tayrona", "Luruaco", "Sabanilla", "Puerto Colombia", "Cabo de la Vela"],
+  },
+  alojamientos: {
+    featured: ["Santa Verónica", "Puerto Colombia", "Minca", "Tayrona", "Barú"],
+    optional: ["Palomino", "Coveñas", "San Andrés", "Cartagena", "Eje Cafetero"],
+  },
+  tours: {
+    featured: ["Paracaidismo", "Buceo", "Tour del Café", "Parque Tayrona", "Ciudad Perdida"],
+    optional: ["Snorkel en Barú", "Kayak en Mallorquín", "Tour Histórico", "Cabalgata", "Kitesurf"],
+  },
+};
+
 export function HeroSection() {
   const { navigateWithSearch } = useNavigation();
   const [activeTab, setActiveTab] = useState<SearchTab>("internacionales");
@@ -50,10 +78,11 @@ export function HeroSection() {
   const [tabParams, setTabParams] = useState<Record<SearchTab, TabParams>>({
     internacionales: { origen: "", destino: "", fecha: "", fechaFin: "", rooms: [{ adults: 2, children: 0 }], adultos: 2, ninos: 0 },
     nacionales: { origen: "", destino: "", fecha: "", fechaFin: "", rooms: [{ adults: 2, children: 0 }], adultos: 2, ninos: 0 },
+    circuitos: { origen: "", destino: "", fecha: "", fechaFin: "", rooms: [{ adults: 2, children: 0 }], adultos: 2, ninos: 0 },
     pasadias: { destino: "", fecha: "", adultos: 2, ninos: 0 },
-    tours: { destino: "", actividad: "", fecha: "", adultos: 2, ninos: 0 },
-    alojamientos: { destino: "", fecha: "", fechaFin: "", rooms: [{ adults: 2, children: 0 }], adultos: 2, ninos: 0 },
     grupales: { destino: "", fecha: "", adultos: 2, ninos: 0, tipoViajero: "" },
+    alojamientos: { destino: "", fecha: "", fechaFin: "", rooms: [{ adults: 2, children: 0 }], adultos: 2, ninos: 0 },
+    tours: { destino: "", actividad: "", fecha: "", adultos: 2, ninos: 0 },
   });
 
   const activeParams = tabParams[activeTab];
@@ -102,6 +131,22 @@ export function HeroSection() {
   const groupTypeRef = useRef<HTMLDivElement>(null);
   const groupDestinationsRef = useRef<HTMLDivElement>(null);
   const groupDatesRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    async function loadOrigin() {
+      const city = await detectUserCity();
+      setTabParams((prev) => {
+        const updated = { ...prev };
+        (Object.keys(updated) as SearchTab[]).forEach((tab) => {
+          if ("origen" in updated[tab]) {
+            updated[tab] = { ...updated[tab], origen: city };
+          }
+        });
+        return updated;
+      });
+    }
+    loadOrigin();
+  }, []);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -159,6 +204,24 @@ export function HeroSection() {
     return CITIES.filter(city => city.toLowerCase().includes(query));
   }, [searchQuery]);
 
+  const featuredSuggestions = useMemo(() => {
+    if (activeTab === "grupales") return [];
+    const list = POPULAR_DESTINATIONS[activeTab].featured;
+    if (!searchQuery) return list;
+    return list.filter(d => d.toLowerCase().includes(searchQuery.toLowerCase()));
+  }, [activeTab, searchQuery]);
+
+  const optionalSuggestions = useMemo(() => {
+    if (activeTab === "grupales") return [];
+    const list = POPULAR_DESTINATIONS[activeTab].optional;
+    if (!searchQuery) return list;
+    return list.filter(d => d.toLowerCase().includes(searchQuery.toLowerCase()));
+  }, [activeTab, searchQuery]);
+
+  const allDestinations = useMemo(() => {
+    return [...featuredSuggestions, ...optionalSuggestions].slice(0, 10);
+  }, [featuredSuggestions, optionalSuggestions]);
+
   const handleSearch = () => {
     const params = tabParams[activeTab];
     const roomsDetailStr = params.rooms ? JSON.stringify(params.rooms) : undefined;
@@ -209,6 +272,7 @@ export function HeroSection() {
     switch (activeTab) {
       case "internacionales": return "¿A qué país viajas?";
       case "nacionales": return "¿Qué destino de Colombia buscas?";
+      case "circuitos": return "¿Qué circuito deseas realizar?";
       case "pasadias": return "¿A qué playa o destino vas hoy?";
       case "tours": return "¿En qué ciudad quieres hacer la actividad?";
       case "alojamientos": return "¿En qué zona te hospedarás?";
@@ -218,24 +282,21 @@ export function HeroSection() {
 
   // Build Travelers Button text summary
   const getTravelersSummary = () => {
-    if (activeTab === "internacionales" || activeTab === "nacionales" || activeTab === "alojamientos") {
-      const rooms = activeParams.rooms || [{ adults: 2, children: 0 }];
-      const totalPersons = rooms.reduce((acc, r) => acc + r.adults + r.children, 0);
-      const totalRooms = rooms.length;
-      return `${totalPersons} persona${totalPersons !== 1 ? "s" : ""}, ${totalRooms} habitación${totalRooms !== 1 ? "es" : ""}`;
-    }
-
     const adults = activeParams.adultos;
     const children = activeParams.ninos;
-    const adultText = `${adults} persona${adults !== 1 ? "s" : ""}`;
-    const childText = children > 0 ? `, ${children} menor${children !== 1 ? "es" : ""}` : "";
-    return `${adultText}${childText}`;
+    const rooms = activeParams.rooms?.length || 1;
+    
+    const adultText = `${adults} adulto${adults !== 1 ? "s" : ""}`;
+    const childText = children > 0 ? `, ${children} niño${children !== 1 ? "s" : ""}` : "";
+    const roomText = hasRooms ? `, ${rooms} habitación${rooms !== 1 ? "es" : ""}` : "";
+    
+    return `${adultText}${childText}${roomText}`;
   };
 
-  const hasRooms = activeTab === "internacionales" || activeTab === "nacionales" || activeTab === "alojamientos";
+  const hasRooms = activeTab === "internacionales" || activeTab === "nacionales" || activeTab === "circuitos" || activeTab === "alojamientos";
 
   return (
-    <section className="relative w-full flex flex-col justify-center min-h-[660px] md:h-[80vh] lg:h-[92vh] overflow-visible md:overflow-hidden">
+    <section className="relative w-full flex flex-col justify-center min-h-[660px] md:h-[80vh] lg:h-[92vh] overflow-visible">
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <img
@@ -270,10 +331,11 @@ export function HeroSection() {
                 [
                   { id: "internacionales", label: "Planes Internacionales" },
                   { id: "nacionales", label: "Planes Nacionales" },
+                  { id: "circuitos", label: "Circuitos" },
                   { id: "pasadias", label: "Pasadías" },
-                  { id: "tours", label: "Actividades" },
-                  { id: "alojamientos", label: "Alojamientos" },
                   { id: "grupales", label: "Viajes Grupales" },
+                  { id: "alojamientos", label: "Cabañas" },
+                  { id: "tours", label: "Actividades" },
                 ] as const
               ).map((tab) => (
                 <button
@@ -299,16 +361,16 @@ export function HeroSection() {
             {/* Inputs Dynamic row */}
             <div className={cn(
               "grid grid-cols-1 gap-4 items-end",
-              (activeTab === "internacionales" || activeTab === "nacionales") && "md:grid-cols-12",
+              (activeTab === "internacionales" || activeTab === "nacionales" || activeTab === "circuitos") && "md:grid-cols-12",
               activeTab === "pasadias" && "md:grid-cols-12",
               activeTab === "tours" && "md:grid-cols-12",
               activeTab === "alojamientos" && "md:grid-cols-12",
               activeTab === "grupales" && "md:grid-cols-12"
             )}>
               
-              {/* ORIGEN (Only for Nacionales & Internacionales) */}
-              {(activeTab === "internacionales" || activeTab === "nacionales") && (
-                <div className="md:col-span-2 relative text-left" ref={autocompleteOrigenRef}>
+              {/* ORIGEN (Only for Nacionales, Internacionales & Circuitos) */}
+              {(activeTab === "internacionales" || activeTab === "nacionales" || activeTab === "circuitos") && (
+                <div className="md:col-span-2 relative text-left" ref={autocompleteOrigenRef} style={{ zIndex: showAutocompleteOrigen ? 50 : 5 }}>
                   <label className="block text-[11px] font-bold text-zinc-500 uppercase tracking-wider mb-1.5 pl-1">Origen</label>
                   <div className="relative">
                     <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 pointer-events-none" />
@@ -330,13 +392,20 @@ export function HeroSection() {
                   </div>
 
                   {showAutocompleteOrigen && (
-                    <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-zinc-150 p-3 z-50 max-h-60 overflow-y-auto animate-in fade-in slide-in-from-top-1 duration-200">
-                      <p className="text-[10px] font-extrabold text-zinc-400 uppercase tracking-wider pl-2 mb-2">Ciudades principales</p>
-                      {filteredCities.length === 0 ? (
-                        <p className="text-xs text-zinc-500 p-2">Escribe para filtrar</p>
-                      ) : (
-                        <div className="space-y-1">
-                          {filteredCities.map((city) => (
+                    <div className="absolute top-full left-0 mt-2 bg-white rounded-2xl shadow-2xl border border-zinc-200/85 p-4 z-50 w-[290px] sm:w-[320px] animate-in fade-in slide-in-from-top-1 duration-200 text-left">
+                      {/* Little pointer arrow */}
+                      <div className="absolute -top-1.5 left-6 w-3 h-3 bg-white border-t border-l border-zinc-200/85 rotate-45" />
+
+                      <div className="flex items-center gap-2 pb-2.5 mb-2.5 border-b border-zinc-150">
+                        <MapPin className="w-4 h-4 text-ocean shrink-0" />
+                        <span className="text-xs sm:text-sm font-extrabold text-zinc-700">Ciudades principales</span>
+                      </div>
+
+                      <div className="space-y-0.5 max-h-60 overflow-y-auto pr-1">
+                        {filteredCities.length === 0 ? (
+                          <p className="text-xs text-zinc-500 p-2">Escribe para filtrar</p>
+                        ) : (
+                          filteredCities.map((city) => (
                             <button
                               key={city}
                               type="button"
@@ -344,14 +413,13 @@ export function HeroSection() {
                                 updateParam("origen", city);
                                 setShowAutocompleteOrigen(false);
                               }}
-                              className="w-full text-left px-2.5 py-2 rounded-lg hover:bg-zinc-100 flex items-center gap-2 text-sm font-semibold text-zinc-800 transition-colors"
+                              className="w-full text-left px-3 py-2 rounded-xl hover:bg-zinc-50 text-sm font-semibold text-zinc-700 hover:text-zinc-900 transition-all duration-155 cursor-pointer block border-none bg-transparent"
                             >
-                              <MapPin className="w-3.5 h-3.5 text-ocean shrink-0" />
-                              <span>{city}</span>
+                              {city}
                             </button>
-                          ))}
-                        </div>
-                      )}
+                          ))
+                        )}
+                      </div>
                     </div>
                   )}
                 </div>
@@ -360,12 +428,12 @@ export function HeroSection() {
               {/* DESTINO / CIUDAD */}
               <div className={cn(
                 "relative text-left",
-                (activeTab === "internacionales" || activeTab === "nacionales") && "md:col-span-2",
+                (activeTab === "internacionales" || activeTab === "nacionales" || activeTab === "circuitos") && "md:col-span-2",
                 activeTab === "pasadias" && "md:col-span-4",
                 activeTab === "tours" && "md:col-span-3",
                 activeTab === "alojamientos" && "md:col-span-3",
                 activeTab === "grupales" && "md:col-span-3"
-              )} ref={activeTab === "grupales" ? groupDestinationsRef : autocompleteDestinoRef}>
+              )} ref={activeTab === "grupales" ? groupDestinationsRef : autocompleteDestinoRef} style={{ zIndex: (showAutocompleteDestino || showGroupDestinations) ? 40 : 4 }}>
                 <label className="block text-[11px] font-bold text-zinc-500 uppercase tracking-wider mb-1.5 pl-1">
                   {activeTab === "grupales" ? "Viaje Grupal" : "Destino"}
                 </label>
@@ -436,35 +504,41 @@ export function HeroSection() {
                 )}
 
                 {!showGroupDestinations && showAutocompleteDestino && (
-                  <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-zinc-150 p-3 z-50 max-h-60 overflow-y-auto animate-in fade-in slide-in-from-top-1 duration-200">
-                    <p className="text-[10px] font-extrabold text-zinc-400 uppercase tracking-wider pl-2 mb-2">Ciudades principales</p>
-                    {filteredCities.length === 0 ? (
-                      <p className="text-xs text-zinc-500 p-2">Escribe para filtrar</p>
-                    ) : (
-                      <div className="space-y-1">
-                        {filteredCities.map((city) => (
+                  <div className="absolute top-full left-0 mt-2 bg-white rounded-2xl shadow-2xl border border-zinc-200/85 p-4 z-50 w-[290px] sm:w-[320px] animate-in fade-in slide-in-from-top-1 duration-200 text-left">
+                    {/* Little pointer arrow */}
+                    <div className="absolute -top-1.5 left-6 w-3 h-3 bg-white border-t border-l border-zinc-200/85 rotate-45" />
+
+                    <div className="flex items-center gap-2 pb-2.5 mb-2.5 border-b border-zinc-150">
+                      <MapPin className="w-4 h-4 text-ocean shrink-0" />
+                      <span className="text-xs sm:text-sm font-extrabold text-zinc-700">Destinos populares</span>
+                    </div>
+
+                    <div className="space-y-0.5 max-h-60 overflow-y-auto pr-1">
+                      {allDestinations.length === 0 ? (
+                        <p className="text-xs text-zinc-500 p-2">Escribe para buscar destinos</p>
+                      ) : (
+                        allDestinations.map((dest) => (
                           <button
-                            key={city}
+                            key={dest}
                             type="button"
                             onClick={() => {
-                              updateParam("destino", city);
+                              updateParam("destino", dest);
                               setShowAutocompleteDestino(false);
                             }}
-                            className="w-full text-left px-2.5 py-2 rounded-lg hover:bg-zinc-100 flex items-center gap-2 text-sm font-semibold text-zinc-800 transition-colors"
+                            className="w-full text-left px-3 py-2 rounded-xl hover:bg-zinc-50 text-sm font-semibold text-zinc-700 hover:text-zinc-900 transition-all duration-155 cursor-pointer block border-none bg-transparent"
                           >
-                            <MapPin className="w-3.5 h-3.5 text-ocean shrink-0" />
-                            <span>{city}</span>
+                            {dest}
                           </button>
-                        ))}
-                      </div>
-                    )}
+                        ))
+                      )}
+                    </div>
                   </div>
                 )}
               </div>
 
               {/* Actividad / Experiencia (Only for Actividades tab) */}
               {activeTab === "tours" && (
-                <div className="md:col-span-3 text-left">
+                <div className="md:col-span-3 text-left" style={{ zIndex: 3 }}>
                   <label className="block text-[11px] font-bold text-zinc-500 uppercase tracking-wider mb-1.5 pl-1">Actividad o Experiencia</label>
                   <div className="relative">
                     <Sparkles className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 pointer-events-none" />
@@ -481,15 +555,15 @@ export function HeroSection() {
 
               {/* ENTRADA (Calendario o Dropdown de fechas para grupales) */}
               <div className={cn(
-                "text-left",
-                (activeTab === "internacionales" || activeTab === "nacionales") && "md:col-span-2",
+                "relative text-left",
+                (activeTab === "internacionales" || activeTab === "nacionales" || activeTab === "circuitos") && "md:col-span-2",
                 activeTab === "pasadias" && "md:col-span-3",
                 activeTab === "tours" && "md:col-span-2",
                 activeTab === "alojamientos" && "md:col-span-2",
                 activeTab === "grupales" && "md:col-span-2"
-              )} ref={activeTab === "grupales" ? groupDatesRef : undefined}>
+              )} ref={activeTab === "grupales" ? groupDatesRef : undefined} style={{ zIndex: (dateOpen || showGroupDates) ? 30 : 3 }}>
                 <label className="block text-[11px] font-bold text-zinc-500 uppercase tracking-wider mb-1.5 pl-1">
-                  {activeTab === "alojamientos" || activeTab === "internacionales" || activeTab === "nacionales" ? "Entrada" : "Fecha"}
+                  {activeTab === "alojamientos" || activeTab === "internacionales" || activeTab === "nacionales" || activeTab === "circuitos" ? "Entrada" : "Fecha"}
                 </label>
 
                 {activeTab === "grupales" ? (
@@ -572,7 +646,7 @@ export function HeroSection() {
                               const dateStr = format(date, "yyyy-MM-dd");
                               updateParam("fecha", dateStr);
                               // Validate return date
-                              const hasReturn = activeTab === "alojamientos" || activeTab === "internacionales" || activeTab === "nacionales";
+                              const hasReturn = activeTab === "alojamientos" || activeTab === "internacionales" || activeTab === "nacionales" || activeTab === "circuitos";
                               if (hasReturn && activeParams.fechaFin) {
                                 const checkOutDate = new Date(activeParams.fechaFin + "T12:00:00");
                                 if (isBefore(checkOutDate, date)) {
@@ -593,9 +667,9 @@ export function HeroSection() {
                 )}
               </div>
 
-              {/* SALIDA (Fecha de regreso para Nacionales, Internacionales y Alojamientos) */}
-              {(activeTab === "alojamientos" || activeTab === "internacionales" || activeTab === "nacionales") && (
-                <div className="md:col-span-2 text-left">
+              {/* SALIDA (Fecha de regreso para Nacionales, Internacionales, Circuitos y Alojamientos) */}
+              {(activeTab === "alojamientos" || activeTab === "internacionales" || activeTab === "nacionales" || activeTab === "circuitos") && (
+                <div className="md:col-span-2 text-left" style={{ zIndex: dateEndOpen ? 20 : 2 }}>
                   <label className="block text-[11px] font-bold text-zinc-500 uppercase tracking-wider mb-1.5 pl-1">Salida</label>
                   <div className="relative">
                     <Popover open={dateEndOpen} onOpenChange={setDateEndOpen}>
@@ -638,7 +712,7 @@ export function HeroSection() {
               {/* PASAJEROS (Multihabitación o contador simple) */}
               <div className={cn(
                 "relative text-left",
-                (activeTab === "internacionales" || activeTab === "nacionales") && "md:col-span-3",
+                (activeTab === "internacionales" || activeTab === "nacionales" || activeTab === "circuitos") && "md:col-span-3",
                 activeTab === "pasadias" && "md:col-span-3",
                 activeTab === "tours" && "md:col-span-2",
                 activeTab === "alojamientos" && "md:col-span-3",
@@ -664,203 +738,132 @@ export function HeroSection() {
                 </button>
 
                 {showTravelersDropdown && (
-                  <div className="absolute right-0 md:left-0 mt-2 w-76 bg-white rounded-2xl shadow-2xl border border-zinc-150 p-4 z-50 animate-in fade-in slide-in-from-top-1 duration-200">
-                    {hasRooms ? (
-                      // Despegar-style Multi-room picker
-                      <div className="space-y-4">
-                        <div className="space-y-3 max-h-56 overflow-y-auto pr-1">
-                          {(activeParams.rooms || [{ adults: 2, children: 0 }]).map((room, idx) => (
-                            <div key={idx} className="p-3 bg-zinc-50/70 rounded-xl border border-zinc-200 relative">
-                              <div className="flex items-center justify-between mb-2 pb-1.5 border-b border-zinc-200/50">
-                                <p className="text-[11px] font-bold text-zinc-600">Habitación {idx + 1}</p>
-                                {(activeParams.rooms || []).length > 1 && (
-                                  <button
-                                    type="button"
-                                    onClick={() => {
-                                      const current = [...(activeParams.rooms || [])];
-                                      current.splice(idx, 1);
-                                      updateRooms(current);
-                                    }}
-                                    className="text-[10px] font-bold text-red-500 hover:text-red-650 cursor-pointer"
-                                  >
-                                    Eliminar
-                                  </button>
-                                )}
-                              </div>
-                              
-                              <div className="space-y-2">
-                                {/* Adultos */}
-                                <div className="flex items-center justify-between">
-                                  <div>
-                                    <p className="text-xs font-bold text-zinc-800">Mayores</p>
-                                    <p className="text-[9px] font-bold text-zinc-400">Desde 18 años</p>
-                                  </div>
-                                  <div className="flex items-center gap-2">
-                                    <button
-                                      type="button"
-                                      onClick={() => {
-                                        const current = [...(activeParams.rooms || [])];
-                                        current[idx] = { ...current[idx], adults: Math.max(1, current[idx].adults - 1) };
-                                        updateRooms(current);
-                                      }}
-                                      className="w-7 h-7 rounded-full border border-zinc-200 flex items-center justify-center text-zinc-650 hover:bg-zinc-100 font-bold active:scale-95 transition-all cursor-pointer text-xs"
-                                    >
-                                      -
-                                    </button>
-                                    <span className="w-4 text-center text-xs font-extrabold text-zinc-800 tabular-nums">
-                                      {room.adults}
-                                    </span>
-                                    <button
-                                      type="button"
-                                      onClick={() => {
-                                        const current = [...(activeParams.rooms || [])];
-                                        current[idx] = { ...current[idx], adults: Math.min(10, current[idx].adults + 1) };
-                                        updateRooms(current);
-                                      }}
-                                      className="w-7 h-7 rounded-full border border-zinc-200 flex items-center justify-center text-zinc-650 hover:bg-zinc-100 font-bold active:scale-95 transition-all cursor-pointer text-xs"
-                                    >
-                                      +
-                                    </button>
-                                  </div>
-                                </div>
-
-                                {/* Niños */}
-                                <div className="flex items-center justify-between">
-                                  <div>
-                                    <p className="text-xs font-bold text-zinc-800">Menores</p>
-                                    <p className="text-[9px] font-bold text-zinc-400">Hasta 17 años</p>
-                                  </div>
-                                  <div className="flex items-center gap-2">
-                                    <button
-                                      type="button"
-                                      onClick={() => {
-                                        const current = [...(activeParams.rooms || [])];
-                                        current[idx] = { ...current[idx], children: Math.max(0, current[idx].children - 1) };
-                                        updateRooms(current);
-                                      }}
-                                      className="w-7 h-7 rounded-full border border-zinc-200 flex items-center justify-center text-zinc-650 hover:bg-zinc-100 font-bold active:scale-95 transition-all cursor-pointer text-xs"
-                                    >
-                                      -
-                                    </button>
-                                    <span className="w-4 text-center text-xs font-extrabold text-zinc-800 tabular-nums">
-                                      {room.children}
-                                    </span>
-                                    <button
-                                      type="button"
-                                      onClick={() => {
-                                        const current = [...(activeParams.rooms || [])];
-                                        current[idx] = { ...current[idx], children: Math.min(6, current[idx].children + 1) };
-                                        updateRooms(current);
-                                      }}
-                                      className="w-7 h-7 rounded-full border border-zinc-200 flex items-center justify-center text-zinc-650 hover:bg-zinc-100 font-bold active:scale-95 transition-all cursor-pointer text-xs"
-                                    >
-                                      +
-                                    </button>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          ))}
+                  <div className="absolute right-0 md:left-0 mt-2 w-72 bg-white rounded-2xl shadow-2xl border border-zinc-150 p-4 z-50 animate-in fade-in slide-in-from-top-1 duration-200">
+                    <div className="space-y-4">
+                      {/* Adultos */}
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm font-semibold text-zinc-800">Adultos</p>
+                          <p className="text-[10px] text-zinc-400 font-bold">Mayores de 12 años</p>
                         </div>
-
-                        <div className="pt-2 border-t border-zinc-250/50 flex items-center justify-between">
+                        <div className="flex items-center gap-3">
                           <button
                             type="button"
-                            onClick={() => {
-                              const current = [...(activeParams.rooms || [{ adults: 2, children: 0 }])];
-                              if (current.length < 5) {
-                                current.push({ adults: 2, children: 0 });
-                                updateRooms(current);
-                              }
-                            }}
-                            className="text-xs font-bold text-ocean hover:underline cursor-pointer"
+                            onClick={() => updateParam("adultos", Math.max(1, activeParams.adultos - 1))}
+                            className="w-8 h-8 rounded-full border border-zinc-200 flex items-center justify-center text-zinc-650 hover:bg-zinc-100 font-bold active:scale-95 transition-all cursor-pointer"
                           >
-                            + Añadir habitación
+                            -
                           </button>
+                          <span className="w-5 text-center text-sm font-extrabold text-zinc-800 tabular-nums">
+                            {activeParams.adultos}
+                          </span>
                           <button
                             type="button"
-                            onClick={() => setShowTravelersDropdown(false)}
-                            className="px-4 py-2 bg-ocean text-white rounded-lg text-xs font-bold hover:bg-ocean-dark transition-colors cursor-pointer"
+                            onClick={() => updateParam("adultos", Math.min(10, activeParams.adultos + 1))}
+                            className="w-8 h-8 rounded-full border border-zinc-200 flex items-center justify-center text-zinc-650 hover:bg-zinc-100 font-bold active:scale-95 transition-all cursor-pointer"
                           >
-                            Aplicar
+                            +
                           </button>
                         </div>
                       </div>
-                    ) : (
-                      // Single counters for Pasadias, Tours and Grupales
-                      <div className="space-y-4">
+
+                      {/* Niños */}
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm font-semibold text-zinc-800">Niños</p>
+                          <p className="text-[10px] text-zinc-400 font-bold">0 a 11 años</p>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <button
+                            type="button"
+                            onClick={() => updateParam("ninos", Math.max(0, activeParams.ninos - 1))}
+                            className="w-8 h-8 rounded-full border border-zinc-200 flex items-center justify-center text-zinc-650 hover:bg-zinc-100 font-bold active:scale-95 transition-all cursor-pointer"
+                          >
+                            -
+                          </button>
+                          <span className="w-5 text-center text-sm font-extrabold text-zinc-800 tabular-nums">
+                            {activeParams.ninos}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => updateParam("ninos", Math.min(6, activeParams.ninos + 1))}
+                            className="w-8 h-8 rounded-full border border-zinc-200 flex items-center justify-center text-zinc-650 hover:bg-zinc-100 font-bold active:scale-95 transition-all cursor-pointer"
+                          >
+                            +
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Habitaciones */}
+                      {hasRooms && (
                         <div className="flex items-center justify-between">
                           <div>
-                            <p className="text-sm font-semibold text-zinc-800">Adultos</p>
-                            <p className="text-[10px] text-zinc-400 font-bold">Mayores de 12 años</p>
+                            <p className="text-sm font-semibold text-zinc-800">Habitaciones</p>
+                            <p className="text-[10px] text-zinc-400 font-bold">Distribución de camas</p>
                           </div>
                           <div className="flex items-center gap-3">
                             <button
                               type="button"
-                              onClick={() => updateParam("adultos", Math.max(1, activeParams.adultos - 1))}
-                              className="w-8 h-8 rounded-full border border-zinc-200 flex items-center justify-center text-zinc-600 hover:bg-zinc-50 active:scale-90 transition-all font-bold cursor-pointer"
+                              onClick={() => {
+                                const currentRooms = activeParams.rooms || [{ adults: 2, children: 0 }];
+                                if (currentRooms.length > 1) {
+                                  const updatedRooms = currentRooms.slice(0, -1);
+                                  setTabParams((prev) => ({
+                                    ...prev,
+                                    [activeTab]: {
+                                      ...prev[activeTab],
+                                      rooms: updatedRooms,
+                                    },
+                                  }));
+                                }
+                              }}
+                              className="w-8 h-8 rounded-full border border-zinc-200 flex items-center justify-center text-zinc-650 hover:bg-zinc-100 font-bold active:scale-95 transition-all cursor-pointer"
                             >
                               -
                             </button>
-                            <span className="w-5 text-center text-sm font-bold text-zinc-800 tabular-nums">
-                              {activeParams.adultos}
+                            <span className="w-5 text-center text-sm font-extrabold text-zinc-800 tabular-nums">
+                              {activeParams.rooms?.length || 1}
                             </span>
                             <button
                               type="button"
-                              onClick={() => updateParam("adultos", Math.min(10, activeParams.adultos + 1))}
-                              className="w-8 h-8 rounded-full border border-zinc-200 flex items-center justify-center text-zinc-600 hover:bg-zinc-50 active:scale-90 transition-all font-bold cursor-pointer"
+                              onClick={() => {
+                                const currentRooms = activeParams.rooms || [{ adults: 2, children: 0 }];
+                                if (currentRooms.length < 5) {
+                                  const updatedRooms = [...currentRooms, { adults: 2, children: 0 }];
+                                  setTabParams((prev) => ({
+                                    ...prev,
+                                    [activeTab]: {
+                                      ...prev[activeTab],
+                                      rooms: updatedRooms,
+                                    },
+                                  }));
+                                }
+                              }}
+                              className="w-8 h-8 rounded-full border border-zinc-200 flex items-center justify-center text-zinc-650 hover:bg-zinc-100 font-bold active:scale-95 transition-all cursor-pointer"
                             >
                               +
                             </button>
                           </div>
                         </div>
+                      )}
 
-                        {activeTab !== "grupales" && (
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <p className="text-sm font-semibold text-zinc-800">Menores</p>
-                              <p className="text-[10px] text-zinc-400 font-bold">Edades de 0 a 11 años</p>
-                            </div>
-                            <div className="flex items-center gap-3">
-                              <button
-                                type="button"
-                                onClick={() => updateParam("ninos", Math.max(0, activeParams.ninos - 1))}
-                                className="w-8 h-8 rounded-full border border-zinc-200 flex items-center justify-center text-zinc-600 hover:bg-zinc-50 active:scale-90 transition-all font-bold cursor-pointer"
-                              >
-                                -
-                              </button>
-                              <span className="w-5 text-center text-sm font-bold text-zinc-800 tabular-nums">
-                                {activeParams.ninos}
-                              </span>
-                              <button
-                                type="button"
-                                onClick={() => updateParam("ninos", Math.min(6, activeParams.ninos + 1))}
-                                className="w-8 h-8 rounded-full border border-zinc-200 flex items-center justify-center text-zinc-600 hover:bg-zinc-50 active:scale-90 transition-all font-bold cursor-pointer"
-                              >
-                                +
-                              </button>
-                            </div>
-                          </div>
-                        )}
-
-                        <div className="pt-2 border-t border-zinc-100 flex justify-end">
-                          <button
-                            type="button"
-                            onClick={() => setShowTravelersDropdown(false)}
-                            className="px-4 py-2 bg-ocean text-white rounded-lg text-xs font-bold hover:bg-ocean-dark transition-colors cursor-pointer"
-                          >
-                            Listo
-                          </button>
-                        </div>
+                      <div className="pt-2 border-t border-zinc-100 flex justify-end">
+                        <button
+                          type="button"
+                          onClick={() => setShowTravelersDropdown(false)}
+                          className="px-4 py-2 bg-ocean text-white rounded-lg text-xs font-bold hover:bg-ocean-dark transition-colors cursor-pointer"
+                        >
+                          Listo
+                        </button>
                       </div>
-                    )}
+                    </div>
                   </div>
                 )}
               </div>
 
               {/* Tipo de viajero (Only for grupales) */}
               {activeTab === "grupales" && (
-                <div className="md:col-span-3 text-left relative" ref={groupTypeRef}>
+                <div className="md:col-span-3 text-left relative" ref={groupTypeRef} style={{ zIndex: showGroupTypeDropdown ? 5 : 1 }}>
                   <label className="block text-[11px] font-bold text-zinc-500 uppercase tracking-wider mb-1.5 pl-1">Tipo de Viajero (opcional)</label>
                   <button
                     type="button"
@@ -898,10 +901,9 @@ export function HeroSection() {
                 </div>
               )}
 
-              {/* Search Button */}
               <div className={cn(
                 "w-full text-center",
-                (activeTab === "internacionales" || activeTab === "nacionales") && "md:col-span-2",
+                (activeTab === "internacionales" || activeTab === "nacionales" || activeTab === "circuitos") && "md:col-span-2",
                 activeTab === "pasadias" && "md:col-span-2",
                 activeTab === "tours" && "md:col-span-2",
                 activeTab === "alojamientos" && "md:col-span-2",

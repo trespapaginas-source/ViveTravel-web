@@ -62,6 +62,7 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
       .sort((a: any, b: any) => a.sort_order - b.sort_order)
       .map((hl: any) => hl.text);
 
+    const localPlan = tourPlans.find((p) => p.id === row.id || p.slug === row.slug);
     const mappedPlan = {
       id: row.id,
       name: row.name,
@@ -85,7 +86,8 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
       meeting: row.meeting_point || "",
       published: row.published,
       order: row.sort_order,
-      fecha_salida: row.plan_categories?.slug === 'grupales' ? (row.schedule || undefined) : undefined
+      fecha_salida: row.plan_categories?.slug === 'grupales' ? (row.schedule || undefined) : undefined,
+      itinerary: localPlan?.itinerary || undefined
     };
 
     return NextResponse.json(mappedPlan);

@@ -4,6 +4,7 @@ import { lazy, Suspense, useRef, useState, useEffect, type ReactNode } from "rea
 import { useNavigation } from "@/lib/store";
 import { usePrefetchData } from "@/hooks/use-prefetch-data";
 import { Navbar } from "@/components/layout/navbar";
+import { StickySummaryBar } from "@/components/layout/sticky-summary-bar";
 import { Footer } from "@/components/layout/footer";
 import { HeroSection } from "@/components/home/hero-section";
 import { VideoShowcase } from "@/components/home/video-showcase";
@@ -138,8 +139,15 @@ function ViewRouter() {
 }
 
 export default function HomePage() {
-  const { currentView } = useNavigation();
+  const { currentView, searchIsSticky, searchDestination } = useNavigation();
   const isHome = currentView === "home";
+  
+  const showSticky = searchIsSticky && searchDestination;
+  const mainPadding = isHome 
+    ? "" 
+    : showSticky 
+      ? "pt-44 md:pt-32" 
+      : "pt-16 sm:pt-20";
 
   // Prefetch plans & cabins data in background so navigation is instant
   usePrefetchData();
@@ -147,7 +155,8 @@ export default function HomePage() {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-      <main className={`flex-1 ${isHome ? "" : "pt-16 sm:pt-20"}`}>
+      <StickySummaryBar />
+      <main className={`flex-1 ${mainPadding}`}>
         <ViewRouter />
       </main>
       <Footer />

@@ -22,6 +22,7 @@ export interface TourPlan {
   published?: boolean;
   order?: number;
   fecha_salida?: string;
+  itinerary?: Array<{ title: string; description: string }>;
 }
 
 export interface BedroomInfo {
@@ -584,6 +585,175 @@ export const tourPlans: TourPlan[] = [
     difficulty: "Moderado",
     schedule: "8:00 AM o 2:00 PM",
     meeting: "Centro de Buceo",
+  },
+  {
+    id: "plan-16",
+    name: "Eurotrip Clásico",
+    slug: "eurotrip-clasico",
+    shortDescription: "Recorre las capitales europeas más icónicas: Madrid, París y Roma en un circuito completo de 15 días.",
+    fullDescription: "El viaje de tus sueños por el viejo continente. Descubre la historia imperial de Madrid, la magia y romance de la Ciudad de la Luz en París, y la majestuosidad de la Ciudad Eterna en Roma. Este circuito incluye pasajes de avión, hotelería de categoría superior, desayunos buffet, traslados en autobús de lujo y visitas guiadas con expertos locales en cada destino.",
+    images: [
+      "https://images.unsplash.com/photo-1543783207-ec64e4d95325?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=800&h=600&fit=crop",
+    ],
+    price: 6500000,
+    priceRange: "$6.500.000 - $7.800.000 COP",
+    duration: "15 días, 14 noches",
+    location: "Madrid, París y Roma",
+    category: "Circuito",
+    includes: [
+      "Tiquetes aéreos internacionales",
+      "Alojamiento 14 noches en hoteles 4★",
+      "Desayunos buffet diarios",
+      "Visita con guía local en Madrid, París y Roma",
+      "Traslados aeropuerto-hotel-aeropuerto",
+      "Tarjeta de asistencia médica",
+    ],
+    excludes: [
+      "Almuerzos y cenas no especificados",
+      "Entradas a monumentos no descritos",
+      "Gastos personales y propinas",
+    ],
+    highlights: [
+      "Visita al Coliseo y Foro Romano",
+      "Subida al segundo piso de la Torre Eiffel",
+      "Tour por el Palacio Real de Madrid",
+      "Crucero nocturno por el Río Sena",
+    ],
+    rating: 4.9,
+    reviewCount: 148,
+    maxGuests: 25,
+    difficulty: "Fácil",
+    schedule: "Salidas el primer sábado de cada mes",
+    meeting: "Aeropuerto Internacional El Dorado, Bogotá",
+    itinerary: [
+      { title: "Llegada a Madrid", description: "Llegada al aeropuerto de Madrid-Barajas y traslado al hotel. Tarde libre para descansar o recorrer la Gran Vía." },
+      { title: "Madrid Histórico", description: "Visita panorámica de la ciudad incluyendo Plaza Mayor, Palacio Real, Fuente de Cibeles y el Parque del Retiro." },
+      { title: "Madrid a París", description: "Traslado al aeropuerto para tomar el vuelo interno hacia París. Llegada y traslado al hotel." },
+      { title: "París: La Ciudad Luz", description: "Visita al Arco de Triunfo, los Campos Elíseos y subida al segundo piso de la imponente Torre Eiffel." },
+      { title: "París y el Sena", description: "Mañana libre para recorrer Montmartre. Por la tarde, paseo en barco por el Río Sena y visita exterior del Louvre." },
+      { title: "París a Venecia", description: "Vuelo directo hacia Venecia. Llegada, traslado en bote al hotel y caminata de bienvenida." },
+      { title: "Venecia Romántica", description: "Paseo por la Plaza de San Marcos, el Palacio Ducal y el Puente de los Suspiros con paseo opcional en góndola." },
+      { title: "Venecia a Florencia", description: "Viaje en tren de alta velocidad a Florencia. Tarde de visita a la Galería de la Academia y el Duomo." },
+      { title: "Florencia a Roma", description: "Viaje por la Toscana hacia Roma. Llegada, check-in y cena tradicional en el barrio de Trastevere." },
+      { title: "Roma Imperial", description: "Visita guiada con entrada preferente al Coliseo Romano, el Foro Romano y el Arco de Constantino." },
+      { title: "Roma Cristiana", description: "Tour por los Museos Vaticanos, Capilla Sixtina de Miguel Ángel y la Basílica de San Pedro." },
+      { title: "Roma (Día Libre)", description: "Día libre para ir de compras, probar helado tradicional o visitar la Fontana di Trevi." },
+      { title: "Roma a Madrid", description: "Vuelo de regreso a Madrid. Alojamiento y cena especial de despedida con tapas españolas." },
+      { title: "Madrid (Excursión a Toledo)", description: "Excursión de día completo a la ciudad medieval de Toledo. Retorno a Madrid por la noche." },
+      { title: "Fin del viaje", description: "Traslado al aeropuerto internacional de Madrid para abordar el vuelo de regreso a Colombia." }
+    ]
+  },
+  {
+    id: "plan-17",
+    name: "Japón Esencial",
+    slug: "japon-esencial",
+    shortDescription: "La combinación perfecta entre tradición milenaria y tecnología del futuro en Tokio, Kioto y Osaka.",
+    fullDescription: "Embárcate en un fascinante circuito de 10 días por la tierra del sol naciente. Desde los rascacielos iluminados y templos antiguos de Tokio, hasta los serenos jardines zen de Kioto y la gastronomía callejera de Osaka, este viaje te mostrará la verdadera esencia de Japón. Viaja en el tren bala Shinkansen y alójate en un Ryokan tradicional con aguas termales (Onsen).",
+    images: [
+      "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1545569341-9eb8b30979d9?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=800&h=600&fit=crop",
+    ],
+    price: 8200000,
+    priceRange: "$8.200.000 - $9.500.000 COP",
+    duration: "10 días, 9 noches",
+    location: "Tokio, Kioto y Osaka",
+    category: "Circuito",
+    includes: [
+      "Tiquetes aéreos internacionales",
+      "Pase de tren Japan Rail Pass (JR Pass)",
+      "Alojamiento 8 noches en hotel + 1 noche en Ryokan",
+      "Desayunos diarios y 1 cena tradicional Kaiseki",
+      "Guía acompañante de habla hispana",
+      "Entradas a todos los templos descritos",
+    ],
+    excludes: [
+      "Almuerzos y cenas no descritos",
+      "Seguro de viaje de cobertura médica extendida",
+      "Propinas y gastos personales",
+    ],
+    highlights: [
+      "Viaje en el Tren Bala Shinkansen",
+      "Paseo por el bosque de bambú de Arashiyama",
+      "Templo Senso-ji en Asakusa, Tokio",
+      "Visita al santuario Fushimi Inari-Taisha",
+    ],
+    rating: 4.9,
+    reviewCount: 94,
+    maxGuests: 15,
+    difficulty: "Moderado",
+    schedule: "Salidas programadas en época de cerezos (Abril) y otoño (Octubre)",
+    meeting: "Aeropuerto Internacional El Dorado, Bogotá",
+    itinerary: [
+      { title: "Llegada a Tokio", description: "Llegada al aeropuerto de Tokio (Narita o Haneda), bienvenida por nuestro guía y traslado al hotel en metro/tren." },
+      { title: "Tokio Tradicional e Histórico", description: "Visita al templo más antiguo de Tokio, Senso-ji en Asakusa, paseo por la calle comercial Nakamise y el barrio electrónico de Akihabara." },
+      { title: "Tokio Moderno y Shibuya", description: "Visita al Santuario Meiji en Harajuku, paseo por la calle Franklin y cruce de peatones de Shibuya con acceso al Shibuya Sky." },
+      { title: "Tokio al Monte Fuji y Hakone", description: "Excursión a Hakone. Paseo en barco por el lago Ashi y teleférico con vistas al Monte Fuji. Noche en Ryokan tradicional con baño Onsen." },
+      { title: "Hakone a Kioto (Tren Bala)", description: "Abordaremos el famoso tren bala Shinkansen con destino a Kioto. Llegada y paseo por el tradicional barrio de Gion." },
+      { title: "Kioto Imperial", description: "Visita al Pabellón de Oro (Kinkaku-ji), el Castillo Nijo y caminata por el imponente bosque de bambú de Arashiyama." },
+      { title: "Fushimi Inari y Excursión a Nara", description: "Visita al santuario de los miles de toriis rojos en Fushimi Inari. Por la tarde, viaje a Nara para ver el Gran Buda en el Templo Todai-ji." },
+      { title: "Kioto a Osaka (Dotonbori)", description: "Traslado en tren local a Osaka. Visita al icónico Castillo de Osaka y caminata nocturna por el dinámico canal de Dotonbori." },
+      { title: "Osaka (Día Libre o Hiroshima)", description: "Día libre para visitar Universal Studios Japan o excursión opcional en tren bala a Hiroshima y la isla de Miyajima." },
+      { title: "Regreso a Tokio y Salida", description: "Retorno a Tokio en tren bala Shinkansen. Traslado al aeropuerto para tomar el vuelo de regreso a Colombia." }
+    ]
+  },
+  {
+    id: "plan-18",
+    name: "Turquía y Dubái",
+    slug: "turquia-dubai",
+    shortDescription: "La magia de Estambul y los globos de Capadocia junto con el lujo futurista y los safaris de Dubái.",
+    fullDescription: "Un circuito extraordinario de 12 días que une dos de los mundos más exóticos del planeta. Déjate cautivar por las mezquitas y bazares históricos de Estambul, sobrevuela en globo los paisajes lunares de Capadocia en Turquía y luego vuela hacia el desierto para vivir la modernidad, rascacielos y safaris de lujo en Dubái.",
+    images: [
+      "https://images.unsplash.com/photo-1527838832700-50592524df7e?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?w=800&h=600&fit=crop",
+    ],
+    price: 5900000,
+    priceRange: "$5.900.000 - $6.900.000 COP",
+    duration: "12 días, 11 noches",
+    location: "Estambul, Capadocia y Dubái",
+    category: "Circuito",
+    includes: [
+      "Tiquetes de vuelo internacional y doméstico",
+      "Alojamiento 11 noches en hoteles 4★ y 5★",
+      "Desayunos diarios y cenas en Turquía",
+      "Safari por el desierto de Dubái con cena BBQ",
+      "Crucero privado por el Río Bósforo en Estambul",
+      "Guías locales en español en ambos países",
+    ],
+    excludes: [
+      "Vuelo en globo aerostático en Capadocia (opcional)",
+      "Impuesto turístico de Dubái (Tourism Dirham)",
+      "Almuerzos no especificados",
+    ],
+    highlights: [
+      "Safari 4x4 por las dunas rojas de Dubái",
+      "Visita a la Mezquita Azul y Santa Sofía en Estambul",
+      "Paisajes de chimeneas de hadas en Capadocia",
+      "Entrada a la plataforma del Burj Khalifa",
+    ],
+    rating: 4.8,
+    reviewCount: 112,
+    maxGuests: 20,
+    difficulty: "Fácil",
+    schedule: "Salidas grupales los días 15 de cada mes",
+    meeting: "Aeropuerto Internacional El Dorado, Bogotá",
+    itinerary: [
+      { title: "Llegada a Estambul", description: "Recepción en el aeropuerto de Estambul y traslado privado al hotel. Tiempo libre para aclimatarse." },
+      { title: "Estambul Clásico", description: "Visita de día completo a la Mezquita Azul, Santa Sofía, Hipódromo Romano, Palacio de Topkapi y el Gran Bazar." },
+      { title: "Estambul y Bósforo", description: "Paseo en barco por el Canal del Bósforo. Por la tarde, traslado al aeropuerto para volar a Capadocia. Llegada y cena." },
+      { title: "Vuelo en Globo y Capadocia Mágica", description: "Paseo opcional en globo al amanecer. Visita al Valle de Göreme, Uchisar, las chimeneas de hadas y taller de alfombras." },
+      { title: "Capadocia Subterránea", description: "Visita a la ciudad subterránea de Kaymakli y caminata ecológica por el cañón del Valle de Ihlara. Cena en el hotel." },
+      { title: "Turquía a Dubái", description: "Traslado al aeropuerto de Capadocia, vuelo de conexión en Estambul y vuelo internacional directo a Dubái. Llegada." },
+      { title: "Dubái Moderno y Burj Khalifa", description: "Paseo por Dubai Marina, paradas de fotos frente al Burj Al Arab, el hotel Atlantis y ascenso al piso 124 del Burj Khalifa." },
+      { title: "Safari por el Desierto", description: "Mañana libre para compras en Dubai Mall. Por la tarde, safari en camionetas 4x4 por el desierto con cena show en campamento beduino." },
+      { title: "Excursión a Abu Dabi", description: "Viaje de día completo a Abu Dabi. Visita a la Gran Mezquita Sheikh Zayed y el palacio presidencial Qasr Al Watan." },
+      { title: "Dubái Tradicional (Zocos)", description: "Cruce del canal en bote tradicional 'abra', paseo por los zocos de las especias y el oro. Tarde libre." },
+      { title: "Día Libre en Dubái", description: "Día libre para disfrutar de la playa, visitar la isla artificial Palm Jumeirah o ir de compras de marcas de diseñador." },
+      { title: "Regreso a Colombia", description: "Traslado al aeropuerto internacional de Dubái para tomar el vuelo de retorno a Colombia." }
+    ]
   }
 ];
 

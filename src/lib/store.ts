@@ -25,6 +25,9 @@ interface NavigationState {
   searchTravelerType: string | null;
   searchCategory: string | null;
   searchActivity: string | null;
+  searchIsSticky: boolean;
+  searchSelectedVariant: string | null;
+  searchPriceFrom: number | null;
   navigate: (view: ViewType, itemId?: string | null) => void;
   navigateWithSearch: (
     view: ViewType,
@@ -45,6 +48,10 @@ interface NavigationState {
   ) => void;
   goHome: () => void;
   clearSearch: () => void;
+  setSearchIsSticky: (isSticky: boolean) => void;
+  setSearchSelectedVariant: (variant: string | null) => void;
+  setSearchPriceFrom: (price: number | null) => void;
+  updateSearchParams: (params: Partial<NavigationState>) => void;
 }
 
 export const useNavigation = create<NavigationState>((set) => ({
@@ -61,21 +68,13 @@ export const useNavigation = create<NavigationState>((set) => ({
   searchTravelerType: null,
   searchCategory: null,
   searchActivity: null,
+  searchIsSticky: false,
+  searchSelectedVariant: null,
+  searchPriceFrom: null,
   navigate: (view, itemId = null) => {
     set({
       currentView: view,
       selectedItemId: itemId,
-      searchDestination: null,
-      searchOrigin: null,
-      searchDate: null,
-      searchDateEnd: null,
-      searchAdults: null,
-      searchChildren: null,
-      searchRooms: null,
-      searchRoomsDetail: null,
-      searchTravelerType: null,
-      searchCategory: null,
-      searchActivity: null,
     });
     window.scrollTo({ top: 0, behavior: "smooth" });
   },
@@ -94,6 +93,7 @@ export const useNavigation = create<NavigationState>((set) => ({
       searchTravelerType: searchParams.tipoViajero || null,
       searchCategory: searchParams.categoria || null,
       searchActivity: searchParams.actividad || null,
+      searchIsSticky: true,
     });
     window.scrollTo({ top: 0, behavior: "smooth" });
   },
@@ -101,17 +101,9 @@ export const useNavigation = create<NavigationState>((set) => ({
     set({
       currentView: "home",
       selectedItemId: null,
-      searchDestination: null,
-      searchOrigin: null,
-      searchDate: null,
-      searchDateEnd: null,
-      searchAdults: null,
-      searchChildren: null,
-      searchRooms: null,
-      searchRoomsDetail: null,
-      searchTravelerType: null,
-      searchCategory: null,
-      searchActivity: null,
+      searchIsSticky: false,
+      searchSelectedVariant: null,
+      searchPriceFrom: null,
     });
     window.scrollTo({ top: 0, behavior: "smooth" });
   },
@@ -128,6 +120,13 @@ export const useNavigation = create<NavigationState>((set) => ({
       searchTravelerType: null,
       searchCategory: null,
       searchActivity: null,
+      searchIsSticky: false,
+      searchSelectedVariant: null,
+      searchPriceFrom: null,
     });
   },
+  setSearchIsSticky: (isSticky) => set({ searchIsSticky: isSticky }),
+  setSearchSelectedVariant: (variant) => set({ searchSelectedVariant: variant }),
+  setSearchPriceFrom: (price) => set({ searchPriceFrom: price }),
+  updateSearchParams: (params) => set((state) => ({ ...state, ...params })),
 }));
