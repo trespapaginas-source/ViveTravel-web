@@ -15,7 +15,7 @@ import { TravelCarousel } from "@/components/home/travel-carousel";
 import { GroupTrips } from "@/components/home/group-trips";
 import { CustomTrips } from "@/components/home/custom-trips";
 import { Testimonials } from "@/components/home/testimonials";
-import { InfluencerAuthority } from "@/components/home/influencer-authority";
+import { PromotionsBanner } from "@/components/home/promotions-banner";
 import { TeamSection } from "@/components/team/team-section";
 import { useSiteContent } from "@/lib/use-site-content";
 
@@ -51,7 +51,7 @@ function HomeView() {
 
   const componentsRegistry: Record<string, React.ReactNode> = {
     hero: <HeroSection key="hero" />,
-    influencer: <InfluencerAuthority key="influencer" />,
+    promotions: <PromotionsBanner key="promotions-banner" />,
     plans: <FeaturedPlans key="plans" />,
     gallery: <DestinationsGallery key="gallery" />,
     international: <InternationalDestinations key="international" />,
@@ -64,15 +64,6 @@ function HomeView() {
 
   return (
     <>
-      {content.campaign?.active && (
-        <div className="bg-ocean text-white py-2.5 px-4 text-center text-xs font-semibold animate-in slide-in-from-top duration-300 relative z-50">
-          {content.campaign.bannerText}{" "}
-          <span className="underline ml-1 cursor-pointer hover:text-white/90">
-            {content.campaign.ctaText}
-          </span>
-        </div>
-      )}
-      
       {order.map((sectionKey) => {
         if (active[sectionKey] && componentsRegistry[sectionKey]) {
           return componentsRegistry[sectionKey];

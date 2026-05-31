@@ -74,7 +74,7 @@ function getShortDuration(duration: string): string {
 }
 
 export function PlanDetail() {
-  const { selectedItemId, navigate } = useNavigation();
+  const { selectedItemId, navigate, searchAdults, searchChildren, searchDate, searchOrigin, searchRoomsDetail } = useNavigation();
   const { data: plan, isLoading } = useQuery({
     queryKey: ["plan", selectedItemId],
     queryFn: () => fetchPlan(selectedItemId!),
@@ -88,8 +88,19 @@ export function PlanDetail() {
   );
 
   const [shareOpen, setShareOpen] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(getNextWeekend());
-  const [guests, setGuests] = useState(1);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(() => {
+    if (searchDate) {
+      // Adding a time component avoids timezone offset parsing issues
+      const parsed = new Date(searchDate + "T12:00:00");
+      if (!isNaN(parsed.getTime())) return parsed;
+    }
+    return getNextWeekend();
+  });
+  const [guests, setGuests] = useState(() => {
+    const adults = parseInt(searchAdults || "1", 10);
+    const children = parseInt(searchChildren || "0", 10);
+    return Math.max(1, adults + children);
+  });
   const [datePopoverOpen, setDatePopoverOpen] = useState(false);
   const [guestPopoverOpen, setGuestPopoverOpen] = useState(false);
   const [mobileCalendarOpen, setMobileCalendarOpen] = useState(false);
@@ -153,19 +164,35 @@ export function PlanDetail() {
     if (!plan) return;
     const total = formatPrice(guests * plan.price);
     const pricePerPerson = formatPrice(plan.price);
+
+    let roomsBreakdown = "";
+    if (searchRoomsDetail) {
+      try {
+        const roomsObj = JSON.parse(searchRoomsDetail);
+        if (Array.isArray(roomsObj)) {
+          roomsBreakdown = roomsObj.map((r, i) => `Hab ${i+1}: ${r.adults} ad, ${r.children} ch`).join(" | ");
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
     const message = [
       `🌴 *CONSULTA VIVE TRAVEL*`,
       ``,
       `📋 *Plan:* ${plan.name}`,
       `📍 *Destino:* ${plan.location}`,
+      searchOrigin ? `🛫 *Origen:* ${searchOrigin}` : "",
       `👥 *Viajeros:* ${guests} persona${guests > 1 ? "s" : ""}`,
+      roomsBreakdown ? `🏨 *Alojamiento:* ${roomsBreakdown}` : "",
       `📅 *Fecha de viaje:* ${plan.fecha_salida || (selectedDate ? format(selectedDate, "d MMM yyyy", { locale: es }) : "Por definir")}`,
       `💵 *Total estimado:* ${total}`,
       ``,
       `Hola, acabo de cotizar esta experiencia en su sitio web. ¿Podrían confirmarme disponibilidad de cupos y opciones de pago?`
-    ].join("\n");
+    ].filter(Boolean).join("\n");
+    
     window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, "_blank");
-  }, [plan, guests, selectedDate]);
+  }, [plan, guests, selectedDate, searchOrigin, searchRoomsDetail]);
 
   const handleToggleFavorite = useCallback(() => {
     if (!selectedItemId) return;
@@ -314,36 +341,39 @@ export function PlanDetail() {
 
             {/* Info Section */}
             {isBookingStyle ? (
-              <div className="sticky top-16 sm:top-20 z-30 bg-background pt-2 pb-0 border-b border-border/50 mb-6 flex overflow-x-auto gap-6 hide-scrollbar">
-                {[
-                  { id: "general", label: "General" },
-                  { id: "incluye", label: "Incluye" },
-                  { id: "itinerario", label: "Itinerario" },
-                  { id: "condiciones", label: "Condiciones" },
-                ].map((tab) => (
-                  <a
-                    key={tab.id}
-                    href={`#${tab.id}`}
-                    className="text-[13px] sm:text-sm font-semibold text-muted-foreground hover:text-foreground whitespace-nowrap py-3 border-b-2 border-transparent hover:border-foreground transition-all"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      const element = document.getElementById(tab.id);
-                      if (element) {
-                        const offset = 100;
-                        const bodyRect = document.body.getBoundingClientRect().top;
-                        const elementRect = element.getBoundingClientRect().top;
-                        const elementPosition = elementRect - bodyRect;
-                        const offsetPosition = elementPosition - offset;
-                        window.scrollTo({
-                          top: offsetPosition,
-                          behavior: "smooth"
-                        });
-                      }
-                    }}
-                  >
-                    {tab.label}
-                  </a>
-                ))}
+              <div className="sticky top-16 sm:top-20 z-30 bg-background border-b border-border/50 mb-6 relative after:absolute after:right-0 after:top-0 after:bottom-0 after:w-8 after:bg-gradient-to-l after:from-white after:to-transparent after:pointer-events-none lg:after:hidden">
+                <div className="flex overflow-x-auto gap-6 hide-scrollbar pt-2 pb-0">
+                  {[
+                    { id: "general", label: "General" },
+                    { id: "incluye", label: "Incluye" },
+                    { id: "itinerario", label: "Itinerario" },
+                    { id: "condiciones", label: "Condiciones" },
+                  ].map((tab) => (
+                    <a
+                      key={tab.id}
+                      href={`#${tab.id}`}
+                      className="text-[13px] sm:text-sm font-semibold text-muted-foreground hover:text-foreground whitespace-nowrap py-3 border-b-2 border-transparent hover:border-foreground transition-all"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        const element = document.getElementById(tab.id);
+                        if (element) {
+                          const isMobile = window.innerWidth < 768;
+                          const offset = isMobile ? 128 : 100;
+                          const bodyRect = document.body.getBoundingClientRect().top;
+                          const elementRect = element.getBoundingClientRect().top;
+                          const elementPosition = elementRect - bodyRect;
+                          const offsetPosition = elementPosition - offset;
+                          window.scrollTo({
+                            top: offsetPosition,
+                            behavior: "smooth"
+                          });
+                        }
+                      }}
+                    >
+                      {tab.label}
+                    </a>
+                  ))}
+                </div>
               </div>
             ) : (
               <>

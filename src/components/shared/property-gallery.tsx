@@ -414,7 +414,19 @@ function Lightbox({
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.97 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
-            className="max-w-full max-h-full object-contain rounded-lg" />
+            drag="x"
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.5}
+            onDragEnd={(_e, info) => {
+              const swipe = info.offset.x;
+              const swipeThreshold = 50;
+              if (swipe < -swipeThreshold) {
+                goTo(currentIndex + 1);
+              } else if (swipe > swipeThreshold) {
+                goTo(currentIndex - 1);
+              }
+            }}
+            className="max-w-full max-h-full object-contain rounded-lg touch-none cursor-grab active:cursor-grabbing" />
         </AnimatePresence>
 
         {/* Navigation Arrows */}

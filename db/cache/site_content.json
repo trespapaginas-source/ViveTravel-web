@@ -217,10 +217,47 @@
     "emptyDescription": "Contáctanos y te ayudamos a encontrar el alojamiento ideal.",
     "contactButton": "Contáctanos"
   },
+  "promotions": {
+    "sectionTitle": "Módulo Promocional",
+    "banners": [
+      {
+        "id": 1,
+        "alt": "Plan 2x1 San Andrés",
+        "url": "/images/banner-san-andres.webp"
+      },
+      {
+        "id": 2,
+        "alt": "Escápate al paraíso Punta Cana",
+        "url": "/images/banner-punta-cana.webp"
+      },
+      {
+        "id": 3,
+        "alt": "Tour Eje Cafetero",
+        "url": "/images/banner-eje-cafetero.webp"
+      }
+    ],
+    "valueCards": [
+      {
+        "id": 1,
+        "title": "Promos y medios de pago",
+        "description": "Cuotas con tarjetas de crédito, transferencias y facilidades de pago."
+      },
+      {
+        "id": 2,
+        "title": "Beneficios y promociones",
+        "description": "Acumula beneficios y aprovecha todas las promociones 2x1 activas."
+      },
+      {
+        "id": 3,
+        "title": "Mi agente Vive Travel",
+        "description": "Asesoría personalizada por WhatsApp o llamada con nuestros agentes."
+      }
+    ]
+  },
   "influencer": {
-    "name": "Oliver Khan",
+    "name": "Luis Méndez",
     "role": "Fundador y Viajero",
-    "quote": "Mi propósito no es solo venderte un bareto, sino asegurarme de que vivas la misma experiencia increíble que yo descubrí He recorrido cada uno de estos destinos para garantizarte calidad, seguridad y recuerdos inolvidables.",
+    "quote": "Mi propósito no es solo venderte un viaje, sino asegurarme de que vivas la misma experiencia increíble que yo descubrí He recorrido cada uno de estos destinos para garantizarte calidad, seguridad y recuerdos inolvidables.",
     "imageUrl": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=800&h=1000&fit=crop&q=80",
     "instagramUrl": "https://instagram.com/luismendez",
     "instagramLabel": "Sigue mis viajes",
@@ -290,7 +327,7 @@
   "homeConfig": {
     "order": [
       "hero",
-      "influencer",
+      "promotions",
       "plans",
       "gallery",
       "international",
@@ -308,7 +345,7 @@
       "custom": true,
       "groups": true,
       "gallery": true,
-      "influencer": true,
+      "promotions": true,
       "testimonials": true,
       "international": true
     }

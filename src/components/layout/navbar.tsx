@@ -96,30 +96,69 @@ export function Navbar() {
   return (
     <header
       className={cn(
-        "fixed left-0 right-0 z-50 transition-all duration-300",
-        content.campaign?.active && isHome && !scrolled ? "top-[36px]" : "top-0",
+        "fixed top-0 left-0 right-0 z-50 transition-colors duration-200 border-b border-transparent",
         showOpaque
-          ? "bg-white/95 backdrop-blur-md shadow-sm border-b border-border/50"
+          ? "bg-white/80 backdrop-blur-lg border-zinc-100/80 shadow-[0_2px_20px_-10px_rgba(0,0,0,0.05)]"
           : "bg-transparent"
       )}
     >
+      {/* Campaign Banner inside the header */}
+      {content.campaign?.active && isHome && (
+        <div
+          className={cn(
+            "bg-ocean text-white text-center text-xs font-semibold transition-all duration-200 ease-in-out overflow-hidden relative z-50 flex items-center justify-center",
+            scrolled ? "h-0 opacity-0" : "h-[36px] opacity-100"
+          )}
+        >
+          <div className="py-2.5 px-4">
+            {content.campaign.bannerText}{" "}
+            <span className="underline ml-1 cursor-pointer hover:text-white/90">
+              {content.campaign.ctaText}
+            </span>
+          </div>
+        </div>
+      )}
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 sm:h-20">
+        <div
+          className={cn(
+            "flex items-center justify-between transition-all duration-300",
+            scrolled ? "h-14 sm:h-16" : "h-16 sm:h-20"
+          )}
+        >
           {/* Logo */}
           <button
             onClick={() => handleNav("home")}
-            className="flex items-center group"
+            className="flex items-center group relative"
           >
-            <img               src={showOpaque ? "/logos/vive-travel-original.png" : "/logos/vive-travel-white.png"}
+            {/* Original Logo (static layout size reservation) */}
+            <img
+              src="/logos/vive-travel-original.png"
               alt="Vive Travel"
               width={120}
               height={48}
-              className="h-10 sm:h-12 w-auto transition-all duration-300"
-             onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"; e.currentTarget.onerror = null; }} />
+              className={cn(
+                "h-10 sm:h-12 w-auto transition-opacity duration-300",
+                showOpaque ? "opacity-100" : "opacity-0"
+              )}
+              onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"; e.currentTarget.onerror = null; }}
+            />
+            {/* White Logo (absolute overlay) */}
+            <img
+              src="/logos/vive-travel-white.png"
+              alt="Vive Travel"
+              width={120}
+              height={48}
+              className={cn(
+                "absolute inset-0 h-10 sm:h-12 w-auto transition-opacity duration-300",
+                showOpaque ? "opacity-0 pointer-events-none" : "opacity-100"
+              )}
+              onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"; e.currentTarget.onerror = null; }}
+            />
           </button>
 
           {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-0.5 lg:gap-1">
+          <nav className="hidden md:flex items-center gap-1">
             {content.navbar.navItems.map((item) => {
               if (item.key === "plans") {
                 return (
@@ -127,14 +166,14 @@ export function Navbar() {
                     <DropdownMenuTrigger asChild>
                       <button
                         className={cn(
-                          "px-2.5 lg:px-4 py-2 rounded-full text-xs lg:text-sm font-medium transition-colors duration-200 flex items-center gap-1.5",
+                          "px-3.5 py-2 rounded-full text-sm font-medium transition-all duration-200 flex items-center gap-1.5",
                           isItemActive("plans", currentView)
                             ? showOpaque
-                              ? "bg-ocean text-white"
+                              ? "bg-ocean text-white shadow-sm shadow-ocean/10"
                               : "bg-white/20 backdrop-blur-sm text-white"
                             : showOpaque
-                            ? "text-muted-foreground hover:bg-muted hover:text-ocean-dark"
-                            : "text-white/70 hover:bg-white/10 hover:text-white"
+                            ? "text-zinc-600 hover:bg-zinc-100 hover:text-ocean-dark"
+                            : "text-white/90 hover:bg-white/10 hover:text-white"
                         )}
                       >
                         {item.label}
@@ -160,14 +199,14 @@ export function Navbar() {
                   key={item.key}
                   onClick={() => handleNav(item.key as any)}
                   className={cn(
-                    "px-2.5 lg:px-4 py-2 rounded-full text-xs lg:text-sm font-medium transition-colors duration-200",
+                    "px-3.5 py-2 rounded-full text-sm font-medium transition-all duration-200",
                     isItemActive(item.key, currentView)
                       ? showOpaque
-                        ? "bg-ocean text-white"
+                        ? "bg-ocean text-white shadow-sm shadow-ocean/10"
                         : "bg-white/20 backdrop-blur-sm text-white"
                       : showOpaque
-                      ? "text-muted-foreground hover:bg-muted hover:text-ocean-dark"
-                      : "text-white/70 hover:bg-white/10 hover:text-white"
+                      ? "text-zinc-600 hover:bg-zinc-100 hover:text-ocean-dark"
+                      : "text-white/90 hover:bg-white/10 hover:text-white"
                   )}
                 >
                   {item.label}
@@ -187,11 +226,11 @@ export function Navbar() {
                 "rounded-full h-10 w-10 sm:h-9 sm:w-9 transition-colors duration-200",
                 currentView === "favorites"
                   ? showOpaque
-                    ? "bg-ocean/10 text-ocean"
+                    ? "bg-ocean/10 text-ocean font-semibold"
                     : "bg-white/20 text-white"
                   : showOpaque
-                  ? "text-muted-foreground hover:text-ocean hover:bg-ocean/5"
-                  : "text-white/50 hover:text-white hover:bg-white/10"
+                  ? "text-zinc-600 hover:text-ocean hover:bg-ocean/5"
+                  : "text-white/90 hover:text-white hover:bg-white/10"
               )}
               aria-label="Mis favoritos"
             >
@@ -205,10 +244,10 @@ export function Navbar() {
             <Button
               onClick={() => handleNav("contact")}
               className={cn(
-                "hidden sm:flex items-center gap-2 rounded-full transition-colors duration-200",
+                "hidden sm:flex items-center gap-2 rounded-full transition-colors duration-200 font-medium px-5",
                 showOpaque
-                  ? "bg-ocean hover:bg-ocean-dark text-white"
-                  : "bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 border border-white/20"
+                  ? "bg-ocean hover:bg-ocean-dark text-white shadow-sm"
+                  : "bg-white hover:bg-white/90 text-ocean hover:text-ocean-dark shadow-sm"
               )}
             >
               <Phone className="w-4 h-4" />
@@ -222,8 +261,8 @@ export function Navbar() {
                   variant="ghost"
                   size="icon"
                   className={cn(
-                    "md:hidden h-10 w-10",
-                    showOpaque ? "text-ocean-dark" : "text-white"
+                    "md:hidden h-10 w-10 hover:bg-transparent",
+                    showOpaque ? "text-zinc-800" : "text-white"
                   )}
                 >
                   <Menu className="w-6 h-6" />
@@ -233,35 +272,38 @@ export function Navbar() {
                 <SheetTitle className="sr-only">Menú de navegación</SheetTitle>
                 <div className="flex flex-col h-full">
                   <div className="flex items-center justify-between p-4 border-b">
-                    <img                       src="/logos/vive-travel-original.png"
+                    <img
+                      src="/logos/vive-travel-original.png"
                       alt="Vive Travel"
                       width={90}
                       height={36}
                       className="h-9 w-auto"
-                     onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"; e.currentTarget.onerror = null; }} />
+                      onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"; e.currentTarget.onerror = null; }}
+                    />
                   </div>
                   <nav className="flex flex-col p-4 gap-1.5 overflow-y-auto">
-                    <div className="px-4 pt-2 pb-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                    <div className="px-4 pt-2 pb-1 text-[11px] font-semibold uppercase tracking-wider text-zinc-400">
                       {content.navbar.navItems.find(i => i.key === "plans")?.label || "Experiencias y viajes"}
                     </div>
                     {EXPERIENCE_SECTIONS.map((section) => (
                       <button
                         key={section.id}
                         onClick={() => handleExperienceNav(section.id)}
-                        className="px-4 py-3.5 rounded-xl text-left text-sm font-medium transition-colors duration-150 min-h-[44px] flex items-center text-muted-foreground hover:bg-muted hover:text-ocean"
+                        className="px-4 py-3 rounded-xl text-left text-sm font-medium transition-colors duration-150 min-h-[44px] flex items-center text-zinc-600 hover:bg-zinc-50 hover:text-ocean"
                       >
                         {section.label}
                       </button>
                     ))}
+                    <div className="h-px bg-zinc-100 my-2" />
                     {content.navbar.navItems.filter(i => i.key !== "plans").map((item) => (
                       <button
                         key={item.key}
                         onClick={() => handleNav(item.key as any)}
                         className={cn(
-                          "px-4 py-3.5 rounded-xl text-left text-sm font-medium transition-colors duration-150 min-h-[44px] flex items-center",
+                          "px-4 py-3 rounded-xl text-left text-sm font-medium transition-colors duration-150 min-h-[44px] flex items-center",
                           isItemActive(item.key, currentView)
                             ? "bg-ocean/10 text-ocean font-semibold"
-                            : "text-muted-foreground hover:bg-muted hover:text-ocean"
+                            : "text-zinc-600 hover:bg-zinc-50 hover:text-ocean"
                         )}
                       >
                         {item.label}
@@ -270,10 +312,10 @@ export function Navbar() {
                     <button
                       onClick={() => handleNav("favorites")}
                       className={cn(
-                        "flex items-center gap-2.5 px-4 py-3.5 rounded-xl text-left text-sm font-medium transition-colors duration-150 min-h-[44px]",
+                        "flex items-center gap-2.5 px-4 py-3 rounded-xl text-left text-sm font-medium transition-colors duration-150 min-h-[44px]",
                         currentView === "favorites"
                           ? "bg-ocean/10 text-ocean font-semibold"
-                          : "text-muted-foreground hover:bg-muted hover:text-ocean"
+                          : "text-zinc-600 hover:bg-zinc-50 hover:text-ocean"
                       )}
                     >
                       <Heart className={cn(
@@ -286,7 +328,7 @@ export function Navbar() {
                   <div className="mt-auto p-4 border-t">
                     <Button
                       onClick={() => handleNav("contact")}
-                      className="w-full bg-ocean hover:bg-ocean-dark text-white rounded-full"
+                      className="w-full bg-ocean hover:bg-ocean-dark text-white rounded-full h-11"
                     >
                       <Phone className="w-4 h-4 mr-2" />
                       {content.navbar.ctaButtonMobile}

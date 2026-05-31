@@ -764,14 +764,14 @@ export function FilterMobileSheet(props: {
             )}
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" className="w-80 overflow-y-auto">
-          <SheetHeader className="pb-0">
+        <SheetContent side="left" className="w-80 p-0 gap-0 flex flex-col h-full">
+          <SheetHeader className="p-5 pb-4 border-b border-border/50 shrink-0 text-left">
             <SheetTitle className="text-base">Filtros</SheetTitle>
-            <SheetDescription className="text-xs text-muted-foreground">
+            <SheetDescription className="text-xs text-muted-foreground mt-0.5">
               {resultCount} resultado{resultCount !== 1 ? "s" : ""} encontrado{resultCount !== 1 ? "s" : ""}
             </SheetDescription>
           </SheetHeader>
-          <div className="px-4 pb-20">
+          <div className="flex-1 overflow-y-auto p-5 pb-10">
             <FilterPanelContent
               sections={sections}
               filters={filters}
@@ -780,7 +780,7 @@ export function FilterMobileSheet(props: {
               onClearAll={onClearAll}
               activeCount={activeCount} />
           </div>
-          <SheetFooter className="absolute bottom-0 left-0 right-0 bg-background border-t p-3">
+          <SheetFooter className="p-4 border-t border-border/50 bg-background shrink-0 mt-0 flex flex-col gap-2">
             <Button
               onClick={onClearAll}
               variant="outline"

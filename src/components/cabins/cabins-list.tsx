@@ -82,11 +82,11 @@ const CabinCardHorizontal = memo(function CabinCardHorizontal({
         {/* Favorite Button */}
         <button
           onClick={handleFavorite}
-          className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-sm hover:bg-white hover:scale-105 transition-all duration-200 min-w-[32px] min-h-[32px]"
+          className="absolute top-3 right-3 z-10 w-10 h-10 rounded-full bg-white/95 backdrop-blur-md flex items-center justify-center shadow-sm hover:bg-white hover:scale-105 active:scale-95 transition-all duration-200 min-w-[40px] shrink-0 border border-black/5"
           aria-label={isFav ? "Eliminar de favoritos" : "Guardar en favoritos"}
         >
           <Heart
-            className={`w-3.5 h-3.5 transition-colors duration-200 ${
+            className={`w-4 h-4 transition-colors duration-200 ${
               isFav ? "fill-indigo text-indigo" : "text-muted-foreground"
             }`} />
         </button>
@@ -179,11 +179,11 @@ const CabinCardVertical = memo(function CabinCardVertical({
         {/* Favorite Button */}
         <button
           onClick={handleFavorite}
-          className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-sm hover:bg-white hover:scale-105 transition-all duration-200 min-w-[32px] min-h-[32px]"
+          className="absolute top-3 right-3 z-10 w-10 h-10 rounded-full bg-white/95 backdrop-blur-md flex items-center justify-center shadow-sm hover:bg-white hover:scale-105 active:scale-95 transition-all duration-200 min-w-[40px] shrink-0 border border-black/5"
           aria-label={isFav ? "Eliminar de favoritos" : "Guardar en favoritos"}
         >
           <Heart
-            className={`w-3.5 h-3.5 transition-colors duration-200 ${
+            className={`w-4 h-4 transition-colors duration-200 ${
               isFav ? "fill-indigo text-indigo" : "text-muted-foreground"
             }`} />
         </button>
@@ -240,7 +240,7 @@ const CabinCardVertical = memo(function CabinCardVertical({
 
 // ─── Main Cabins List ──────────────────────────────────────────────────────────
 export function CabinsList() {
-  const { navigate } = useNavigation();
+  const { navigate, searchDestination } = useNavigation();
   const { data: cabins = [], isLoading } = useQuery({
     queryKey: ["cabins"],
     queryFn: fetchCabins,
@@ -263,9 +263,23 @@ export function CabinsList() {
     [cabins]
   );
 
+  const searchedCabins = useMemo(() => {
+    let list = publishedCabins;
+    if (searchDestination) {
+      const query = searchDestination.toLowerCase().trim();
+      list = list.filter(
+        (cabin) =>
+          cabin.location.toLowerCase().includes(query) ||
+          cabin.name.toLowerCase().includes(query) ||
+          cabin.shortDescription.toLowerCase().includes(query)
+      );
+    }
+    return list;
+  }, [publishedCabins, searchDestination]);
+
   const filterSections = useMemo(
-    () => buildCabinFilters(publishedCabins),
-    [publishedCabins]
+    () => buildCabinFilters(searchedCabins),
+    [searchedCabins]
   );
 
   const { filters, toggleCheckbox, changeRange, clearAll, activeCount } =
@@ -273,8 +287,8 @@ export function CabinsList() {
 
   // Apply filters
   const filteredCabins = useMemo(
-    () => filterCabins(publishedCabins, filters),
-    [publishedCabins, filters]
+    () => filterCabins(searchedCabins, filters),
+    [searchedCabins, filters]
   );
 
   // Apply sorting

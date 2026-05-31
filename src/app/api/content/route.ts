@@ -49,9 +49,14 @@ export async function GET() {
             destinations: mergedDestinations
           };
         } else {
+          const content = row.content as Record<string, any>;
+          if (key === "influencer" && typeof content?.quote === "string") {
+            content.quote = content.quote.replace(/\bbareto\b/g, "viaje");
+            content.quote = content.quote.replace("descubrí He", "descubrí. He");
+          }
           result[key] = {
             ...defaultSiteContent[key],
-            ...(row.content as Record<string, unknown>),
+            ...content,
           };
         }
       }

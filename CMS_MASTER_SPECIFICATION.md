@@ -296,16 +296,31 @@ La tabla `site_content` almacena los textos fijos, banners promocionales y confi
   }
   ```
 
-### 3.8 Esquemas Adicionales (Navbar, Footer, Configuración de Inicio, Campañas y SEO)
+### 3.8 Esquema `promotions` (Módulo Promocional)
+* **Llave en base de datos:** `section_key = 'promotions'`
+* **Esquema del JSON:**
+  ```json
+  {
+    "sectionTitle": "string",
+    "banners": [
+      { "id": "number", "url": "string", "alt": "string" }
+    ],
+    "valueCards": [
+      { "id": "number", "title": "string", "description": "string" }
+    ]
+  }
+  ```
+
+### 3.9 Esquemas Adicionales (Navbar, Footer, Configuración de Inicio, Campañas y SEO)
 El CMS también debe permitir configurar el flujo global mediante:
-* **Configuración del Home (`homeConfig`):**
+  * **Configuración del Home (`homeConfig`):**
   * Orden y estado de activación de las secciones en la página principal:
   ```json
   {
-    "order": ["hero", "influencer", "plans", "gallery", "international", "stats", "groups", "custom", "testimonials", "team"],
+    "order": ["hero", "promotions", "plans", "gallery", "international", "stats", "groups", "custom", "testimonials", "team"],
     "active": {
       "hero": true,
-      "influencer": true,
+      "promotions": true,
       "plans": true,
       "gallery": true,
       "international": true,

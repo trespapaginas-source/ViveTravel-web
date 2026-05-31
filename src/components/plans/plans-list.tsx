@@ -119,9 +119,8 @@ const PlanCardHorizontal = memo(function PlanCardHorizontal({
 
         {/* Date Badge for Grupales — top left */}
         {getPlanExperienceSection(plan) === "grupales" && plan.fecha_salida && (
-          <div className="absolute top-3 left-3 z-10 flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold text-slate-700"
-            style={{ background: "rgba(255,255,255,0.88)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)", boxShadow: "0 1px 4px rgba(0,0,0,0.10)" }}>
-            <Calendar className="w-3 h-3 shrink-0 text-slate-600" />
+          <div className="absolute top-2.5 left-2.5 z-10 bg-white/95 backdrop-blur-md px-2.5 py-1 rounded-full flex items-center gap-1.5 text-[11px] font-semibold text-slate-700 shadow-sm border border-black/5">
+            <Calendar className="w-3.5 h-3.5 shrink-0 text-slate-600" />
             <span>{plan.fecha_salida}</span>
           </div>
         )}
@@ -135,14 +134,14 @@ const PlanCardHorizontal = memo(function PlanCardHorizontal({
         )}
 
         {/* Favorite Button — top right */}
-        <div className="absolute top-3 right-3 z-10">
+        <div className="absolute top-2.5 right-2.5 z-10">
           <button
             onClick={handleFavorite}
-            className="w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-sm hover:bg-white hover:scale-105 transition-all duration-200 min-w-[32px] shrink-0"
+            className="w-10 h-10 rounded-full bg-white/95 backdrop-blur-md flex items-center justify-center shadow-sm hover:bg-white hover:scale-105 active:scale-95 transition-all duration-200 min-w-[40px] shrink-0 border border-black/5"
             aria-label={isFav ? "Eliminar de favoritos" : "Guardar en favoritos"}
           >
             <Heart
-              className={`w-3.5 h-3.5 transition-colors duration-200 ${
+              className={`w-4 h-4 transition-colors duration-200 ${
                 isFav ? "fill-indigo text-indigo" : "text-muted-foreground"
               }`} />
           </button>
@@ -267,9 +266,8 @@ const PlanCardVertical = memo(function PlanCardVertical({
 
         {/* Date Badge for Grupales — top left */}
         {getPlanExperienceSection(plan) === "grupales" && plan.fecha_salida && (
-          <div className="absolute top-3 left-3 z-10 flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-semibold text-slate-800"
-            style={{ background: "rgba(255,255,255,0.85)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)", boxShadow: "0 1px 4px rgba(0,0,0,0.12)" }}>
-            <Calendar className="w-3 h-3 shrink-0 text-slate-600" />
+          <div className="absolute top-2.5 left-2.5 z-10 bg-white/95 backdrop-blur-md px-2.5 py-1 rounded-full flex items-center gap-1.5 text-[11px] font-semibold text-slate-700 shadow-sm border border-black/5">
+            <Calendar className="w-3.5 h-3.5 shrink-0 text-slate-600" />
             <span>{plan.fecha_salida}</span>
           </div>
         )}
@@ -283,14 +281,14 @@ const PlanCardVertical = memo(function PlanCardVertical({
         )}
 
         {/* Favorite Button — top right */}
-        <div className="absolute top-3 right-3 z-10">
+        <div className="absolute top-2.5 right-2.5 z-10">
           <button
             onClick={handleFavorite}
-            className="w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-sm hover:bg-white hover:scale-105 transition-all duration-200 min-w-[32px] shrink-0"
+            className="w-10 h-10 rounded-full bg-white/95 backdrop-blur-md flex items-center justify-center shadow-sm hover:bg-white hover:scale-105 active:scale-95 transition-all duration-200 min-w-[40px] shrink-0 border border-black/5"
             aria-label={isFav ? "Eliminar de favoritos" : "Guardar en favoritos"}
           >
             <Heart
-              className={`w-3.5 h-3.5 transition-colors duration-200 ${
+              className={`w-4 h-4 transition-colors duration-200 ${
                 isFav ? "fill-indigo text-indigo" : "text-muted-foreground"
               }`} />
           </button>
@@ -348,7 +346,7 @@ const PlanCardVertical = memo(function PlanCardVertical({
 
 // ─── Main Plans List ───────────────────────────────────────────────────────────
 export function PlansList() {
-  const { selectedItemId, navigate } = useNavigation();
+  const { selectedItemId, navigate, searchDestination } = useNavigation();
   const activeSection = getExperienceSection(selectedItemId);
 
   const { data: tourPlans = [], isLoading } = useQuery({
@@ -374,11 +372,22 @@ export function PlansList() {
   );
 
   const sectionPlans = useMemo(
-    () =>
-      publishedPlans.filter(
+    () => {
+      let list = publishedPlans.filter(
         (plan) => getPlanExperienceSection(plan) === activeSection.id
-      ),
-    [publishedPlans, activeSection.id]
+      );
+      if (searchDestination) {
+        const query = searchDestination.toLowerCase().trim();
+        list = list.filter(
+          (plan) =>
+            plan.location.toLowerCase().includes(query) ||
+            plan.name.toLowerCase().includes(query) ||
+            plan.shortDescription.toLowerCase().includes(query)
+        );
+      }
+      return list;
+    },
+    [publishedPlans, activeSection.id, searchDestination]
   );
 
   const filterSections = useMemo(
@@ -481,7 +490,7 @@ export function PlansList() {
         </div>
 
         {/* Tabs - Order 1 in Mobile, 2 in Desktop */}
-        <div className="order-1 lg:order-2 mb-5 lg:mb-6 w-full overflow-hidden mt-1 lg:mt-0">
+        <div className="order-1 lg:order-2 mb-5 lg:mb-6 w-full overflow-hidden mt-1 lg:mt-0 relative after:absolute after:right-0 after:top-0 after:bottom-0 after:w-8 after:bg-gradient-to-l after:from-white after:to-transparent after:pointer-events-none lg:after:hidden">
           <div className="flex overflow-x-auto items-center md:justify-center gap-2.5 pb-2 -mb-2 px-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             {EXPERIENCE_SECTIONS.map((section) => (
               <button

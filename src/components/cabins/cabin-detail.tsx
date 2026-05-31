@@ -62,6 +62,7 @@ import {
   TreeDeciduous,
   Minus,
   Plus,
+  X,
 } from "lucide-react";
 import { useState, useCallback } from "react";
 import { type DateRange } from "react-day-picker";
@@ -71,6 +72,7 @@ import { toast } from "sonner";
 import { isFavorite, toggleFavorite } from "@/lib/favorites";
 import { ShareDialog } from "@/components/shared/share-dialog";
 import { ExpandableSection } from "@/components/shared/expandable-section";
+import { WHATSAPP_NUMBER } from "@/lib/config";
 
 function formatPrice(price: number): string {
   return new Intl.NumberFormat("es-CO", {
@@ -205,7 +207,7 @@ function getLocationData(locationStr: string) {
 }
 
 export function CabinDetail() {
-  const { selectedItemId, navigate } = useNavigation();
+  const { selectedItemId, navigate, searchDate, searchDateEnd, searchRoomsDetail } = useNavigation();
 
   const { data: cabin, isLoading } = useQuery({
     queryKey: ["cabin", selectedItemId],
@@ -226,6 +228,13 @@ export function CabinDetail() {
   const [mobileBottomSheetOpen, setMobileBottomSheetOpen] = useState(false);
   const [mobileCalendarModalOpen, setMobileCalendarModalOpen] = useState(false);
   const [mobileDateRange, setMobileDateRange] = useState<DateRange | undefined>(() => {
+    if (searchDate && searchDateEnd) {
+      const from = new Date(searchDate + "T12:00:00");
+      const to = new Date(searchDateEnd + "T12:00:00");
+      if (!isNaN(from.getTime()) && !isNaN(to.getTime())) {
+        return { from, to };
+      }
+    }
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const nextSaturday = new Date(today);
@@ -260,6 +269,41 @@ export function CabinDetail() {
       description: nowFav ? "Encuéntralo en tu lista de favoritos" : undefined,
     });
   }, [selectedItemId]);
+
+  const handleWhatsAppReservation = useCallback(() => {
+    if (!cabin || !mobileDateRange?.from || !mobileDateRange?.to) return;
+    const checkInStr = format(mobileDateRange.from, "d 'de' MMMM yyyy", { locale: es });
+    const checkOutStr = format(mobileDateRange.to, "d 'de' MMMM yyyy", { locale: es });
+    const totalStr = formatPrice(mobileTotal);
+    
+    let roomsBreakdown = "";
+    if (searchRoomsDetail) {
+      try {
+        const roomsObj = JSON.parse(searchRoomsDetail);
+        if (Array.isArray(roomsObj)) {
+          roomsBreakdown = roomsObj.map((r, i) => `Hab ${i+1}: ${r.adults} ad, ${r.children} ch`).join(" | ");
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    const message = [
+      `🏡 *COTIZACIÓN DE CABAÑA - VIVE TRAVEL*`,
+      ``,
+      `🏡 *Alojamiento:* ${cabin.name}`,
+      `📍 *Ubicación:* ${cabin.location}`,
+      `📅 *Check-in:* ${checkInStr}`,
+      `📅 *Check-out:* ${checkOutStr}`,
+      roomsBreakdown ? `🏨 *Habitaciones:* ${roomsBreakdown}` : "",
+      `🌙 *Estadía:* ${mobileNightCount} noche${mobileNightCount > 1 ? "s" : ""}`,
+      `💵 *Total estimado:* ${totalStr}`,
+      ``,
+      `Hola, me interesa reservar esta cabaña en las fechas indicadas. ¿Podrían confirmarme la disponibilidad y pasos a seguir?`
+    ].filter(Boolean).join("\n");
+    
+    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, "_blank");
+  }, [cabin, mobileDateRange, mobileNightCount, mobileTotal, searchRoomsDetail]);
 
   if (isLoading) {
     return (
@@ -483,11 +527,11 @@ export function CabinDetail() {
                   <h2 className="text-2xl md:text-[28px] font-bold tracking-tight text-foreground mb-4">
                     ¿Dónde vas a dormir?
                   </h2>
-                  <div className="flex overflow-x-auto gap-4 pb-4 scrollbar-hide touch-pan-y">
+                  <div className="flex overflow-x-auto gap-4 pb-4 overscroll-behavior-x-contain snap-x snap-mandatory hide-scrollbar">
                     {displayRooms.map((bedroom: any) => (
                       <div 
                         key={bedroom.id} 
-                        className="w-[160px] flex-none group cursor-pointer overflow-hidden overflow-x-hidden touch-pan-y"
+                        className="w-[160px] flex-none group cursor-pointer overflow-hidden overflow-x-hidden snap-start"
                         onClick={() => setRoomsModalOpen(true)}
                       >
                         <div className="w-full h-[110px] rounded-xl overflow-hidden mb-2 relative">
@@ -622,65 +666,25 @@ export function CabinDetail() {
 
             {/* Mobile Airbnb-style Reservation Flow (Visible only on mobile/tablet) */}
             <div className="lg:hidden">
-              <h2 className="text-2xl font-semibold text-foreground mb-1">
-                {mobileNightCount} noches en {locationData.text.split(',')[0]}
+              <h2 className="text-2xl font-bold text-foreground mb-3">
+                Fechas de estadía
               </h2>
-              <p className="text-sm text-muted-foreground mb-4">
-                {mobileDateRange?.from && mobileDateRange?.to
-                  ? `${format(mobileDateRange.from, "d 'de' MMM", { locale: es })} - ${format(mobileDateRange.to, "d 'de' MMM", { locale: es })}`
-                  : "Selecciona tus fechas"}
-              </p>
-              
-              <div className="bg-muted/30 rounded-2xl p-2 -mx-2 sm:mx-0 sm:border sm:border-border/50 flex justify-center mobile-airbnb-calendar">
-                <style dangerouslySetInnerHTML={{__html: `
-                  .mobile-airbnb-calendar button[data-range-start="true"],
-                  .mobile-airbnb-calendar button[data-range-end="true"] {
-                    background-color: #008B8B !important;
-                    color: white !important;
-                    border-radius: 50% !important;
-                  }
-                  .mobile-airbnb-calendar button[data-range-middle="true"] {
-                    background-color: transparent !important;
-                    color: #1F2937 !important;
-                    border-radius: 0 !important;
-                  }
-                  .mobile-airbnb-calendar td:has(button[data-range-start="true"]) {
-                    background: linear-gradient(to right, transparent 50%, #e8f5f5 50%) !important;
-                  }
-                  .mobile-airbnb-calendar td:has(button[data-range-end="true"]) {
-                    background: linear-gradient(to left, transparent 50%, #e8f5f5 50%) !important;
-                  }
-                  .mobile-airbnb-calendar td:has(button[data-range-start="true"][data-range-end="true"]) {
-                    background: transparent !important;
-                  }
-                  .mobile-airbnb-calendar td:has(button[data-range-middle="true"]) {
-                    background-color: #e8f5f5 !important;
-                  }
-                  .mobile-airbnb-calendar button:disabled {
-                    color: #D1D5DB !important;
-                    opacity: 0.5;
-                  }
-                  .mobile-airbnb-calendar button:not(:disabled):not([data-range-start="true"]):not([data-range-end="true"]):not([data-range-middle="true"]) {
-                    color: #1F2937 !important;
-                  }
-                `}} />
-                <Calendar
-                  initialFocus
-                  mode="range"
-                  defaultMonth={mobileDateRange?.from}
-                  selected={mobileDateRange}
-                  onSelect={setMobileDateRange}
-                  numberOfMonths={1}
-                  disabled={(date) => {
-                    const today = new Date();
-                    today.setHours(0, 0, 0, 0);
-                    return date < today;
-                  }}
-                  className="mx-auto w-full max-w-[320px]" />
-              </div>
-              <div className="flex justify-start mt-2">
-                <Button variant="link" onClick={() => setMobileDateRange(undefined)} className="text-foreground underline px-0">Borrar fechas</Button>
-              </div>
+              <button
+                onClick={() => setMobileCalendarModalOpen(true)}
+                className="w-full flex items-center justify-between p-4 rounded-2xl border border-border bg-muted/20 hover:border-ocean/40 transition-colors text-left"
+              >
+                <div>
+                  <p className="text-sm font-semibold text-foreground">
+                    {mobileNightCount > 0 ? `${mobileNightCount} noches en esta cabaña` : "Seleccionar fechas"}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    {mobileDateRange?.from && mobileDateRange?.to
+                      ? `${format(mobileDateRange.from, "d 'de' MMM", { locale: es })} – ${format(mobileDateRange.to, "d 'de' MMM", { locale: es })}`
+                      : "Añade tus fechas de viaje para obtener una cotización"}
+                  </p>
+                </div>
+                <Calendar className="w-5 h-5 text-ocean/80 shrink-0" />
+              </button>
             </div>
 
 
@@ -762,8 +766,16 @@ export function CabinDetail() {
       {/* Mobile Bottom Sheet (Price Details) */}
       <Dialog open={mobileBottomSheetOpen} onOpenChange={setMobileBottomSheetOpen}>
         <DialogContent className="w-full max-w-full h-auto p-0 gap-0 flex flex-col bg-background z-[100] bottom-0 top-auto translate-y-0 border-t border-border/50 rounded-t-2xl rounded-b-none lg:hidden data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:slide-out-to-bottom-full data-[state=open]:slide-in-from-bottom-full">
-          <DialogHeader className="px-5 py-4 border-b border-border/50 bg-background/95 backdrop-blur-sm z-10 text-left flex flex-row items-center justify-between rounded-t-2xl">
+          <div className="w-12 h-1.5 bg-muted-foreground/20 rounded-full mx-auto my-3 flex-shrink-0" />
+          <DialogHeader className="px-5 py-2 border-b border-border/50 bg-background/95 backdrop-blur-sm z-10 text-left flex flex-row items-center justify-between">
             <DialogTitle className="text-xl font-bold">Detalles del precio</DialogTitle>
+            <button
+              onClick={() => setMobileBottomSheetOpen(false)}
+              aria-label="Cerrar"
+              className="flex items-center justify-center w-8 h-8 rounded-full hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
+            >
+              <X className="w-5 h-5" />
+            </button>
           </DialogHeader>
           <div className="p-6 space-y-6 flex-1 bg-background pb-10">
              <div className="flex justify-between items-center text-base">
@@ -790,23 +802,23 @@ export function CabinDetail() {
              
              <Separator />
 
-             <div className="flex justify-between items-center font-bold text-lg">
-               <span>Total estimado</span>
-               <span>{formatPrice(mobileTotal)}</span>
-             </div>
-             
-             <div className="flex justify-center mt-6">
-               <Button className="relative inline-flex items-center justify-center gap-2 h-12 px-7 rounded-full bg-white border border-[#1DA851]/20 shadow-[0_4px_14px_0_rgba(29,168,81,0.12)] transition-all duration-300 hover:shadow-[0_6px_20px_rgba(29,168,81,0.2)] hover:-translate-y-0.5 group overflow-hidden" onClick={() => {
-                 setMobileBottomSheetOpen(false);
-                 navigate("contact");
-               }}>
-                 <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-[#1DA851]/10 to-transparent group-hover:animate-[shimmer_1.5s_infinite]" />
-                 <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-[#1DA851] relative z-10"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
-                 <span className="relative z-10 font-bold text-base bg-clip-text text-transparent bg-gradient-to-r from-ocean-dark to-[#1DA851]">
-                   Reservar por WhatsApp
-                 </span>
-               </Button>
-             </div>
+              <div className="flex justify-between items-center font-bold text-lg">
+                <span>Total estimado</span>
+                <span>{formatPrice(mobileTotal)}</span>
+              </div>
+              
+              <div className="flex justify-center mt-6">
+                <Button className="relative inline-flex items-center justify-center gap-2 h-12 px-7 rounded-full bg-white border border-[#1DA851]/20 shadow-[0_4px_14px_0_rgba(29,168,81,0.12)] transition-all duration-300 hover:shadow-[0_6px_20px_rgba(29,168,81,0.2)] hover:-translate-y-0.5 group overflow-hidden w-full" onClick={() => {
+                  setMobileBottomSheetOpen(false);
+                  handleWhatsAppReservation();
+                }}>
+                  <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-[#1DA851]/10 to-transparent group-hover:animate-[shimmer_1.5s_infinite]" />
+                  <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-[#1DA851] relative z-10"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+                  <span className="relative z-10 font-bold text-base bg-clip-text text-transparent bg-gradient-to-r from-ocean-dark to-[#1DA851]">
+                    Reservar por WhatsApp
+                  </span>
+                </Button>
+              </div>
           </div>
         </DialogContent>
       </Dialog>
@@ -1028,7 +1040,7 @@ function PriceCard({ cabin }: { cabin: Cabin }) {
           className="w-full rounded-xl h-11 border-leaf/30 text-leaf hover:bg-leaf/5 gap-2"
         >
           <a
-            href={`https://wa.me/573001234567?text=${encodeURIComponent(
+            href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
               `Hola, me interesa la ${cabin.name} en ${cabin.location}. ¿Podrían darme más información?`
             )}`}
             target="_blank"

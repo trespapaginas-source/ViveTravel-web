@@ -136,6 +136,24 @@ export interface CabinsListContent {
   contactButton: string;
 }
 
+export interface BannerItem {
+  id: number;
+  url: string;
+  alt: string;
+}
+
+export interface ValueCardItem {
+  id: number;
+  title: string;
+  description: string;
+}
+
+export interface PromotionsContent {
+  sectionTitle: string;
+  banners: BannerItem[];
+  valueCards: ValueCardItem[];
+}
+
 export interface InfluencerContent {
   name: string;
   role: string;
@@ -211,6 +229,7 @@ export interface SiteContentData {
   navbar: NavbarContent;
   plansList: PlansListContent;
   cabinsList: CabinsListContent;
+  promotions: PromotionsContent;
   influencer: InfluencerContent;
   team: TeamContent;
   gallery: GalleryContent;

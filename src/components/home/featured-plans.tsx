@@ -31,7 +31,7 @@ const PlanCard = memo(function PlanCard({
 }) {
   return (
     <Card
-      className="group w-[80vw] max-w-[290px] sm:w-auto sm:max-w-none flex-none flex flex-col cursor-pointer overflow-hidden overflow-x-hidden touch-pan-y rounded-2xl border border-zinc-100 hover:border-zinc-200 bg-white transition-all duration-300 hover:-translate-y-1 shadow-none"
+      className="group w-full h-full flex flex-col cursor-pointer overflow-hidden overflow-x-hidden rounded-2xl border border-zinc-100 hover:border-zinc-200 bg-white transition-all duration-300 hover:-translate-y-1 shadow-none"
       onClick={() => onNavigate(plan.id)}
     >
       {/* Image */}
@@ -71,7 +71,11 @@ const PlanCard = memo(function PlanCard({
           {plan.shortDescription}
         </p>
 
-        <div className="mt-auto pt-4 border-t border-zinc-100 flex items-center justify-end">
+        <div className="mt-auto pt-4 border-t border-zinc-100 flex items-center justify-between gap-2">
+          <span className="text-ocean text-[13px] font-semibold flex items-center gap-1 transition-colors duration-200 group-hover:text-ocean-dark">
+            Ver detalles
+            <ArrowRight className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-0.5" />
+          </span>
           <div className="text-right">
             <p className="text-foreground font-bold text-[17px] sm:text-[18px] leading-tight">
               {formatPrice(plan.price)}
@@ -105,10 +109,10 @@ export function FeaturedPlans() {
             title={featured.title}
             subtitle={featured.subtitle}
           />
-          <div className="mt-8 flex sm:grid overflow-x-auto sm:overflow-visible sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 scroll-smooth pb-4 sm:pb-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] touch-pan-y">
+          <div className="mt-8 flex sm:grid overflow-x-auto sm:overflow-visible sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 scroll-smooth pb-4 sm:pb-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="flex-none">
-                <Card className="w-[80vw] max-w-[290px] sm:w-auto sm:max-w-none flex flex-col overflow-hidden rounded-2xl shadow-none border border-zinc-100">
+              <div key={i} className="flex-none w-[80vw] max-w-[290px] sm:w-auto sm:max-w-none">
+                <Card className="w-full h-full flex flex-col overflow-hidden rounded-2xl shadow-none border border-zinc-100">
                   <Skeleton className="h-[220px] w-full" />
                   <CardContent className="p-4 space-y-3">
                     <Skeleton className="h-5 w-3/4" />
@@ -134,7 +138,7 @@ export function FeaturedPlans() {
           subtitle={featured.subtitle}
         />
 
-        <div className="flex gap-4 sm:grid overflow-x-auto sm:overflow-visible sm:grid-cols-2 lg:grid-cols-4 sm:gap-6 scroll-smooth pb-4 sm:pb-0 px-4 sm:px-0 -mx-4 sm:mx-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] touch-pan-y">
+        <div className="flex gap-4 sm:grid overflow-x-auto sm:overflow-visible sm:grid-cols-2 lg:grid-cols-4 sm:gap-6 scroll-smooth pb-4 sm:pb-0 px-4 sm:px-0 -mx-4 sm:mx-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] snap-x snap-mandatory scroll-pl-4">
           {featuredPlans.map((plan, index) => {
             return (
               <motion.div
@@ -147,12 +151,18 @@ export function FeaturedPlans() {
                   ease: [0.16, 1, 0.3, 1],
                   delay: index * 0.1,
                 }}
-                className="flex-none flex w-full sm:block"
+                className="flex-none w-[80vw] max-w-[290px] sm:w-auto sm:max-w-none snap-start snap-always flex sm:block"
               >
                 <PlanCard plan={plan} onNavigate={handleNavigate} />
               </motion.div>
             );
           })}
+        </div>
+
+        {/* Indicador de deslizamiento horizontal en móvil */}
+        <div className="flex sm:hidden items-center justify-center gap-1.5 text-xs text-muted-foreground mt-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-ocean animate-ping" />
+          <span>Desliza para ver más planes</span>
         </div>
 
 

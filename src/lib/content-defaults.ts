@@ -314,6 +314,44 @@ Se consideran fuerza mayor: desastres naturales, epidemias, declaraciones de eme
     contactButton: "Contáctanos",
   },
 
+  promotions: {
+    sectionTitle: "Módulo Promocional",
+    banners: [
+      {
+        id: 1,
+        url: "/images/banner-san-andres.webp",
+        alt: "Plan 2x1 San Andrés"
+      },
+      {
+        id: 2,
+        url: "/images/banner-punta-cana.webp",
+        alt: "Escápate al paraíso Punta Cana"
+      },
+      {
+        id: 3,
+        url: "/images/banner-eje-cafetero.webp",
+        alt: "Tour Eje Cafetero"
+      }
+    ],
+    valueCards: [
+      {
+        id: 1,
+        title: "Promos y medios de pago",
+        description: "Cuotas con tarjetas de crédito, transferencias y facilidades de pago."
+      },
+      {
+        id: 2,
+        title: "Beneficios y promociones",
+        description: "Acumula beneficios y aprovecha todas las promociones 2x1 activas."
+      },
+      {
+        id: 3,
+        title: "Mi agente Vive Travel",
+        description: "Asesoría personalizada por WhatsApp o llamada con nuestros agentes."
+      }
+    ]
+  },
+
   influencer: {
     name: "Luis Méndez",
     role: "Fundador y Viajero",
@@ -391,7 +429,7 @@ Se consideran fuerza mayor: desastres naturales, epidemias, declaraciones de eme
   homeConfig: {
     order: [
       "hero",
-      "influencer",
+      "promotions",
       "plans",
       "gallery",
       "international",
@@ -403,7 +441,7 @@ Se consideran fuerza mayor: desastres naturales, epidemias, declaraciones de eme
     ],
     active: {
       hero: true,
-      influencer: true,
+      promotions: true,
       plans: true,
       gallery: true,
       international: true,
