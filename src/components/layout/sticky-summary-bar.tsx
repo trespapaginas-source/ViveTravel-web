@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { useNavigation } from "@/lib/store";
 import { ArrowRight, Calendar, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -8,6 +9,7 @@ import { es } from "date-fns/locale";
 
 export function StickySummaryBar() {
   const {
+    currentView,
     searchDestination,
     searchOrigin,
     searchDate,
@@ -21,7 +23,29 @@ export function StickySummaryBar() {
     setSearchIsSticky,
   } = useNavigation();
 
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 200);
+    };
+
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   if (!searchIsSticky || !searchDestination) return null;
+
+  const isListView = currentView === "plans" || currentView === "cabins";
+  const isDetailView = currentView === "plan-detail" || currentView === "cabin-detail";
+  const isVisible = isDetailView || (isListView && isScrolled);
+
+  const visibilityClasses = isVisible
+    ? "translate-y-0 opacity-100"
+    : "-translate-y-full opacity-0 pointer-events-none";
 
   // Format dates nicely
   const formatDateRange = () => {
@@ -55,7 +79,7 @@ export function StickySummaryBar() {
   };
 
   return (
-    <div className="fixed top-14 sm:top-16 left-0 right-0 z-30 bg-white/95 backdrop-blur-md border-b border-zinc-200/80 py-2.5 px-4 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.05)] transition-all duration-300 animate-in slide-in-from-top duration-300">
+    <div className={`fixed top-14 sm:top-16 left-0 right-0 z-30 bg-white/95 backdrop-blur-md border-b border-zinc-200/80 py-2.5 px-4 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.05)] transition-all duration-500 transform ${visibilityClasses}`}>
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3 text-sm">
         {/* Route Info */}
         <div className="flex items-center gap-2 font-bold text-zinc-800">

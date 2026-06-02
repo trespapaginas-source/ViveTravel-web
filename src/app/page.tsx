@@ -143,9 +143,11 @@ export default function HomePage() {
   const isHome = currentView === "home";
   
   const showSticky = searchIsSticky && searchDestination;
+  const isDetailView = currentView === "plan-detail" || currentView === "cabin-detail";
+  
   const mainPadding = isHome 
     ? "" 
-    : showSticky 
+    : (showSticky && isDetailView)
       ? "pt-44 md:pt-32" 
       : "pt-16 sm:pt-20";
 

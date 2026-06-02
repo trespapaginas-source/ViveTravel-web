@@ -26,12 +26,17 @@ import {
   MapPin,
   ArrowRight,
   Heart,
+  Compass,
+  Calendar,
 } from "lucide-react";
 import { isFavorite, toggleFavorite } from "@/lib/favorites";
 import { useState, useCallback, useEffect } from "react";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 import { sortCabins, getGridCols, ITEMS_PER_PAGE } from "@/lib/sorting";
+import { WHATSAPP_NUMBER } from "@/lib/config";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
 
 function formatPrice(price: number): string {
   return new Intl.NumberFormat("es-CO", {
@@ -42,13 +47,195 @@ function formatPrice(price: number): string {
   }).format(price);
 }
 
+const getCabinWhatsAppUrl = (
+  cabin: Cabin,
+  searchParams?: {
+    destination?: string | null;
+    date?: string | null;
+    dateEnd?: string | null;
+    adults?: string | null;
+    children?: string | null;
+  }
+) => {
+  const destination = searchParams?.destination || cabin.location;
+  let dateText = "fechas a convenir";
+  if (searchParams?.date) {
+    try {
+      const start = new Date(searchParams.date + "T12:00:00");
+      const startStr = format(start, "d MMM", { locale: es });
+      if (searchParams.dateEnd) {
+        const end = new Date(searchParams.dateEnd + "T12:00:00");
+        const endStr = format(end, "d MMM yyyy", { locale: es });
+        dateText = `${startStr} al ${endStr}`;
+      } else {
+        dateText = `${startStr} (mes aproximado: ${format(start, "MMMM", { locale: es })})`;
+      }
+    } catch (_) {}
+  }
+  
+  const adultsStr = searchParams?.adults || "2";
+  const childrenStr = searchParams?.children || "0";
+  const totalTravelers = parseInt(adultsStr, 10) + parseInt(childrenStr, 10);
+  const travelersText = `${totalTravelers} persona${totalTravelers !== 1 ? "s" : ""}`;
+  
+  const text = `Hola Vive Travel Atlántico, me interesa cotizar la cabaña *${cabin.name}* en *${destination}* para la fecha *${dateText}*, para *${travelersText}*. ¿Me podrían confirmar disponibilidad y tarifas?`;
+  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
+};
+
+// ─── Cabin Search Summary Header Component ─────────────────────────────────────
+
+function CabinSearchSummaryHeader({
+  destination,
+  date,
+  dateEnd,
+  adults,
+  children,
+  resultCount,
+  bestMatchCabin,
+  onModify,
+}: {
+  destination: string;
+  date: string | null;
+  dateEnd: string | null;
+  adults: string | null;
+  children: string | null;
+  resultCount: number;
+  bestMatchCabin?: Cabin;
+  onModify: () => void;
+}) {
+  const totalTravelers = parseInt(adults || "2", 10) + parseInt(children || "0", 10);
+  const travelersText = `${totalTravelers} persona${totalTravelers !== 1 ? "s" : ""}`;
+  
+  const getDatesLabel = () => {
+    if (!date) return "Fechas por definir";
+    try {
+      const start = new Date(date + "T12:00:00");
+      const startStr = format(start, "d MMM", { locale: es });
+      if (!dateEnd) return `${startStr} (${format(start, "MMMM", { locale: es })})`;
+      const end = new Date(dateEnd + "T12:00:00");
+      const endStr = format(end, "d MMM yyyy", { locale: es });
+      return `${startStr} - ${endStr}`;
+    } catch (_) {
+      return "Fechas por definir";
+    }
+  };
+
+  return (
+    <div className="bg-gradient-to-br from-slate-50 via-white to-slate-50 border border-zinc-200/70 rounded-2xl p-4 md:p-5 mb-5 md:mb-6 shadow-sm">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-4 mb-4 border-b border-zinc-150">
+        <div>
+          <div className="flex items-center gap-2 text-xs font-bold text-ocean uppercase tracking-wider mb-1">
+            <Compass className="w-3.5 h-3.5" />
+            <span>Búsqueda de alojamiento inteligente</span>
+          </div>
+          <h2 className="text-xl sm:text-2xl font-black text-zinc-800 leading-tight">
+            Cabañas en {destination}
+          </h2>
+        </div>
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={onModify}
+          className="rounded-xl text-xs font-bold border-zinc-250 text-zinc-650 hover:bg-zinc-100 hover:text-zinc-900 shrink-0 h-9"
+        >
+          Modificar búsqueda
+        </Button>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+        <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="bg-white border border-zinc-150 p-3 rounded-xl flex flex-col justify-between">
+            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Zona</span>
+            <div className="flex items-center gap-1.5 mt-1">
+              <MapPin className="w-3.5 h-3.5 text-ocean shrink-0" />
+              <span className="text-xs sm:text-sm font-extrabold text-zinc-800 truncate">{destination}</span>
+            </div>
+          </div>
+
+          <div className="bg-white border border-zinc-150 p-3 rounded-xl flex flex-col justify-between">
+            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Fechas</span>
+            <div className="flex items-center gap-1.5 mt-1">
+              <Calendar className="w-3.5 h-3.5 text-ocean shrink-0" />
+              <span className="text-xs sm:text-sm font-extrabold text-zinc-800 truncate">{getDatesLabel()}</span>
+            </div>
+          </div>
+
+          <div className="bg-white border border-zinc-150 p-3 rounded-xl flex flex-col justify-between">
+            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Huéspedes</span>
+            <div className="flex items-center gap-1.5 mt-1">
+              <Users className="w-3.5 h-3.5 text-ocean shrink-0" />
+              <span className="text-xs sm:text-sm font-extrabold text-zinc-800 truncate">{travelersText}</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="lg:col-span-5 bg-ocean/5 border border-ocean/10 p-4 rounded-xl flex flex-col justify-between gap-2">
+          {bestMatchCabin ? (
+            <>
+              <div>
+                <div className="flex justify-between items-center gap-2">
+                  <span className="text-[9px] font-black text-ocean uppercase tracking-wider bg-ocean/10 px-2 py-0.5 rounded-full">
+                    Alojamiento recomendado
+                  </span>
+                  <span className="text-[11px] text-muted-foreground font-semibold">
+                    {resultCount} {resultCount === 1 ? "cabaña" : "cabañas"}
+                  </span>
+                </div>
+                <h3 className="font-extrabold text-sm sm:text-base text-zinc-800 mt-1.5 line-clamp-1">
+                  {bestMatchCabin.name}
+                </h3>
+                <div className="flex flex-wrap gap-1.5 mt-2">
+                  <span className="text-[9px] font-semibold text-zinc-650 bg-white border border-zinc-200 px-2 py-0.5 rounded-md">
+                    👤 {bestMatchCabin.capacity} huéspedes
+                  </span>
+                  <span className="text-[9px] font-semibold text-zinc-650 bg-white border border-zinc-200 px-2 py-0.5 rounded-md">
+                    🛏️ {bestMatchCabin.bedrooms} hab.
+                  </span>
+                  {bestMatchCabin.highlights?.[0] && (
+                    <span className="text-[9px] font-semibold text-ocean bg-white border border-ocean/10 px-2 py-0.5 rounded-md">
+                      ✨ {bestMatchCabin.highlights[0]}
+                    </span>
+                  )}
+                </div>
+              </div>
+              <div className="flex items-center justify-between pt-2 border-t border-ocean/10">
+                <div className="flex items-baseline gap-1">
+                  <span className="text-[9px] font-bold text-zinc-400 uppercase tracking-wider">Desde</span>
+                  <span className="text-sm font-black text-ocean-dark">{formatPrice(bestMatchCabin.pricePerNight)} / noche</span>
+                </div>
+                <span className="text-[9px] font-bold text-ocean flex items-center gap-1">
+                  Ver cabañas abajo <ArrowRight className="w-3 h-3 animate-[bounce_1.5s_infinite]" />
+                </span>
+              </div>
+            </>
+          ) : (
+            <div className="h-full flex flex-col items-center justify-center text-center p-2 text-zinc-500">
+              <Compass className="w-6 h-6 text-zinc-400 mb-1" />
+              <p className="text-xs font-semibold">Sin alojamientos coincidentes</p>
+              <p className="text-[10px] text-zinc-400 leading-tight mt-0.5">Modifica los filtros para ver otras alternativas</p>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── Horizontal Cabin Card (1-column list view) ────────────────────────────────
 const CabinCardHorizontal = memo(function CabinCardHorizontal({
   cabin,
   onSelect,
+  searchParams,
 }: {
   cabin: Cabin;
   onSelect: () => void;
+  searchParams?: {
+    destination?: string | null;
+    date?: string | null;
+    dateEnd?: string | null;
+    adults?: string | null;
+    children?: string | null;
+  };
 }) {
   const [isFav, setIsFav] = useState(() =>
     typeof window !== "undefined" ? isFavorite(cabin.id) : false
@@ -66,6 +253,11 @@ const CabinCardHorizontal = memo(function CabinCardHorizontal({
     [cabin.id]
   );
 
+  const handleWhatsAppClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    window.open(getCabinWhatsAppUrl(cabin, searchParams), "_blank");
+  };
+
   return (
     <Card
       className="overflow-hidden cursor-pointer group border-border/50 hover:border-ocean/20 hover:shadow-lg transition-all duration-200 py-0 gap-0 flex flex-col sm:flex-row"
@@ -73,12 +265,13 @@ const CabinCardHorizontal = memo(function CabinCardHorizontal({
     >
       {/* Image */}
       <div className="relative w-full sm:w-[260px] md:w-[300px] shrink-0 overflow-hidden aspect-[3/2] sm:aspect-auto">
-        <img           src={cabin.images[0]}
+        <img
+          src={cabin.images[0]}
           alt={cabin.name}
           loading="lazy"
           decoding="async"
           className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-         onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"; e.currentTarget.onerror = null; }} />
+          onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"; e.currentTarget.onerror = null; }} />
         {/* Favorite Button */}
         <button
           onClick={handleFavorite}
@@ -124,13 +317,35 @@ const CabinCardHorizontal = memo(function CabinCardHorizontal({
           </div>
         </div>
 
-        {/* Bottom row: Price */}
-        <div className="flex items-center justify-end mt-4 pt-3 border-t border-border/30">
-          <div className="text-right">
+        {/* Bottom row: Price and Actions */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between mt-4 pt-3 border-t border-border/30 gap-3">
+          <div className="text-left">
             <p className="text-foreground font-bold text-lg leading-tight">
-              <span className="text-sm font-normal text-muted-foreground mr-1">Desde</span>
+              <span className="text-xs font-bold text-zinc-400 uppercase tracking-wider mr-1">Desde</span>
               {formatPrice(cabin.pricePerNight)}
+              <span className="text-xs text-muted-foreground font-normal ml-0.5"> / noche</span>
             </p>
+          </div>
+          
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            <Button
+              size="sm"
+              variant="outline"
+              className="rounded-xl text-xs font-bold flex-1 sm:flex-initial h-9 border-zinc-200 hover:bg-zinc-50"
+              onClick={(e) => {
+                e.stopPropagation();
+                onSelect();
+              }}
+            >
+              Ver detalle
+            </Button>
+            <Button
+              size="sm"
+              className="rounded-xl text-xs font-bold flex-1 sm:flex-initial h-9 bg-yellow-400 hover:bg-yellow-500 text-zinc-950 border-none shadow-sm shadow-yellow-400/10"
+              onClick={handleWhatsAppClick}
+            >
+              Cotizar
+            </Button>
           </div>
         </div>
       </CardContent>
@@ -142,9 +357,17 @@ const CabinCardHorizontal = memo(function CabinCardHorizontal({
 const CabinCardVertical = memo(function CabinCardVertical({
   cabin,
   onSelect,
+  searchParams,
 }: {
   cabin: Cabin;
   onSelect: () => void;
+  searchParams?: {
+    destination?: string | null;
+    date?: string | null;
+    dateEnd?: string | null;
+    adults?: string | null;
+    children?: string | null;
+  };
 }) {
   const [isFav, setIsFav] = useState(() =>
     typeof window !== "undefined" ? isFavorite(cabin.id) : false
@@ -162,75 +385,107 @@ const CabinCardVertical = memo(function CabinCardVertical({
     [cabin.id]
   );
 
+  const handleWhatsAppClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    window.open(getCabinWhatsAppUrl(cabin, searchParams), "_blank");
+  };
+
   return (
     <Card
-      className="overflow-hidden cursor-pointer group border-border/50 hover:border-ocean/20 hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5 py-0 gap-0"
+      className="overflow-hidden cursor-pointer group border-border/50 hover:border-ocean/20 hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5 py-0 gap-0 flex flex-col justify-between"
       onClick={onSelect}
     >
-      {/* Image */}
-      <div className="relative aspect-[3/2] overflow-hidden">
-        <img           src={cabin.images[0]}
-          alt={cabin.name}
-          loading="lazy"
-          decoding="async"
-          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-         onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"; e.currentTarget.onerror = null; }} />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-        {/* Favorite Button */}
-        <button
-          onClick={handleFavorite}
-          className="absolute top-3 right-3 z-10 w-10 h-10 rounded-full bg-white/95 backdrop-blur-md flex items-center justify-center shadow-sm hover:bg-white hover:scale-105 active:scale-95 transition-all duration-200 min-w-[40px] shrink-0 border border-black/5"
-          aria-label={isFav ? "Eliminar de favoritos" : "Guardar en favoritos"}
-        >
-          <Heart
-            className={`w-4 h-4 transition-colors duration-200 ${
-              isFav ? "fill-indigo text-indigo" : "text-muted-foreground"
-            }`} />
-        </button>
+      <div>
+        {/* Image */}
+        <div className="relative aspect-[3/2] overflow-hidden">
+          <img
+            src={cabin.images[0]}
+            alt={cabin.name}
+            loading="lazy"
+            decoding="async"
+            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+            onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"; e.currentTarget.onerror = null; }} />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+          {/* Favorite Button */}
+          <button
+            onClick={handleFavorite}
+            className="absolute top-3 right-3 z-10 w-10 h-10 rounded-full bg-white/95 backdrop-blur-md flex items-center justify-center shadow-sm hover:bg-white hover:scale-105 active:scale-95 transition-all duration-200 min-w-[40px] shrink-0 border border-black/5"
+            aria-label={isFav ? "Eliminar de favoritos" : "Guardar en favoritos"}
+          >
+            <Heart
+              className={`w-4 h-4 transition-colors duration-200 ${
+                isFav ? "fill-indigo text-indigo" : "text-muted-foreground"
+              }`} />
+          </button>
+        </div>
+
+        <CardContent className="p-3.5 sm:p-4 pb-0 space-y-2">
+          {/* Name and Location */}
+          <div>
+            <h3 className="font-bold text-[17px] text-foreground group-hover:text-ocean transition-colors duration-200 line-clamp-1 leading-snug">
+              {cabin.name}
+            </h3>
+            <div className="flex items-center gap-1 text-xs text-muted-foreground mt-0.5">
+              <MapPin className="w-3 h-3 shrink-0 text-muted-foreground" />
+              <span className="line-clamp-1">{cabin.location}</span>
+            </div>
+          </div>
+
+          {/* Short Description */}
+          <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+            {cabin.shortDescription}
+          </p>
+
+          {/* Compact Stats Row */}
+          <div className="flex items-center gap-0 text-[10px] sm:text-xs text-muted-foreground pt-1 flex-wrap">
+            <div className="flex items-center gap-1">
+              <Users className="w-3 h-3" />
+              <span>{cabin.capacity} guests</span>
+            </div>
+            <span className="mx-1.5 text-muted-foreground">·</span>
+            <div className="flex items-center gap-1">
+              <BedDouble className="w-3 h-3" />
+              <span>{cabin.bedrooms} hab.</span>
+            </div>
+            <span className="mx-1.5 text-muted-foreground">·</span>
+            <div className="flex items-center gap-1">
+              <Bath className="w-3 h-3" />
+              <span>{cabin.bathrooms} baño{cabin.bathrooms > 1 ? "s" : ""}</span>
+            </div>
+          </div>
+        </CardContent>
       </div>
 
-      <CardContent className="p-3.5 sm:p-4 space-y-2">
-        {/* Name and Location */}
-        <div>
-          <h3 className="font-bold text-[17px] text-foreground group-hover:text-ocean transition-colors duration-200 line-clamp-1 leading-snug">
-            {cabin.name}
-          </h3>
-          <div className="flex items-center gap-1 text-xs text-muted-foreground mt-0.5">
-            <MapPin className="w-3 h-3 shrink-0 text-muted-foreground" />
-            <span className="line-clamp-1">{cabin.location}</span>
-          </div>
-        </div>
-
-        {/* Short Description */}
-        <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
-          {cabin.shortDescription}
-        </p>
-
-        {/* Compact Stats Row */}
-        <div className="flex items-center gap-0 text-[10px] sm:text-xs text-muted-foreground pt-1 flex-wrap">
-          <div className="flex items-center gap-1">
-            <Users className="w-3 h-3" />
-            <span>{cabin.capacity}</span>
-          </div>
-          <span className="mx-1.5 text-muted-foreground">·</span>
-          <div className="flex items-center gap-1">
-            <BedDouble className="w-3 h-3" />
-            <span>{cabin.bedrooms} hab.</span>
-          </div>
-          <span className="mx-1.5 text-muted-foreground">·</span>
-          <div className="flex items-center gap-1">
-            <Bath className="w-3 h-3" />
-            <span>{cabin.bathrooms} baño{cabin.bathrooms > 1 ? "s" : ""}</span>
-          </div>
-        </div>
-
-        {/* Bottom: Price */}
-        <div className="flex items-center justify-end pt-2 mt-2 border-t border-border/30">
-          <div className="text-right">
+      {/* Bottom: Price and Actions */}
+      <CardContent className="p-3.5 sm:p-4 pt-0">
+        <div className="pt-2.5 mt-2.5 border-t border-border/30 space-y-3">
+          <div className="flex items-baseline justify-between">
+            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Desde</span>
             <p className="text-foreground font-bold text-[15px] sm:text-[17px] leading-tight">
-              <span className="text-[11px] sm:text-[13px] font-normal text-muted-foreground mr-1">Desde</span>
               {formatPrice(cabin.pricePerNight)}
+              <span className="text-xs text-muted-foreground font-normal ml-0.5"> / noche</span>
             </p>
+          </div>
+          
+          <div className="grid grid-cols-2 gap-2">
+            <Button
+              size="sm"
+              variant="outline"
+              className="rounded-xl text-[11px] font-bold h-8.5 border-zinc-200 hover:bg-zinc-50 py-1"
+              onClick={(e) => {
+                e.stopPropagation();
+                onSelect();
+              }}
+            >
+              Ver detalle
+            </Button>
+            <Button
+              size="sm"
+              className="rounded-xl text-[11px] font-bold h-8.5 bg-yellow-400 hover:bg-yellow-500 text-zinc-950 border-none shadow-sm shadow-yellow-400/10 py-1"
+              onClick={handleWhatsAppClick}
+            >
+              Cotizar
+            </Button>
           </div>
         </div>
       </CardContent>
@@ -240,7 +495,16 @@ const CabinCardVertical = memo(function CabinCardVertical({
 
 // ─── Main Cabins List ──────────────────────────────────────────────────────────
 export function CabinsList() {
-  const { navigate, searchDestination } = useNavigation();
+  const {
+    navigate,
+    searchDestination,
+    searchDate,
+    searchDateEnd,
+    searchAdults,
+    searchChildren,
+    setSearchIsSticky,
+  } = useNavigation();
+
   const { data: cabins = [], isLoading } = useQuery({
     queryKey: ["cabins"],
     queryFn: fetchCabins,
@@ -329,12 +593,32 @@ export function CabinsList() {
     [navigate]
   );
 
+  const handleModifySearch = useCallback(() => {
+    navigate("home");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    setSearchIsSticky(false);
+  }, [navigate, setSearchIsSticky]);
+
   const gridCols = getGridCols(viewMode);
   const isHorizontal = viewMode === "1";
 
+  // Identify best matched cabin overall for summary display
+  const bestMatchCabin = useMemo(() => {
+    if (sortedCabins.length > 0) return sortedCabins[0];
+    return undefined;
+  }, [sortedCabins]);
+
+  const searchParams = useMemo(() => ({
+    destination: searchDestination,
+    date: searchDate,
+    dateEnd: searchDateEnd,
+    adults: searchAdults,
+    children: searchChildren
+  }), [searchDestination, searchDate, searchDateEnd, searchAdults, searchChildren]);
+
   if (isLoading) {
     return (
-      <section className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8">
+      <section className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-7xl mx-auto">
           <SectionHeader
             title="Nuestras Cabañas"
@@ -357,12 +641,25 @@ export function CabinsList() {
   }
 
   return (
-    <section className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8">
+    <section className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 bg-white animate-in fade-in duration-300">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <SectionHeader
-          title="Nuestras Cabañas"
-          subtitle="Descubre el alojamiento perfecto para tu escapada al Caribe colombiano. Desde refugios románticos hasta espacios familiares frente al mar." />
+        {searchDestination ? (
+          <CabinSearchSummaryHeader
+            destination={searchDestination}
+            date={searchDate}
+            dateEnd={searchDateEnd}
+            adults={searchAdults}
+            children={searchChildren}
+            resultCount={filteredCabins.length}
+            bestMatchCabin={bestMatchCabin}
+            onModify={handleModifySearch}
+          />
+        ) : (
+          <SectionHeader
+            title="Nuestras Cabañas"
+            subtitle="Descubre el alojamiento perfecto para tu escapada al Caribe colombiano. Desde refugios románticos hasta espacios familiares frente al mar." />
+        )}
 
         {/* Mobile filter button */}
         <div className="flex items-center justify-between mb-4 lg:mb-6">
@@ -409,12 +706,14 @@ export function CabinsList() {
                   <CabinCardHorizontal
                     key={cabin.id}
                     cabin={cabin}
-                    onSelect={() => handleSelect(cabin.id)} />
+                    onSelect={() => handleSelect(cabin.id)}
+                    searchParams={searchParams} />
                 ) : (
                   <CabinCardVertical
                     key={cabin.id}
                     cabin={cabin}
-                    onSelect={() => handleSelect(cabin.id)} />
+                    onSelect={() => handleSelect(cabin.id)}
+                    searchParams={searchParams} />
                 )
               )}
             </div>
