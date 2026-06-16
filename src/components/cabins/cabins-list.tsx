@@ -89,7 +89,7 @@ function CabinSearchSummaryHeader({
   date,
   dateEnd,
   adults,
-  children,
+  childrenCount,
   resultCount,
   bestMatchCabin,
   onModify,
@@ -98,12 +98,12 @@ function CabinSearchSummaryHeader({
   date: string | null;
   dateEnd: string | null;
   adults: string | null;
-  children: string | null;
+  childrenCount: string | null;
   resultCount: number;
   bestMatchCabin?: Cabin;
   onModify: () => void;
 }) {
-  const totalTravelers = parseInt(adults || "2", 10) + parseInt(children || "0", 10);
+  const totalTravelers = parseInt(adults || "2", 10) + parseInt(childrenCount || "0", 10);
   const travelersText = `${totalTravelers} persona${totalTravelers !== 1 ? "s" : ""}`;
   
   const getDatesLabel = () => {
@@ -650,7 +650,7 @@ export function CabinsList() {
             date={searchDate}
             dateEnd={searchDateEnd}
             adults={searchAdults}
-            children={searchChildren}
+            childrenCount={searchChildren}
             resultCount={filteredCabins.length}
             bestMatchCabin={bestMatchCabin}
             onModify={handleModifySearch}

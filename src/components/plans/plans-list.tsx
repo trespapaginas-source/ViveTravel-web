@@ -275,7 +275,7 @@ function SearchSummaryHeader({
   date,
   dateEnd,
   adults,
-  children,
+  childrenCount,
   category,
   resultCount,
   bestMatchPlan,
@@ -286,13 +286,13 @@ function SearchSummaryHeader({
   date: string | null;
   dateEnd: string | null;
   adults: string | null;
-  children: string | null;
+  childrenCount: string | null;
   category: string | null;
   resultCount: number;
   bestMatchPlan?: TourPlan;
   onModify: () => void;
 }) {
-  const totalTravelers = parseInt(adults || "2", 10) + parseInt(children || "0", 10);
+  const totalTravelers = parseInt(adults || "2", 10) + parseInt(childrenCount || "0", 10);
   const travelersText = `${totalTravelers} persona${totalTravelers !== 1 ? "s" : ""}`;
   
   const getDatesLabel = () => {
@@ -1040,7 +1040,7 @@ export function PlansList() {
               date={searchDate}
               dateEnd={searchDateEnd}
               adults={searchAdults}
-              children={searchChildren}
+              childrenCount={searchChildren}
               category={searchCategory}
               resultCount={sortedPlans.length}
               bestMatchPlan={bestMatchOverall}
