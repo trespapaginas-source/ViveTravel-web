@@ -503,6 +503,7 @@ export function CabinsList() {
     searchAdults,
     searchChildren,
     setSearchIsSticky,
+    clearSearch,
   } = useNavigation();
 
   const { data: cabins = [], isLoading } = useQuery({
@@ -578,10 +579,16 @@ export function CabinsList() {
     setViewMode(mode);
   }, []);
 
-  const handleClearAll = useCallback(() => {
+  const handleClearFilters = useCallback(() => {
     clearAll();
     setCurrentPage(1);
   }, [clearAll]);
+
+  const handleClearAll = useCallback(() => {
+    clearAll();
+    clearSearch();
+    setCurrentPage(1);
+  }, [clearAll, clearSearch]);
 
   const handlePageChange = useCallback((page: number) => {
     setCurrentPage(page);
@@ -669,7 +676,7 @@ export function CabinsList() {
               filters={filters}
               onToggleCheckbox={toggleCheckbox}
               onChangeRange={changeRange}
-              onClearAll={handleClearAll}
+              onClearAll={handleClearFilters}
               activeCount={activeCount}
               resultCount={filteredCabins.length} />
           </div>
@@ -683,7 +690,7 @@ export function CabinsList() {
             filters={filters}
             onToggleCheckbox={toggleCheckbox}
             onChangeRange={changeRange}
-            onClearAll={handleClearAll}
+            onClearAll={handleClearFilters}
             activeCount={activeCount} />
 
           {/* Cabins Grid */}

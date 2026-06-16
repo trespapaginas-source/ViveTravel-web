@@ -863,6 +863,7 @@ export function PlansList() {
     searchCategory,
     searchActivity,
     setSearchIsSticky,
+    clearSearch,
   } = useNavigation();
   
   const activeSection = getExperienceSection(selectedItemId);
@@ -957,10 +958,16 @@ export function PlansList() {
     setViewMode(mode);
   }, []);
 
-  const handleClearAll = useCallback(() => {
+  const handleClearFilters = useCallback(() => {
     clearAll();
     setCurrentPage(1);
   }, [clearAll]);
+
+  const handleClearAll = useCallback(() => {
+    clearAll();
+    clearSearch();
+    setCurrentPage(1);
+  }, [clearAll, clearSearch]);
 
   const handleSectionChange = useCallback(
     (section: ExperienceSectionId) => {
@@ -1086,7 +1093,7 @@ export function PlansList() {
             filters={filters}
             onToggleCheckbox={toggleCheckbox}
             onChangeRange={changeRange}
-            onClearAll={handleClearAll}
+            onClearAll={handleClearFilters}
             activeCount={activeCount} />
 
           {/* Plans Grid */}
@@ -1100,7 +1107,7 @@ export function PlansList() {
                   filters={filters}
                   onToggleCheckbox={toggleCheckbox}
                   onChangeRange={changeRange}
-                  onClearAll={handleClearAll}
+                  onClearAll={handleClearFilters}
                   activeCount={activeCount}
                   resultCount={filteredPlans.length} />
               </div>
