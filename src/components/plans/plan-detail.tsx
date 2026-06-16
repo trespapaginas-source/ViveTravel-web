@@ -48,6 +48,16 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Plus, Minus } from "lucide-react";
 import { WHATSAPP_NUMBER } from "@/lib/config";
 
+const WhatsAppIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    {...props}
+  >
+    <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.513 2.262 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.457L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.625 1.45 5.507.003 10.024-4.512 10.026-10.022.002-2.67-1.038-5.18-2.93-7.076-1.893-1.897-4.405-2.937-7.079-2.939-5.51 0-10.024 4.52-10.027 10.029-.001 1.835.507 3.572 1.47 5.114l-.993 3.626 3.908-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.174.2-.298.3-.496.099-.198.05-.372-.025-.521-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.501-.669-.51l-.57-.011c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z" />
+  </svg>
+);
+
 const getNextWeekend = () => {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -117,6 +127,7 @@ export function PlanDetail() {
     searchSelectedVariant,
     setSearchSelectedVariant,
     setSearchPriceFrom,
+    setFavoritesPulseActive,
   } = useNavigation();
   const { data: plan, isLoading } = useQuery({
     queryKey: ["plan", selectedItemId],
@@ -265,10 +276,23 @@ export function PlanDetail() {
     if (!selectedItemId) return;
     const nowFav = toggleFavorite(selectedItemId);
     setIsFav(nowFav);
-    toast.success(nowFav ? "Guardado en tu colección" : "Eliminado de tu colección", {
-      description: nowFav ? "Encuéntralo en tu lista de favoritos" : undefined,
-    });
-  }, [selectedItemId]);
+    const isMobile = window.innerWidth < 768;
+    if (isMobile && nowFav) {
+      setFavoritesPulseActive(true);
+    } else {
+      toast.success(nowFav ? "Guardado en tu colección" : "Eliminado de tu colección", {
+        description: nowFav ? "Encuéntralo en tu lista de favoritos" : undefined,
+      });
+    }
+  }, [selectedItemId, setFavoritesPulseActive]);
+
+  const handleWhatsAppShare = useCallback(() => {
+    if (!plan) return;
+    const currentUrl = typeof window !== "undefined" ? window.location.href : "";
+    const text = `Mira este increíble plan en Vive Travel: ${plan.name}\n${currentUrl}`;
+    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
+    window.open(whatsappUrl, "_blank");
+  }, [plan]);
 
   if (isLoading) {
     return (
@@ -339,10 +363,11 @@ export function PlanDetail() {
               <Button
                 variant="outline"
                 size="icon"
-                className="h-10 w-10 rounded-full bg-white/90 backdrop-blur-sm border-border/20 shadow-md hover:bg-white text-foreground"
-                onClick={() => setShareOpen(true)}
+                className="h-10 w-10 rounded-full bg-white/90 backdrop-blur-sm border-border/20 shadow-md hover:bg-white text-[#25D366] hover:text-[#20ba5a]"
+                onClick={handleWhatsAppShare}
+                aria-label="Compartir por WhatsApp"
               >
-                <Share2 className="w-5 h-5" />
+                <WhatsAppIcon className="w-5 h-5" />
               </Button>
             </div>
           </div>
@@ -380,11 +405,11 @@ export function PlanDetail() {
                   <Button
                     variant="outline"
                     size="icon"
-                    className="rounded-full h-9 w-9 border-border/50 hover:border-border"
-                    onClick={() => setShareOpen(true)}
-                    aria-label="Compartir"
+                    className="rounded-full h-9 w-9 border-border/50 hover:border-border text-[#25D366] hover:text-[#20ba5a] hover:bg-emerald-50/50"
+                    onClick={handleWhatsAppShare}
+                    aria-label="Compartir por WhatsApp"
                   >
-                    <Share2 className="w-4 h-4" />
+                    <WhatsAppIcon className="w-4 h-4" />
                   </Button>
                   <Button
                     variant="outline"

@@ -52,6 +52,8 @@ interface NavigationState {
   setSearchSelectedVariant: (variant: string | null) => void;
   setSearchPriceFrom: (price: number | null) => void;
   updateSearchParams: (params: Partial<NavigationState>) => void;
+  favoritesPulseActive: boolean;
+  setFavoritesPulseActive: (active: boolean) => void;
 }
 
 export const useNavigation = create<NavigationState>((set) => ({
@@ -129,4 +131,6 @@ export const useNavigation = create<NavigationState>((set) => ({
   setSearchSelectedVariant: (variant) => set({ searchSelectedVariant: variant }),
   setSearchPriceFrom: (price) => set({ searchPriceFrom: price }),
   updateSearchParams: (params) => set((state) => ({ ...state, ...params })),
+  favoritesPulseActive: false,
+  setFavoritesPulseActive: (active) => set({ favoritesPulseActive: active }),
 }));

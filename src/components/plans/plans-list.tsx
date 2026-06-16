@@ -288,16 +288,23 @@ const PlanCardHorizontal = memo(function PlanCardHorizontal({
     typeof window !== "undefined" ? isFavorite(plan.id) : false
   );
 
+  const { setFavoritesPulseActive } = useNavigation();
+
   const handleFavorite = useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation();
       const nowFav = toggleFavorite(plan.id);
       setIsFav(nowFav);
-      toast.success(nowFav ? "Guardado en tu colección" : "Eliminado de tu colección", {
-        description: nowFav ? "Encuéntralo en tu lista de favoritos" : undefined,
-      });
+      const isMobile = window.innerWidth < 768;
+      if (isMobile && nowFav) {
+        setFavoritesPulseActive(true);
+      } else {
+        toast.success(nowFav ? "Guardado en tu colección" : "Eliminado de tu colección", {
+          description: nowFav ? "Encuéntralo en tu lista de favoritos" : undefined,
+        });
+      }
     },
-    [plan.id]
+    [plan.id, setFavoritesPulseActive]
   );
 
   const handleWhatsAppClick = (e: React.MouseEvent) => {
@@ -495,16 +502,23 @@ const PlanCardVertical = memo(function PlanCardVertical({
     typeof window !== "undefined" ? isFavorite(plan.id) : false
   );
 
+  const { setFavoritesPulseActive } = useNavigation();
+
   const handleFavorite = useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation();
       const nowFav = toggleFavorite(plan.id);
       setIsFav(nowFav);
-      toast.success(nowFav ? "Guardado en tu colección" : "Eliminado de tu colección", {
-        description: nowFav ? "Encuéntralo en tu lista de favoritos" : undefined,
-      });
+      const isMobile = window.innerWidth < 768;
+      if (isMobile && nowFav) {
+        setFavoritesPulseActive(true);
+      } else {
+        toast.success(nowFav ? "Guardado en tu colección" : "Eliminado de tu colección", {
+          description: nowFav ? "Encuéntralo en tu lista de favoritos" : undefined,
+        });
+      }
     },
-    [plan.id]
+    [plan.id, setFavoritesPulseActive]
   );
 
   const handleWhatsAppClick = (e: React.MouseEvent) => {
