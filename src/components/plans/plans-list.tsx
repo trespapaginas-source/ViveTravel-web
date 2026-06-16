@@ -734,8 +734,23 @@ export function PlansList() {
   // Score and sort plans if search is active
   const scoredAllPlans = useMemo(() => {
     if (!searchDestination) return [];
+
+    const query = searchDestination.toLowerCase().trim();
+    const queryWords = query.split(/\s+/).filter(Boolean);
+
+    const filtered = publishedPlans.filter((plan) => {
+      const planLoc = plan.location.toLowerCase();
+      const planName = plan.name.toLowerCase();
+      const planDesc = plan.shortDescription.toLowerCase();
+
+      const hasDirectMatch = planLoc.includes(query) || planName.includes(query) || planDesc.includes(query);
+      const hasWordMatch = queryWords.length > 0 && queryWords.some((w) => planLoc.includes(w) || planName.includes(w));
+
+      return hasDirectMatch || hasWordMatch;
+    });
+
     return scorePlans(
-      publishedPlans,
+      filtered,
       searchDestination,
       searchDate,
       searchAdults,
