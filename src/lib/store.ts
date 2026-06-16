@@ -54,11 +54,15 @@ interface NavigationState {
   updateSearchParams: (params: Partial<NavigationState>) => void;
   favoritesPulseActive: boolean;
   setFavoritesPulseActive: (active: boolean) => void;
+  previousView: ViewType | null;
+  previousItemId: string | null;
 }
 
 export const useNavigation = create<NavigationState>((set) => ({
   currentView: "home",
   selectedItemId: null,
+  previousView: null,
+  previousItemId: null,
   searchDestination: null,
   searchOrigin: null,
   searchDate: null,
@@ -74,9 +78,19 @@ export const useNavigation = create<NavigationState>((set) => ({
   searchSelectedVariant: null,
   searchPriceFrom: null,
   navigate: (view, itemId = null) => {
-    set({
-      currentView: view,
-      selectedItemId: itemId,
+    set((state) => {
+      const updates: Partial<NavigationState> = {
+        currentView: view,
+        selectedItemId: itemId,
+      };
+      if (view === "favorites" && state.currentView !== "favorites") {
+        updates.previousView = state.currentView;
+        updates.previousItemId = state.selectedItemId;
+      } else if (view !== "favorites") {
+        updates.previousView = null;
+        updates.previousItemId = null;
+      }
+      return updates;
     });
     window.scrollTo({ top: 0, behavior: "smooth" });
   },
@@ -96,6 +110,8 @@ export const useNavigation = create<NavigationState>((set) => ({
       searchCategory: searchParams.categoria || null,
       searchActivity: searchParams.actividad || null,
       searchIsSticky: true,
+      previousView: null,
+      previousItemId: null,
     });
     window.scrollTo({ top: 0, behavior: "smooth" });
   },
@@ -106,6 +122,8 @@ export const useNavigation = create<NavigationState>((set) => ({
       searchIsSticky: false,
       searchSelectedVariant: null,
       searchPriceFrom: null,
+      previousView: null,
+      previousItemId: null,
     });
     window.scrollTo({ top: 0, behavior: "smooth" });
   },
