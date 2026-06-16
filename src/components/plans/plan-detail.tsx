@@ -601,26 +601,29 @@ export function PlanDetail() {
                   </ExpandableSection>
                 </div>
 
-                <Separator className="my-5" />
-
-                {/* Schedule & Meeting */}
-                <div>
-                  <h2 className="text-xl md:text-2xl font-bold text-foreground mb-3.5">
-                    Horario y punto de encuentro
-                  </h2>
-                  <ExpandableSection itemCount={2}>
-                    <div className="space-y-3">
-                      <InfoItem
-                        icon={Calendar}
-                        label="Horario"
-                        value={plan.schedule} />
-                      <InfoItem
-                        icon={Navigation}
-                        label="Punto de encuentro"
-                        value={plan.meeting} />
+                {isGrupal && (
+                  <>
+                    <Separator className="my-5" />
+                    {/* Schedule & Meeting */}
+                    <div>
+                      <h2 className="text-xl md:text-2xl font-bold text-foreground mb-3.5">
+                        Horario y punto de encuentro
+                      </h2>
+                      <ExpandableSection itemCount={2}>
+                        <div className="space-y-3">
+                          <InfoItem
+                            icon={Calendar}
+                            label="Horario"
+                            value={plan.schedule} />
+                          <InfoItem
+                            icon={Navigation}
+                            label="Punto de encuentro"
+                            value={plan.meeting} />
+                        </div>
+                      </ExpandableSection>
                     </div>
-                  </ExpandableSection>
-                </div>
+                  </>
+                )}
               </>
             )}
 
