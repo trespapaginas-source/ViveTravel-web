@@ -82,144 +82,7 @@ const getCabinWhatsAppUrl = (
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
 };
 
-// ─── Cabin Search Summary Header Component ─────────────────────────────────────
 
-function CabinSearchSummaryHeader({
-  destination,
-  date,
-  dateEnd,
-  adults,
-  childrenCount,
-  resultCount,
-  bestMatchCabin,
-  onModify,
-}: {
-  destination: string;
-  date: string | null;
-  dateEnd: string | null;
-  adults: string | null;
-  childrenCount: string | null;
-  resultCount: number;
-  bestMatchCabin?: Cabin;
-  onModify: () => void;
-}) {
-  const totalTravelers = parseInt(adults || "2", 10) + parseInt(childrenCount || "0", 10);
-  const travelersText = `${totalTravelers} persona${totalTravelers !== 1 ? "s" : ""}`;
-  
-  const getDatesLabel = () => {
-    if (!date) return "Fechas por definir";
-    try {
-      const start = new Date(date + "T12:00:00");
-      const startStr = format(start, "d MMM", { locale: es });
-      if (!dateEnd) return `${startStr} (${format(start, "MMMM", { locale: es })})`;
-      const end = new Date(dateEnd + "T12:00:00");
-      const endStr = format(end, "d MMM yyyy", { locale: es });
-      return `${startStr} - ${endStr}`;
-    } catch (_) {
-      return "Fechas por definir";
-    }
-  };
-
-  return (
-    <div className="bg-gradient-to-br from-slate-50 via-white to-slate-50 border border-zinc-200/70 rounded-2xl p-4 md:p-5 mb-5 md:mb-6 shadow-sm">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-4 mb-4 border-b border-zinc-150">
-        <div>
-          <div className="flex items-center gap-2 text-xs font-bold text-ocean uppercase tracking-wider mb-1">
-            <Compass className="w-3.5 h-3.5" />
-            <span>Búsqueda de alojamiento inteligente</span>
-          </div>
-          <h2 className="text-xl sm:text-2xl font-black text-zinc-800 leading-tight">
-            Cabañas en {destination}
-          </h2>
-        </div>
-        <Button
-          size="sm"
-          variant="outline"
-          onClick={onModify}
-          className="rounded-xl text-xs font-bold border-zinc-250 text-zinc-650 hover:bg-zinc-100 hover:text-zinc-900 shrink-0 h-9"
-        >
-          Modificar búsqueda
-        </Button>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
-        <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <div className="bg-white border border-zinc-150 p-3 rounded-xl flex flex-col justify-between">
-            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Zona</span>
-            <div className="flex items-center gap-1.5 mt-1">
-              <MapPin className="w-3.5 h-3.5 text-ocean shrink-0" />
-              <span className="text-xs sm:text-sm font-extrabold text-zinc-800 truncate">{destination}</span>
-            </div>
-          </div>
-
-          <div className="bg-white border border-zinc-150 p-3 rounded-xl flex flex-col justify-between">
-            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Fechas</span>
-            <div className="flex items-center gap-1.5 mt-1">
-              <Calendar className="w-3.5 h-3.5 text-ocean shrink-0" />
-              <span className="text-xs sm:text-sm font-extrabold text-zinc-800 truncate">{getDatesLabel()}</span>
-            </div>
-          </div>
-
-          <div className="bg-white border border-zinc-150 p-3 rounded-xl flex flex-col justify-between">
-            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Huéspedes</span>
-            <div className="flex items-center gap-1.5 mt-1">
-              <Users className="w-3.5 h-3.5 text-ocean shrink-0" />
-              <span className="text-xs sm:text-sm font-extrabold text-zinc-800 truncate">{travelersText}</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="lg:col-span-5 bg-ocean/5 border border-ocean/10 p-4 rounded-xl flex flex-col justify-between gap-2">
-          {bestMatchCabin ? (
-            <>
-              <div>
-                <div className="flex justify-between items-center gap-2">
-                  <span className="text-[9px] font-black text-ocean uppercase tracking-wider bg-ocean/10 px-2 py-0.5 rounded-full">
-                    Alojamiento recomendado
-                  </span>
-                  <span className="text-[11px] text-muted-foreground font-semibold">
-                    {resultCount} {resultCount === 1 ? "cabaña" : "cabañas"}
-                  </span>
-                </div>
-                <h3 className="font-extrabold text-sm sm:text-base text-zinc-800 mt-1.5 line-clamp-1">
-                  {bestMatchCabin.name}
-                </h3>
-                <div className="flex flex-wrap gap-1.5 mt-2">
-                  <span className="text-[9px] font-semibold text-zinc-650 bg-white border border-zinc-200 px-2 py-0.5 rounded-md">
-                    👤 {bestMatchCabin.capacity} huéspedes
-                  </span>
-                  <span className="text-[9px] font-semibold text-zinc-650 bg-white border border-zinc-200 px-2 py-0.5 rounded-md">
-                    🛏️ {bestMatchCabin.bedrooms} hab.
-                  </span>
-                  {bestMatchCabin.highlights?.[0] && (
-                    <span className="text-[9px] font-semibold text-ocean bg-white border border-ocean/10 px-2 py-0.5 rounded-md">
-                      ✨ {bestMatchCabin.highlights[0]}
-                    </span>
-                  )}
-                </div>
-              </div>
-              <div className="flex items-center justify-between pt-2 border-t border-ocean/10">
-                <div className="flex items-baseline gap-1">
-                  <span className="text-[9px] font-bold text-zinc-400 uppercase tracking-wider">Desde</span>
-                  <span className="text-sm font-black text-ocean-dark">{formatPrice(bestMatchCabin.pricePerNight)} / noche</span>
-                </div>
-                <span className="text-[9px] font-bold text-ocean flex items-center gap-1">
-                  Ver cabañas abajo <ArrowRight className="w-3 h-3 animate-[bounce_1.5s_infinite]" />
-                </span>
-              </div>
-            </>
-          ) : (
-            <div className="h-full flex flex-col items-center justify-center text-center p-2 text-zinc-500">
-              <Compass className="w-6 h-6 text-zinc-400 mb-1" />
-              <p className="text-xs font-semibold">Sin alojamientos coincidentes</p>
-              <p className="text-[10px] text-zinc-400 leading-tight mt-0.5">Modifica los filtros para ver otras alternativas</p>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
 
 // ─── Horizontal Cabin Card (1-column list view) ────────────────────────────────
 const CabinCardHorizontal = memo(function CabinCardHorizontal({
@@ -651,22 +514,9 @@ export function CabinsList() {
     <section className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 bg-white animate-in fade-in duration-300">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        {searchDestination ? (
-          <CabinSearchSummaryHeader
-            destination={searchDestination}
-            date={searchDate}
-            dateEnd={searchDateEnd}
-            adults={searchAdults}
-            childrenCount={searchChildren}
-            resultCount={filteredCabins.length}
-            bestMatchCabin={bestMatchCabin}
-            onModify={handleModifySearch}
-          />
-        ) : (
-          <SectionHeader
-            title="Nuestras Cabañas"
-            subtitle="Descubre el alojamiento perfecto para tu escapada al Caribe colombiano. Desde refugios románticos hasta espacios familiares frente al mar." />
-        )}
+        <SectionHeader
+          title="Nuestras Cabañas"
+          subtitle="Descubre el alojamiento perfecto para tu escapada al Caribe colombiano. Desde refugios románticos hasta espacios familiares frente al mar." />
 
         {/* Mobile filter button */}
         <div className="flex items-center justify-between mb-4 lg:mb-6">
