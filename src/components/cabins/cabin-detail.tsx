@@ -67,7 +67,7 @@ import {
 import { useState, useCallback } from "react";
 import { type DateRange } from "react-day-picker";
 import { format, differenceInDays } from "date-fns";
-import { es } from "date-fns/locale/es";
+import { es } from "date-fns/locale";
 import { toast } from "sonner";
 import { isFavorite, toggleFavorite } from "@/lib/favorites";
 import { ShareDialog } from "@/components/shared/share-dialog";

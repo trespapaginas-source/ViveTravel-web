@@ -908,13 +908,7 @@ export function HeroSection() {
                                 const currentRooms = activeParams.rooms || [{ adults: 2, children: 0 }];
                                 if (currentRooms.length > 1) {
                                   const updatedRooms = currentRooms.slice(0, -1);
-                                  setTabParams((prev) => ({
-                                    ...prev,
-                                    [activeTab]: {
-                                      ...prev[activeTab],
-                                      rooms: updatedRooms,
-                                    },
-                                  }));
+                                  updateRooms(updatedRooms);
                                 }
                               }}
                               className="w-8 h-8 rounded-full border border-zinc-200 flex items-center justify-center text-zinc-650 hover:bg-zinc-100 font-bold active:scale-95 transition-all cursor-pointer"
@@ -930,13 +924,7 @@ export function HeroSection() {
                                 const currentRooms = activeParams.rooms || [{ adults: 2, children: 0 }];
                                 if (currentRooms.length < 5) {
                                   const updatedRooms = [...currentRooms, { adults: 2, children: 0 }];
-                                  setTabParams((prev) => ({
-                                    ...prev,
-                                    [activeTab]: {
-                                      ...prev[activeTab],
-                                      rooms: updatedRooms,
-                                    },
-                                  }));
+                                  updateRooms(updatedRooms);
                                 }
                               }}
                               className="w-8 h-8 rounded-full border border-zinc-200 flex items-center justify-center text-zinc-650 hover:bg-zinc-100 font-bold active:scale-95 transition-all cursor-pointer"
