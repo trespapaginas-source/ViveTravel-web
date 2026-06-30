@@ -115,9 +115,9 @@ const getMultiplier = (v: "3d2n" | "4d3n" | "5d4n") => {
   return 1.0;
 };
 
-export function PlanDetail() {
+export function PlanDetail({ id }: { id?: string }) {
   const {
-    selectedItemId,
+    selectedItemId: storeSelectedItemId,
     navigate,
     searchAdults,
     searchChildren,
@@ -129,6 +129,8 @@ export function PlanDetail() {
     setSearchPriceFrom,
     setFavoritesPulseActive,
   } = useNavigation();
+  const selectedItemId = id || storeSelectedItemId;
+  
   const { data: plan, isLoading } = useQuery({
     queryKey: ["plan", selectedItemId],
     queryFn: () => fetchPlan(selectedItemId!),

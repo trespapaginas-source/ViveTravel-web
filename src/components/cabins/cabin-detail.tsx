@@ -216,8 +216,9 @@ function getLocationData(locationStr: string) {
   };
 }
 
-export function CabinDetail() {
-  const { selectedItemId, navigate, searchDate, searchDateEnd, searchRoomsDetail, setFavoritesPulseActive } = useNavigation();
+export function CabinDetail({ id }: { id?: string }) {
+  const { selectedItemId: storeSelectedItemId, navigate, searchDate, searchDateEnd, searchRoomsDetail, setFavoritesPulseActive } = useNavigation();
+  const selectedItemId = id || storeSelectedItemId;
 
   const { data: cabin, isLoading } = useQuery({
     queryKey: ["cabin", selectedItemId],
