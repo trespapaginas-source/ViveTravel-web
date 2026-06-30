@@ -137,6 +137,8 @@ export function PlanDetail({ id }: { id?: string }) {
     enabled: !!selectedItemId,
   });
 
+  console.log("PlanDetail client render - selectedItemId:", selectedItemId, "plan found:", plan, "isLoading:", isLoading);
+
   const [isFav, setIsFav] = useState(() =>
     typeof window !== "undefined" && selectedItemId
       ? isFavorite(selectedItemId)

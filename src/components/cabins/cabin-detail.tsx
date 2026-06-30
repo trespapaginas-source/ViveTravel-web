@@ -226,6 +226,8 @@ export function CabinDetail({ id }: { id?: string }) {
     enabled: !!selectedItemId,
   });
 
+  console.log("CabinDetail client render - selectedItemId:", selectedItemId, "cabin found:", cabin, "isLoading:", isLoading);
+
   const [isFav, setIsFav] = useState(() =>
     typeof window !== "undefined" && selectedItemId
       ? isFavorite(selectedItemId)
