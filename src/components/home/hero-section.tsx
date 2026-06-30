@@ -277,7 +277,7 @@ export function HeroSection() {
     }
   };
 
-  const backgroundImageUrl = heroImages[0]?.url || "https://gvpioebttpmtblsjilbt.supabase.co/storage/v1/object/public/images/1779761594179-oiiu8u8.jpg";
+  const backgroundImageUrl = heroImages[0]?.url || "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1600&h=900&fit=crop&q=80";
 
   // Build placeholders dynamically
   const getDestinationPlaceholder = () => {
@@ -317,7 +317,7 @@ export function HeroSection() {
           loading="eager"
           decoding="async"
           className="w-full h-full object-cover"
-          onError={(e) => { e.currentTarget.src = "https://gvpioebttpmtblsjilbt.supabase.co/storage/v1/object/public/images/1779761594179-oiiu8u8.jpg"; e.currentTarget.onerror = null; }}
+          onError={(e) => { e.currentTarget.src = "/images/banner-san-andres.webp"; e.currentTarget.onerror = null; }}
         />
       </div>
 
