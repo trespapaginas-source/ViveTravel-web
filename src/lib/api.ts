@@ -12,7 +12,7 @@ export async function fetchPlans(): Promise<TourPlan[]> {
 }
 
 export async function fetchPlan(id: string): Promise<TourPlan | null> {
-  const plan = plans.find((p) => p.id === id) || null;
+  const plan = plans.find((p) => p.id === id || p.slug === id) || null;
   return Promise.resolve(plan);
 }
 
@@ -21,7 +21,7 @@ export async function fetchCabins(): Promise<Cabin[]> {
 }
 
 export async function fetchCabin(id: string): Promise<Cabin | null> {
-  const cabin = cabins.find((c) => c.id === id) || null;
+  const cabin = cabins.find((c) => c.id === id || c.slug === id) || null;
   return Promise.resolve(cabin);
 }
 

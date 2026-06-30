@@ -344,7 +344,7 @@ export function CabinDetail({ id }: { id?: string }) {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center space-y-4">
           <p className="text-muted-foreground text-lg">
-            Cabaña no encontrada
+            Cabaña no encontrada (ID: {selectedItemId})
           </p>
           <Button
             onClick={() => navigate("cabins")}
