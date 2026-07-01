@@ -67,7 +67,7 @@ import {
 import { useState, useCallback } from "react";
 import { type DateRange } from "react-day-picker";
 import { format, differenceInDays } from "date-fns";
-import { es } from "date-fns/locale";
+import { es } from "date-fns/locale/es";
 import { toast } from "sonner";
 import { isFavorite, toggleFavorite } from "@/lib/favorites";
 import { ShareDialog } from "@/components/shared/share-dialog";
@@ -216,17 +216,14 @@ function getLocationData(locationStr: string) {
   };
 }
 
-export function CabinDetail({ id }: { id?: string }) {
-  const { selectedItemId: storeSelectedItemId, navigate, searchDate, searchDateEnd, searchRoomsDetail, setFavoritesPulseActive } = useNavigation();
-  const selectedItemId = id || storeSelectedItemId;
+export function CabinDetail() {
+  const { selectedItemId, navigate, searchDate, searchDateEnd, searchRoomsDetail, setFavoritesPulseActive } = useNavigation();
 
   const { data: cabin, isLoading } = useQuery({
     queryKey: ["cabin", selectedItemId],
     queryFn: () => fetchCabin(selectedItemId!),
     enabled: !!selectedItemId,
   });
-
-  console.log("CabinDetail client render - selectedItemId:", selectedItemId, "cabin found:", cabin, "isLoading:", isLoading);
 
   const [isFav, setIsFav] = useState(() =>
     typeof window !== "undefined" && selectedItemId
@@ -344,7 +341,7 @@ export function CabinDetail({ id }: { id?: string }) {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center space-y-4">
           <p className="text-muted-foreground text-lg">
-            Cabaña no encontrada (ID: {selectedItemId})
+            Cabaña no encontrada
           </p>
           <Button
             onClick={() => navigate("cabins")}

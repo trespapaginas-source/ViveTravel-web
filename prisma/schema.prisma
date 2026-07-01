@@ -1,0 +1,107 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model TourPlan {
+  id               String   @id @default(cuid())
+  name             String
+  slug             String   @unique
+  shortDescription String
+  fullDescription  String
+  images           String   // JSON string array
+  price            Int
+  priceRange       String
+  duration         String
+  location         String
+  city             String?
+  subLocation      String?
+  category         String
+  includes         String   // JSON string array
+  excludes         String   // JSON string array
+  highlights       String   // JSON string array
+  rating           Float    @default(0)
+  reviewCount      Int      @default(0)
+  maxGuests        Int      @default(1)
+  difficulty       String   @default("Fácil")
+  schedule         String   @default("")
+  meeting          String   @default("")
+  published        Boolean  @default(true)
+  order            Int      @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model Cabin {
+  id                 String   @id @default(cuid())
+  name               String
+  slug               String   @unique
+  shortDescription   String
+  fullDescription    String
+  images             String   // JSON string array
+  pricePerNight      Int
+  priceRange         String
+  location           String
+  city               String?
+  subLocation        String?
+  capacity           Int      @default(2)
+  bedrooms           Int      @default(1)
+  bathrooms          Int      @default(1)
+  amenities          String   // JSON string array
+  highlights         String   // JSON string array
+  rules              String   // JSON string array
+  rating             Float    @default(0)
+  reviewCount        Int      @default(0)
+  lat                Float    @default(0)
+  lng                Float    @default(0)
+  checkIn            String   @default("3:00 PM")
+  checkOut           String   @default("11:00 AM")
+  cancellationPolicy String   @default("")
+  published          Boolean  @default(true)
+  order              Int      @default(0)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+model Testimonial {
+  id        String   @id @default(cuid())
+  name      String
+  avatar    String
+  location  String
+  text      String
+  rating    Int      @default(5)
+  tripName  String
+  published Boolean  @default(true)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model HeroImage {
+  id        String   @id @default(cuid())
+  url       String
+  caption   String
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TripImage {
+  id        String   @id @default(cuid())
+  url       String
+  caption   String
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SiteContent {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  updatedAt DateTime @updatedAt
+}

@@ -277,7 +277,7 @@ export function HeroSection() {
     }
   };
 
-  const backgroundImageUrl = heroImages[0]?.url || "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1600&h=900&fit=crop&q=80";
+  const backgroundImageUrl = heroImages[0]?.url || "https://gvpioebttpmtblsjilbt.supabase.co/storage/v1/object/public/images/1779761594179-oiiu8u8.jpg";
 
   // Build placeholders dynamically
   const getDestinationPlaceholder = () => {
@@ -317,7 +317,7 @@ export function HeroSection() {
           loading="eager"
           decoding="async"
           className="w-full h-full object-cover"
-          onError={(e) => { e.currentTarget.src = "/images/banner-san-andres.webp"; e.currentTarget.onerror = null; }}
+          onError={(e) => { e.currentTarget.src = "https://gvpioebttpmtblsjilbt.supabase.co/storage/v1/object/public/images/1779761594179-oiiu8u8.jpg"; e.currentTarget.onerror = null; }}
         />
       </div>
 
@@ -908,7 +908,13 @@ export function HeroSection() {
                                 const currentRooms = activeParams.rooms || [{ adults: 2, children: 0 }];
                                 if (currentRooms.length > 1) {
                                   const updatedRooms = currentRooms.slice(0, -1);
-                                  updateRooms(updatedRooms);
+                                  setTabParams((prev) => ({
+                                    ...prev,
+                                    [activeTab]: {
+                                      ...prev[activeTab],
+                                      rooms: updatedRooms,
+                                    },
+                                  }));
                                 }
                               }}
                               className="w-8 h-8 rounded-full border border-zinc-200 flex items-center justify-center text-zinc-650 hover:bg-zinc-100 font-bold active:scale-95 transition-all cursor-pointer"
@@ -924,7 +930,13 @@ export function HeroSection() {
                                 const currentRooms = activeParams.rooms || [{ adults: 2, children: 0 }];
                                 if (currentRooms.length < 5) {
                                   const updatedRooms = [...currentRooms, { adults: 2, children: 0 }];
-                                  updateRooms(updatedRooms);
+                                  setTabParams((prev) => ({
+                                    ...prev,
+                                    [activeTab]: {
+                                      ...prev[activeTab],
+                                      rooms: updatedRooms,
+                                    },
+                                  }));
                                 }
                               }}
                               className="w-8 h-8 rounded-full border border-zinc-200 flex items-center justify-center text-zinc-650 hover:bg-zinc-100 font-bold active:scale-95 transition-all cursor-pointer"

@@ -115,9 +115,9 @@ const getMultiplier = (v: "3d2n" | "4d3n" | "5d4n") => {
   return 1.0;
 };
 
-export function PlanDetail({ id }: { id?: string }) {
+export function PlanDetail() {
   const {
-    selectedItemId: storeSelectedItemId,
+    selectedItemId,
     navigate,
     searchAdults,
     searchChildren,
@@ -129,15 +129,11 @@ export function PlanDetail({ id }: { id?: string }) {
     setSearchPriceFrom,
     setFavoritesPulseActive,
   } = useNavigation();
-  const selectedItemId = id || storeSelectedItemId;
-  
   const { data: plan, isLoading } = useQuery({
     queryKey: ["plan", selectedItemId],
     queryFn: () => fetchPlan(selectedItemId!),
     enabled: !!selectedItemId,
   });
-
-  console.log("PlanDetail client render - selectedItemId:", selectedItemId, "plan found:", plan, "isLoading:", isLoading);
 
   const [isFav, setIsFav] = useState(() =>
     typeof window !== "undefined" && selectedItemId
@@ -311,7 +307,7 @@ export function PlanDetail({ id }: { id?: string }) {
       <div className="min-h-[60vh] flex flex-col items-center justify-center gap-4 px-4">
         <Mountain className="w-10 h-10 text-muted-foreground" />
         <p className="text-muted-foreground text-lg">
-          Plan no encontrado (ID: {selectedItemId})
+          Plan no encontrado
         </p>
         <Button
           variant="outline"
