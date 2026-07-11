@@ -457,44 +457,44 @@ function FilterCheckboxSection({
 
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-      <CollapsibleTrigger className="flex items-center justify-between w-full py-2 group">
-        <span className="text-sm font-medium text-foreground">{section.title}</span>
+      <CollapsibleTrigger className="flex items-center justify-between w-full py-1.5 group">
+        <span className="text-[13px] font-bold text-slate-700 tracking-wide uppercase">{section.title}</span>
         <ChevronDown
-          className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${
+          className={`w-3.5 h-3.5 text-muted-foreground transition-transform duration-200 ${
             isOpen ? "" : "-rotate-90"
           }`} />
       </CollapsibleTrigger>
-      <CollapsibleContent className="space-y-1 pb-3">
+      <CollapsibleContent className="space-y-0.5 pb-2">
         {section.groups && section.groups.length > 0 ? (
           section.groups.map(group => (
-            <div key={group.value} className="mb-2">
-              <label className="flex items-center gap-2.5 py-1 px-1 rounded-md hover:bg-muted/50 cursor-pointer group/item transition-colors">
+            <div key={group.value} className="mb-1">
+              <label className="flex items-center gap-2 py-0.5 px-0.5 rounded cursor-pointer group/item transition-colors">
                 <Checkbox
                   checked={selectedValues.includes(group.value)}
                   onCheckedChange={() => onToggle(section.id, group.value)}
-                  className="data-[state=checked]:bg-ocean data-[state=checked]:border-ocean data-[state=checked]:text-white" />
-                <span className="text-[13px] font-semibold text-foreground group-hover/item:text-foreground transition-colors flex-1 leading-tight">
+                  className="w-3.5 h-3.5 rounded border-zinc-300 data-[state=checked]:bg-ocean data-[state=checked]:border-ocean data-[state=checked]:text-white" />
+                <span className="text-xs font-bold text-zinc-700 group-hover/item:text-foreground transition-colors flex-1 leading-tight select-none">
                   {group.label}
                 </span>
-                <span className="text-[11px] text-muted-foreground tabular-nums">
+                <span className="text-[10px] text-muted-foreground/80 tabular-nums">
                   {group.count}
                 </span>
               </label>
               {group.options.length > 0 && (
-                <div className="pl-6 space-y-0.5 mt-0.5 border-l-2 border-muted ml-2.5">
+                <div className="pl-4 space-y-0.5 mt-0 border-l border-muted ml-2">
                   {group.options.map((option) => (
                     <label
                       key={option.value}
-                      className="flex items-center gap-2.5 py-1 px-1 pl-2.5 rounded-md hover:bg-muted/50 cursor-pointer group/item transition-colors"
+                      className="flex items-center gap-2 py-0.5 px-0.5 pl-1.5 rounded cursor-pointer group/item transition-colors"
                     >
                       <Checkbox
                         checked={selectedValues.includes(option.value)}
                         onCheckedChange={() => onToggle(section.id, option.value)}
-                        className="data-[state=checked]:bg-ocean data-[state=checked]:border-ocean data-[state=checked]:text-white" />
-                      <span className="text-[13px] text-muted-foreground group-hover/item:text-foreground transition-colors flex-1 leading-tight">
+                        className="w-3.5 h-3.5 rounded border-zinc-300 data-[state=checked]:bg-ocean data-[state=checked]:border-ocean data-[state=checked]:text-white" />
+                      <span className="text-xs text-zinc-500 group-hover/item:text-foreground transition-colors flex-1 leading-tight select-none">
                         {option.label}
                       </span>
-                      <span className="text-[11px] text-muted-foreground/60 tabular-nums">
+                      <span className="text-[10px] text-muted-foreground/60 tabular-nums">
                         {option.count}
                       </span>
                     </label>
@@ -507,16 +507,16 @@ function FilterCheckboxSection({
           displayedOptions.map((option) => (
             <label
               key={option.value}
-              className="flex items-center gap-2.5 py-1 px-1 rounded-md hover:bg-muted/50 cursor-pointer group/item transition-colors"
+              className="flex items-center gap-2 py-0.5 px-0.5 rounded cursor-pointer group/item transition-colors"
             >
               <Checkbox
                 checked={selectedValues.includes(option.value)}
                 onCheckedChange={() => onToggle(section.id, option.value)}
-                className="data-[state=checked]:bg-ocean data-[state=checked]:border-ocean data-[state=checked]:text-white" />
-              <span className="text-[13px] text-foreground group-hover/item:text-foreground transition-colors flex-1 leading-tight">
+                className="w-3.5 h-3.5 rounded border-zinc-300 data-[state=checked]:bg-ocean data-[state=checked]:border-ocean data-[state=checked]:text-white" />
+              <span className="text-xs text-zinc-650 group-hover/item:text-foreground transition-colors flex-1 leading-tight select-none">
                 {option.label}
               </span>
-              <span className="text-[11px] text-muted-foreground tabular-nums">
+              <span className="text-[10px] text-muted-foreground tabular-nums">
                 {option.count}
               </span>
             </label>
@@ -525,7 +525,7 @@ function FilterCheckboxSection({
         {hasMore && !section.groups && (
           <button
             onClick={() => setShowAll(!showAll)}
-            className="text-[12px] text-foreground hover:text-foreground transition-colors ml-7 mt-1"
+            className="text-[11px] font-semibold text-ocean hover:text-ocean-dark transition-colors ml-5.5 mt-0.5 cursor-pointer"
           >
             {showAll ? "Mostrar menos" : `Mostrar más (${section.options.length - showCount})`}
           </button>
@@ -550,15 +550,15 @@ function FilterRangeSection({
 
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-      <CollapsibleTrigger className="flex items-center justify-between w-full py-2 group">
-        <span className="text-sm font-medium text-foreground">{section.title}</span>
+      <CollapsibleTrigger className="flex items-center justify-between w-full py-1.5 group">
+        <span className="text-[13px] font-bold text-slate-700 tracking-wide uppercase">{section.title}</span>
         <ChevronDown
-          className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${
+          className={`w-3.5 h-3.5 text-muted-foreground transition-transform duration-200 ${
             isOpen ? "" : "-rotate-90"
           }`} />
       </CollapsibleTrigger>
-      <CollapsibleContent className="pb-4 pt-2 px-1">
-        <div className="space-y-3">
+      <CollapsibleContent className="pb-3 pt-1.5 px-1">
+        <div className="space-y-2">
           <Slider
             value={value}
             min={section.min}
@@ -567,10 +567,10 @@ function FilterRangeSection({
             onValueChange={(v) => onChange(section.id, v as [number, number])}
             className="w-full" />
           <div className="flex items-center justify-between">
-            <span className="text-xs text-muted-foreground tabular-nums">
+            <span className="text-[11px] font-medium text-muted-foreground tabular-nums">
               {section.formatLabel(value[0])}
             </span>
-            <span className="text-xs text-muted-foreground tabular-nums">
+            <span className="text-[11px] font-medium text-muted-foreground tabular-nums">
               {section.formatLabel(value[1])}
             </span>
           </div>
@@ -598,16 +598,16 @@ function FilterPanelContent({
   activeCount: number;
 }) {
   return (
-    <div className="space-y-1">
+    <div className="space-y-0.5">
       {/* Header */}
-      <div className="flex items-center justify-between pb-2">
-        <div className="flex items-center gap-2">
-          <SlidersHorizontal className="w-4 h-4 text-foreground" />
-          <span className="text-sm font-semibold text-foreground">Filtros</span>
+      <div className="flex items-center justify-between pb-1">
+        <div className="flex items-center gap-1.5">
+          <SlidersHorizontal className="w-3.5 h-3.5 text-foreground" />
+          <span className="text-xs font-bold text-foreground uppercase tracking-wider">Filtros</span>
           {activeCount > 0 && (
             <Badge
               variant="secondary"
-              className="h-5 min-w-5 text-[10px] px-1.5 bg-ocean text-white rounded-full"
+              className="h-4.5 min-w-4.5 text-[9px] px-1 bg-ocean text-white rounded-full flex items-center justify-center"
             >
               {activeCount}
             </Badge>
@@ -616,19 +616,19 @@ function FilterPanelContent({
         {activeCount > 0 && (
           <button
             onClick={onClearAll}
-            className="flex items-center gap-1 text-[12px] text-muted-foreground hover:text-foreground transition-colors"
+            className="flex items-center gap-1 text-[11px] text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
           >
-            <RotateCcw className="w-3 h-3" />
+            <RotateCcw className="w-2.5 h-2.5" />
             Limpiar
           </button>
         )}
       </div>
 
-      <Separator className="mb-2" />
+      <Separator className="mb-1.5" />
 
       {/* Active Filters Tags */}
       {activeCount > 0 && (
-        <div className="flex flex-wrap gap-1.5 pb-2">
+        <div className="flex flex-wrap gap-1 pb-1.5">
           {sections.map((section) => {
             if (section.type === "checkbox") {
               const selected = filters.checkboxes[section.id] || [];
@@ -654,7 +654,7 @@ function FilterPanelContent({
                   <button
                     key={`${section.id}-${value}`}
                     onClick={() => onToggleCheckbox(section.id, value)}
-                    className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full bg-muted/80 text-foreground hover:bg-muted transition-colors"
+                    className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-muted/80 text-foreground hover:bg-muted transition-colors cursor-pointer"
                   >
                     {optionLabel}
                     <X className="w-2.5 h-2.5" />
@@ -673,7 +673,7 @@ function FilterPanelContent({
                 <button
                   key={section.id}
                   onClick={() => onChangeRange(section.id, [section.min, section.max])}
-                  className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full bg-muted/80 text-foreground hover:bg-muted transition-colors"
+                  className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-muted/80 text-foreground hover:bg-muted transition-colors cursor-pointer"
                 >
                   {section.formatLabel(range[0])} – {section.formatLabel(range[1])}
                   <X className="w-2.5 h-2.5" />
@@ -699,7 +699,7 @@ function FilterPanelContent({
               value={filters.ranges[section.id] || [section.min, section.max]}
               onChange={onChangeRange} />
           )}
-          {index < sections.length - 1 && <Separator className="my-1" />}
+          {index < sections.length - 1 && <Separator className="my-0.5" />}
         </div>
       ))}
     </div>
@@ -718,7 +718,7 @@ export function FilterSidebar(props: {
 }) {
   return (
     <aside className="hidden lg:block w-64 xl:w-72 shrink-0">
-      <div className="sticky top-24 bg-background/80 backdrop-blur-sm rounded-xl border border-border/50 p-4 shadow-sm">
+      <div className="sticky top-20 bg-background/85 backdrop-blur-sm rounded-lg border border-border/50 p-3 shadow-none">
         <FilterPanelContent {...props} />
       </div>
     </aside>

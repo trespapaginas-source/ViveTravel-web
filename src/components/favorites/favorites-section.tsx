@@ -15,6 +15,7 @@ import {
   BedDouble,
   Bath,
   ArrowRight,
+  ArrowLeft,
   Compass,
   Clock,
 } from "lucide-react";
@@ -282,7 +283,7 @@ function FavoritePlanCard({
 }
 
 export function FavoritesSection() {
-  const { navigate } = useNavigation();
+  const { navigate, previousView, previousItemId } = useNavigation();
   const [favIds, setFavIds] = useState<string[]>(() =>
     typeof window !== "undefined" ? getFavorites() : []
   );
@@ -294,6 +295,16 @@ export function FavoritesSection() {
   return (
     <section className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
+        {previousView && (
+          <Button
+            variant="ghost"
+            onClick={() => navigate(previousView, previousItemId)}
+            className="flex gap-2 mb-6 -ml-2 text-muted-foreground hover:text-foreground w-fit items-center"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Volver
+          </Button>
+        )}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

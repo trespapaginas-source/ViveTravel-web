@@ -189,6 +189,10 @@
         "label": "Cabañas"
       },
       {
+        "key": "transports",
+        "label": "Transporte"
+      },
+      {
         "key": "team",
         "label": "Equipo"
       },

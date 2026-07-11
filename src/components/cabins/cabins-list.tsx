@@ -26,12 +26,17 @@ import {
   MapPin,
   ArrowRight,
   Heart,
+  Compass,
+  Calendar,
 } from "lucide-react";
 import { isFavorite, toggleFavorite } from "@/lib/favorites";
 import { useState, useCallback, useEffect } from "react";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 import { sortCabins, getGridCols, ITEMS_PER_PAGE } from "@/lib/sorting";
+import { WHATSAPP_NUMBER } from "@/lib/config";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
 
 function formatPrice(price: number): string {
   return new Intl.NumberFormat("es-CO", {
@@ -42,29 +47,86 @@ function formatPrice(price: number): string {
   }).format(price);
 }
 
+const getCabinWhatsAppUrl = (
+  cabin: Cabin,
+  searchParams?: {
+    destination?: string | null;
+    date?: string | null;
+    dateEnd?: string | null;
+    adults?: string | null;
+    children?: string | null;
+  }
+) => {
+  const destination = searchParams?.destination || cabin.location;
+  let dateText = "fechas a convenir";
+  if (searchParams?.date) {
+    try {
+      const start = new Date(searchParams.date + "T12:00:00");
+      const startStr = format(start, "d MMM", { locale: es });
+      if (searchParams.dateEnd) {
+        const end = new Date(searchParams.dateEnd + "T12:00:00");
+        const endStr = format(end, "d MMM yyyy", { locale: es });
+        dateText = `${startStr} al ${endStr}`;
+      } else {
+        dateText = `${startStr} (mes aproximado: ${format(start, "MMMM", { locale: es })})`;
+      }
+    } catch (_) {}
+  }
+  
+  const adultsStr = searchParams?.adults || "2";
+  const childrenStr = searchParams?.children || "0";
+  const totalTravelers = parseInt(adultsStr, 10) + parseInt(childrenStr, 10);
+  const travelersText = `${totalTravelers} persona${totalTravelers !== 1 ? "s" : ""}`;
+  
+  const text = `Hola Vive Travel Atlántico, me interesa cotizar la cabaña *${cabin.name}* en *${destination}* para la fecha *${dateText}*, para *${travelersText}*. ¿Me podrían confirmar disponibilidad y tarifas?`;
+  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
+};
+
+
+
 // ─── Horizontal Cabin Card (1-column list view) ────────────────────────────────
 const CabinCardHorizontal = memo(function CabinCardHorizontal({
   cabin,
   onSelect,
+  searchParams,
 }: {
   cabin: Cabin;
   onSelect: () => void;
+  searchParams?: {
+    destination?: string | null;
+    date?: string | null;
+    dateEnd?: string | null;
+    adults?: string | null;
+    children?: string | null;
+  };
 }) {
   const [isFav, setIsFav] = useState(() =>
     typeof window !== "undefined" ? isFavorite(cabin.id) : false
   );
+
+  const { setFavoritesPulseActive } = useNavigation();
 
   const handleFavorite = useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation();
       const nowFav = toggleFavorite(cabin.id);
       setIsFav(nowFav);
-      toast.success(nowFav ? "Guardado en tu colección" : "Eliminado de tu colección", {
-        description: nowFav ? "Encuéntralo en tu lista de favoritos" : undefined,
-      });
+      const isMobile = window.innerWidth < 768;
+      if (isMobile && nowFav) {
+        setFavoritesPulseActive(true);
+      } else {
+        toast.success(nowFav ? "Guardado en tu colección" : "Eliminado de tu colección", {
+          description: nowFav ? "Encuéntralo en tu lista de favoritos" : undefined,
+        });
+      }
     },
-    [cabin.id]
+    [cabin.id, setFavoritesPulseActive]
   );
+
+  const handleWhatsAppClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    window.open(getCabinWhatsAppUrl(cabin, searchParams), "_blank");
+  };
 
   return (
     <Card
@@ -73,12 +135,13 @@ const CabinCardHorizontal = memo(function CabinCardHorizontal({
     >
       {/* Image */}
       <div className="relative w-full sm:w-[260px] md:w-[300px] shrink-0 overflow-hidden aspect-[3/2] sm:aspect-auto">
-        <img           src={cabin.images[0]}
+        <img
+          src={cabin.images[0]}
           alt={cabin.name}
           loading="lazy"
           decoding="async"
           className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-         onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"; e.currentTarget.onerror = null; }} />
+          onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"; e.currentTarget.onerror = null; }} />
         {/* Favorite Button */}
         <button
           onClick={handleFavorite}
@@ -124,13 +187,35 @@ const CabinCardHorizontal = memo(function CabinCardHorizontal({
           </div>
         </div>
 
-        {/* Bottom row: Price */}
-        <div className="flex items-center justify-end mt-4 pt-3 border-t border-border/30">
-          <div className="text-right">
+        {/* Bottom row: Price and Actions */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between mt-4 pt-3 border-t border-border/30 gap-3">
+          <div className="text-left">
             <p className="text-foreground font-bold text-lg leading-tight">
-              <span className="text-sm font-normal text-muted-foreground mr-1">Desde</span>
+              <span className="text-xs font-bold text-zinc-400 uppercase tracking-wider mr-1">Desde</span>
               {formatPrice(cabin.pricePerNight)}
+              <span className="text-xs text-muted-foreground font-normal ml-0.5"> / noche</span>
             </p>
+          </div>
+          
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            <Button
+              size="sm"
+              variant="outline"
+              className="rounded-xl text-xs font-bold flex-1 sm:flex-initial h-9 border-zinc-200 hover:bg-zinc-50"
+              onClick={(e) => {
+                e.stopPropagation();
+                onSelect();
+              }}
+            >
+              Ver detalle
+            </Button>
+            <Button
+              size="sm"
+              className="rounded-xl text-xs font-bold flex-1 sm:flex-initial h-9 bg-yellow-400 hover:bg-yellow-500 text-zinc-950 border-none shadow-sm shadow-yellow-400/10"
+              onClick={handleWhatsAppClick}
+            >
+              Cotizar
+            </Button>
           </div>
         </div>
       </CardContent>
@@ -142,95 +227,142 @@ const CabinCardHorizontal = memo(function CabinCardHorizontal({
 const CabinCardVertical = memo(function CabinCardVertical({
   cabin,
   onSelect,
+  searchParams,
 }: {
   cabin: Cabin;
   onSelect: () => void;
+  searchParams?: {
+    destination?: string | null;
+    date?: string | null;
+    dateEnd?: string | null;
+    adults?: string | null;
+    children?: string | null;
+  };
 }) {
   const [isFav, setIsFav] = useState(() =>
     typeof window !== "undefined" ? isFavorite(cabin.id) : false
   );
+
+  const { setFavoritesPulseActive } = useNavigation();
 
   const handleFavorite = useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation();
       const nowFav = toggleFavorite(cabin.id);
       setIsFav(nowFav);
-      toast.success(nowFav ? "Guardado en tu colección" : "Eliminado de tu colección", {
-        description: nowFav ? "Encuéntralo en tu lista de favoritos" : undefined,
-      });
+      const isMobile = window.innerWidth < 768;
+      if (isMobile && nowFav) {
+        setFavoritesPulseActive(true);
+      } else {
+        toast.success(nowFav ? "Guardado en tu colección" : "Eliminado de tu colección", {
+          description: nowFav ? "Encuéntralo en tu lista de favoritos" : undefined,
+        });
+      }
     },
-    [cabin.id]
+    [cabin.id, setFavoritesPulseActive]
   );
+
+  const handleWhatsAppClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    window.open(getCabinWhatsAppUrl(cabin, searchParams), "_blank");
+  };
 
   return (
     <Card
-      className="overflow-hidden cursor-pointer group border-border/50 hover:border-ocean/20 hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5 py-0 gap-0"
+      className="overflow-hidden cursor-pointer group border-border/50 hover:border-ocean/20 hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5 py-0 gap-0 flex flex-col justify-between"
       onClick={onSelect}
     >
-      {/* Image */}
-      <div className="relative aspect-[3/2] overflow-hidden">
-        <img           src={cabin.images[0]}
-          alt={cabin.name}
-          loading="lazy"
-          decoding="async"
-          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-         onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"; e.currentTarget.onerror = null; }} />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-        {/* Favorite Button */}
-        <button
-          onClick={handleFavorite}
-          className="absolute top-3 right-3 z-10 w-10 h-10 rounded-full bg-white/95 backdrop-blur-md flex items-center justify-center shadow-sm hover:bg-white hover:scale-105 active:scale-95 transition-all duration-200 min-w-[40px] shrink-0 border border-black/5"
-          aria-label={isFav ? "Eliminar de favoritos" : "Guardar en favoritos"}
-        >
-          <Heart
-            className={`w-4 h-4 transition-colors duration-200 ${
-              isFav ? "fill-indigo text-indigo" : "text-muted-foreground"
-            }`} />
-        </button>
+      <div>
+        {/* Image */}
+        <div className="relative aspect-[3/2] overflow-hidden">
+          <img
+            src={cabin.images[0]}
+            alt={cabin.name}
+            loading="lazy"
+            decoding="async"
+            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+            onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"; e.currentTarget.onerror = null; }} />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+          {/* Favorite Button */}
+          <button
+            onClick={handleFavorite}
+            className="absolute top-3 right-3 z-10 w-10 h-10 rounded-full bg-white/95 backdrop-blur-md flex items-center justify-center shadow-sm hover:bg-white hover:scale-105 active:scale-95 transition-all duration-200 min-w-[40px] shrink-0 border border-black/5"
+            aria-label={isFav ? "Eliminar de favoritos" : "Guardar en favoritos"}
+          >
+            <Heart
+              className={`w-4 h-4 transition-colors duration-200 ${
+                isFav ? "fill-indigo text-indigo" : "text-muted-foreground"
+              }`} />
+          </button>
+        </div>
+
+        <CardContent className="p-3.5 sm:p-4 pb-0 space-y-2">
+          {/* Name and Location */}
+          <div>
+            <h3 className="font-bold text-[17px] text-foreground group-hover:text-ocean transition-colors duration-200 line-clamp-1 leading-snug">
+              {cabin.name}
+            </h3>
+            <div className="flex items-center gap-1 text-xs text-muted-foreground mt-0.5">
+              <MapPin className="w-3 h-3 shrink-0 text-muted-foreground" />
+              <span className="line-clamp-1">{cabin.location}</span>
+            </div>
+          </div>
+
+          {/* Short Description */}
+          <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+            {cabin.shortDescription}
+          </p>
+
+          {/* Compact Stats Row */}
+          <div className="flex items-center gap-0 text-[10px] sm:text-xs text-muted-foreground pt-1 flex-wrap">
+            <div className="flex items-center gap-1">
+              <Users className="w-3 h-3" />
+              <span>{cabin.capacity} guests</span>
+            </div>
+            <span className="mx-1.5 text-muted-foreground">·</span>
+            <div className="flex items-center gap-1">
+              <BedDouble className="w-3 h-3" />
+              <span>{cabin.bedrooms} hab.</span>
+            </div>
+            <span className="mx-1.5 text-muted-foreground">·</span>
+            <div className="flex items-center gap-1">
+              <Bath className="w-3 h-3" />
+              <span>{cabin.bathrooms} baño{cabin.bathrooms > 1 ? "s" : ""}</span>
+            </div>
+          </div>
+        </CardContent>
       </div>
 
-      <CardContent className="p-3.5 sm:p-4 space-y-2">
-        {/* Name and Location */}
-        <div>
-          <h3 className="font-bold text-[17px] text-foreground group-hover:text-ocean transition-colors duration-200 line-clamp-1 leading-snug">
-            {cabin.name}
-          </h3>
-          <div className="flex items-center gap-1 text-xs text-muted-foreground mt-0.5">
-            <MapPin className="w-3 h-3 shrink-0 text-muted-foreground" />
-            <span className="line-clamp-1">{cabin.location}</span>
-          </div>
-        </div>
-
-        {/* Short Description */}
-        <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
-          {cabin.shortDescription}
-        </p>
-
-        {/* Compact Stats Row */}
-        <div className="flex items-center gap-0 text-[10px] sm:text-xs text-muted-foreground pt-1 flex-wrap">
-          <div className="flex items-center gap-1">
-            <Users className="w-3 h-3" />
-            <span>{cabin.capacity}</span>
-          </div>
-          <span className="mx-1.5 text-muted-foreground">·</span>
-          <div className="flex items-center gap-1">
-            <BedDouble className="w-3 h-3" />
-            <span>{cabin.bedrooms} hab.</span>
-          </div>
-          <span className="mx-1.5 text-muted-foreground">·</span>
-          <div className="flex items-center gap-1">
-            <Bath className="w-3 h-3" />
-            <span>{cabin.bathrooms} baño{cabin.bathrooms > 1 ? "s" : ""}</span>
-          </div>
-        </div>
-
-        {/* Bottom: Price */}
-        <div className="flex items-center justify-end pt-2 mt-2 border-t border-border/30">
-          <div className="text-right">
+      {/* Bottom: Price and Actions */}
+      <CardContent className="p-3.5 sm:p-4 pt-0">
+        <div className="pt-2.5 mt-2.5 border-t border-border/30 space-y-3">
+          <div className="flex items-baseline justify-between">
+            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Desde</span>
             <p className="text-foreground font-bold text-[15px] sm:text-[17px] leading-tight">
-              <span className="text-[11px] sm:text-[13px] font-normal text-muted-foreground mr-1">Desde</span>
               {formatPrice(cabin.pricePerNight)}
+              <span className="text-xs text-muted-foreground font-normal ml-0.5"> / noche</span>
             </p>
+          </div>
+          
+          <div className="grid grid-cols-2 gap-2">
+            <Button
+              size="sm"
+              variant="outline"
+              className="rounded-xl text-[11px] font-bold h-8.5 border-zinc-200 hover:bg-zinc-50 py-1"
+              onClick={(e) => {
+                e.stopPropagation();
+                onSelect();
+              }}
+            >
+              Ver detalle
+            </Button>
+            <Button
+              size="sm"
+              className="rounded-xl text-[11px] font-bold h-8.5 bg-yellow-400 hover:bg-yellow-500 text-zinc-950 border-none shadow-sm shadow-yellow-400/10 py-1"
+              onClick={handleWhatsAppClick}
+            >
+              Cotizar
+            </Button>
           </div>
         </div>
       </CardContent>
@@ -240,23 +372,26 @@ const CabinCardVertical = memo(function CabinCardVertical({
 
 // ─── Main Cabins List ──────────────────────────────────────────────────────────
 export function CabinsList() {
-  const { navigate, searchDestination } = useNavigation();
+  const {
+    navigate,
+    searchDestination,
+    searchDate,
+    searchDateEnd,
+    searchAdults,
+    searchChildren,
+    setSearchIsSticky,
+    clearSearch,
+  } = useNavigation();
+
   const { data: cabins = [], isLoading } = useQuery({
     queryKey: ["cabins"],
     queryFn: fetchCabins,
   });
 
   // View mode state
-  const [viewMode, setViewMode] = useState<ViewMode>("1"); // Mobile default
+  const [viewMode, setViewMode] = useState<ViewMode>("1"); // Default: 1 column
   const [sortOption, setSortOption] = useState<SortOption>("popular");
   const [currentPage, setCurrentPage] = useState(1);
-
-  // Set default viewmode based on screen size
-  useEffect(() => {
-    if (typeof window !== 'undefined' && window.innerWidth >= 768) {
-      setTimeout(() => setViewMode("2"), 0);
-    }
-  }, []);
 
   const publishedCabins = useMemo(
     () => cabins.filter((c) => c.published !== false),
@@ -314,10 +449,16 @@ export function CabinsList() {
     setViewMode(mode);
   }, []);
 
-  const handleClearAll = useCallback(() => {
+  const handleClearFilters = useCallback(() => {
     clearAll();
     setCurrentPage(1);
   }, [clearAll]);
+
+  const handleClearAll = useCallback(() => {
+    clearAll();
+    clearSearch();
+    setCurrentPage(1);
+  }, [clearAll, clearSearch]);
 
   const handlePageChange = useCallback((page: number) => {
     setCurrentPage(page);
@@ -329,12 +470,32 @@ export function CabinsList() {
     [navigate]
   );
 
+  const handleModifySearch = useCallback(() => {
+    navigate("home");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    setSearchIsSticky(false);
+  }, [navigate, setSearchIsSticky]);
+
   const gridCols = getGridCols(viewMode);
   const isHorizontal = viewMode === "1";
 
+  // Identify best matched cabin overall for summary display
+  const bestMatchCabin = useMemo(() => {
+    if (sortedCabins.length > 0) return sortedCabins[0];
+    return undefined;
+  }, [sortedCabins]);
+
+  const searchParams = useMemo(() => ({
+    destination: searchDestination,
+    date: searchDate,
+    dateEnd: searchDateEnd,
+    adults: searchAdults,
+    children: searchChildren
+  }), [searchDestination, searchDate, searchDateEnd, searchAdults, searchChildren]);
+
   if (isLoading) {
     return (
-      <section className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8">
+      <section className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-7xl mx-auto">
           <SectionHeader
             title="Nuestras Cabañas"
@@ -357,7 +518,7 @@ export function CabinsList() {
   }
 
   return (
-    <section className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8">
+    <section className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 bg-white animate-in fade-in duration-300">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <SectionHeader
@@ -372,7 +533,7 @@ export function CabinsList() {
               filters={filters}
               onToggleCheckbox={toggleCheckbox}
               onChangeRange={changeRange}
-              onClearAll={handleClearAll}
+              onClearAll={handleClearFilters}
               activeCount={activeCount}
               resultCount={filteredCabins.length} />
           </div>
@@ -386,7 +547,7 @@ export function CabinsList() {
             filters={filters}
             onToggleCheckbox={toggleCheckbox}
             onChangeRange={changeRange}
-            onClearAll={handleClearAll}
+            onClearAll={handleClearFilters}
             activeCount={activeCount} />
 
           {/* Cabins Grid */}
@@ -409,12 +570,14 @@ export function CabinsList() {
                   <CabinCardHorizontal
                     key={cabin.id}
                     cabin={cabin}
-                    onSelect={() => handleSelect(cabin.id)} />
+                    onSelect={() => handleSelect(cabin.id)}
+                    searchParams={searchParams} />
                 ) : (
                   <CabinCardVertical
                     key={cabin.id}
                     cabin={cabin}
-                    onSelect={() => handleSelect(cabin.id)} />
+                    onSelect={() => handleSelect(cabin.id)}
+                    searchParams={searchParams} />
                 )
               )}
             </div>

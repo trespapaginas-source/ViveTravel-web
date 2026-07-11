@@ -138,7 +138,7 @@
     "shortDescription": "Recorre los manglares de Mallorquín en kayak y descubre la fauna del ecosistema costero del Atlántico.",
     "fullDescription": "Sumérgete en una experiencia única navegando por los canales del manglar de Mallorquín, uno de los ecosistemas más importantes de la costa caribe colombiana. Este plan incluye un recorrido guiado en kayak por los canales del manglar, donde podrás observar aves, cangrejos y otra fauna local en su hábitat natural. El guía te contará sobre la importancia ecológica del manglar y los esfuerzos de conservación. Disfruta de un refrigerio típico frente al mar y finaliza con tiempo libre en la playa de Mallorquín para relajarte y tomar fotografías.",
     "images": [
-      "https://gvpioebttpmtblsjilbt.supabase.co/storage/v1/object/public/images/1779760559661-xsslc5f.jpg",
+      "/static-media/plan-circuito-machu-picchu.jpg",
       "https://images.unsplash.com/photo-1586105251261-72a756497a11?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop"
@@ -177,49 +177,45 @@
     "order": 0
   },
   {
-    "id": "a40efc68-ddfe-4f84-9aea-256b8d525091",
-    "name": "Plan Playa Blanca",
-    "slug": "plan-playa-blanca",
-    "shortDescription": "Disfruta de un día paradisíaco en Playa Blanca con transporte, comida y actividades acuáticas incluidas.",
-    "fullDescription": "Vive un día completo en una de las playas más hermosas del Caribe colombiano. Playa Blanca te espera con sus aguas cristalinas y arenas blancas. El plan incluye transporte cómodo desde Barranquilla, ingreso al sector premium de la playa, almuerzo típico costeño con opciones de pescado frito o pollo, y actividades acuáticas como snorkel y paddleboard. También tendrás acceso a zonas de descanso con camas y sombrillas. Un día perfecto para relajarte, nadar y disfrutar del Caribe.",
-    "images": [
-      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1519046904884-53103b34b206?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1473116763249-2faaef81ccda?w=800&h=600&fit=crop"
-    ],
-    "price": 150000,
-    "priceRange": "$150.000 - $200.000 COP",
-    "duration": "Día completo (10 horas)",
-    "location": "Cartagena, Barú",
+    "id": "8ef0f18b-cdd3-4cb6-a83d-8656b7d8a7cf",
+    "slug": "bora-bora-beach-club-area-club",
+    "name": "Bora Bora Beach Club - Área Club",
+    "shortDescription": "Disfruta un exclusivo día de playa con transporte, almuerzo y acceso al Área Club.",
+    "fullDescription": "Vive una experiencia premium en Bora Bora Beach Club, uno de los clubes de playa más reconocidos de las Islas del Rosario. Relájate frente al mar Caribe con acceso al Área Club, disfruta de un cóctel de bienvenida, transporte en lancha rápida y múltiples opciones de almuerzo. Ideal para quienes buscan comodidad y un ambiente exclusivo durante todo el día.",
+    "price": 390000,
+    "priceRange": "$390.000 COP",
+    "duration": "Día completo (8 horas)",
+    "location": "Islas del Rosario, Cartagena",
     "category": "Playa",
     "includes": [
-      "Transporte ida y vuelta en bus climatizado",
-      "Ingreso a zona premium de playa",
-      "Almuerzo típico costeño",
-      "Equipo de snorkel",
-      "Paddleboard (30 min)",
-      "Cama y sombrilla",
-      "Seguro de viaje"
+      "Transporte ida y regreso en lancha rápida",
+      "Cóctel de bienvenida",
+      "5 opciones de almuerzo",
+      "Cama de playa o asoleadora",
+      "Acceso al Área Club"
     ],
     "excludes": [
-      "Bebidas alcohólicas",
-      "Gastos personales",
-      "Fotos y videos profesionales"
+      "Impuesto portuario",
+      "Seguro",
+      "Gastos no especificados"
     ],
     "highlights": [
-      "Aguas cristalinas del Caribe",
-      "Almuerzo costeño incluido",
-      "Snorkel y paddleboard",
-      "Zona premium con camas y sombrillas"
+      "Beach Club exclusivo",
+      "Playa privada",
+      "Almuerzo incluido",
+      "Ambiente relajado frente al mar"
     ],
-    "rating": 4.9,
-    "reviewCount": 287,
-    "maxGuests": 25,
+    "rating": 0,
+    "reviewCount": 0,
+    "maxGuests": 20,
     "difficulty": "Fácil",
-    "schedule": "6:00 AM - 4:00 PM",
-    "meeting": "Centro Comercial Buenavista, Barranquilla",
+    "schedule": "7:30 AM - 4:30 PM",
+    "meeting": "Muelle La Bodeguita, Puerta #3, Cartagena",
     "published": true,
-    "order": 1
+    "order": 1,
+    "images": [
+      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop"
+    ]
   },
   {
     "id": "48598e12-26ef-4130-a373-337cb4746fa1",
@@ -599,43 +595,46 @@
     "order": 10
   },
   {
-    "id": "76aa8532-6814-4dd3-b28a-3a1081e98b27",
-    "name": "Tour Grupal de las Islas",
-    "slug": "tour-islas-cartagena-tintipan",
-    "shortDescription": "Un viaje en grupo recorriendo las islas de Cartagena y Tintipán en un ambiente festivo.",
-    "fullDescription": "Únete a este increíble viaje grupal de un día completo explorando los archipiélagos más hermosos. Navegaremos en lancha rápida desde Cartagena hacia las Islas del Rosario y Tintipán. Habrá música, refrigerios, paradas estratégicas para hacer snorkel y un almuerzo isleño espectacular. Ideal para celebrar con amigos o conocer gente nueva.",
-    "images": [
-      "https://images.unsplash.com/photo-1550953181-e28a50f75f92?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1580228373356-820875298a00?w=800&h=600&fit=crop"
-    ],
-    "price": 320000,
-    "priceRange": "$320.000 - $380.000 COP",
-    "duration": "Día completo (10 horas)",
-    "location": "Cartagena / Tintipán",
-    "category": "Grupal",
+    "id": "53c8a10d-9a62-4fe3-aad5-96fc0d756735",
+    "slug": "bora-bora-beach-club-area-vip",
+    "name": "Bora Bora Beach Club - Área VIP",
+    "shortDescription": "La experiencia más exclusiva de Bora Bora con acceso VIP y almuerzo premium.",
+    "fullDescription": "Disfruta la versión más exclusiva de Bora Bora Beach Club con acceso tanto al Área VIP como al Área Club. Relájate en un espacio reservado, recibe un cóctel especial de bienvenida y elige entre una amplia variedad de opciones de almuerzo mientras disfrutas del Caribe colombiano.",
+    "price": 490000,
+    "priceRange": "$490.000 COP",
+    "duration": "Día completo (8 horas)",
+    "location": "Islas del Rosario, Cartagena",
+    "category": "Playa",
     "includes": [
-      "Transporte en lancha",
-      "Almuerzo isleño",
-      "Snorkel",
-      "Guía animador"
+      "Transporte ida y regreso en lancha rápida",
+      "Cóctel especial de bienvenida",
+      "10 opciones de almuerzo",
+      "Cama de playa",
+      "Acceso Área VIP",
+      "Acceso Área Club"
     ],
     "excludes": [
       "Impuesto portuario",
-      "Bebidas alcohólicas"
+      "Seguro",
+      "Gastos personales"
     ],
     "highlights": [
-      "Islas del Rosario",
-      "Tintipán",
-      "Snorkel y fiesta"
+      "Área VIP exclusiva",
+      "Acceso Área Club",
+      "10 opciones de almuerzo",
+      "Beach Club premium"
     ],
-    "rating": 4.8,
-    "reviewCount": 189,
-    "maxGuests": 40,
+    "rating": 0,
+    "reviewCount": 0,
+    "maxGuests": 20,
     "difficulty": "Fácil",
-    "schedule": "7:00 AM - 5:00 PM",
-    "meeting": "Muelle de los Pegasos, Cartagena",
+    "schedule": "7:30 AM - 4:30 PM",
+    "meeting": "Muelle La Bodeguita, Puerta #3, Cartagena",
     "published": true,
-    "order": 11
+    "order": 11,
+    "images": [
+      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop"
+    ]
   },
   {
     "id": "ac658a12-c3bc-4073-b700-e3fb7efde724",
@@ -752,55 +751,224 @@
     "order": 14
   },
   {
-    "id": "37eab389-1a9b-4fe8-840d-c264f5a72a01",
-    "name": "Casa En El Barro",
-    "slug": "casa-en-el-barro",
-    "shortDescription": "Una que cule casa la verga en la mitad del mar caribe",
-    "fullDescription": "",
-    "images": [
-      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"
+    "id": "0ef84479-8a9d-49d2-a6ee-1fb672595c5d",
+    "slug": "pao-pao-hotel-restaurante",
+    "name": "Pao Pao Hotel & Restaurante",
+    "shortDescription": "Naturaleza, playa, piscina y snorkel en una exclusiva isla privada del Rosario.",
+    "fullDescription": "Descubre Pao Pao, una isla privada rodeada de aguas cristalinas donde podrás disfrutar de playa, piscina, actividades recreativas y gastronomía local. Incluye transporte en lancha rápida, almuerzo y experiencias como snorkel guiado y tour de fragatas para vivir un día inolvidable.",
+    "price": 390000,
+    "priceRange": "$390.000 COP",
+    "duration": "Día completo (8 horas)",
+    "location": "Islas del Rosario, Cartagena",
+    "category": "Playa",
+    "includes": [
+      "Transporte ida y regreso en lancha rápida",
+      "Cóctel de bienvenida",
+      "5 opciones de almuerzo",
+      "Asoleadora",
+      "Tour de fragatas",
+      "Wellness diario",
+      "Cornhole Championship",
+      "Piscina de agua dulce",
+      "Snorkel guiado",
+      "Traslado al Oceanario"
     ],
-    "price": 700000,
-    "priceRange": "$750.000 - $1.200.000 COP",
-    "duration": "2 días, 1 noches",
-    "location": "Cartagena",
-    "category": "Internacional",
-    "includes": [],
-    "excludes": [],
-    "highlights": [],
+    "excludes": [
+      "Impuesto portuario",
+      "Seguro",
+      "Gastos personales"
+    ],
+    "highlights": [
+      "Piscina de agua dulce",
+      "Snorkel guiado",
+      "Isla privada",
+      "Actividades incluidas"
+    ],
     "rating": 0,
     "reviewCount": 0,
-    "maxGuests": 4,
+    "maxGuests": 20,
     "difficulty": "Fácil",
-    "schedule": "",
-    "meeting": "",
-    "published": false,
-    "order": 15
+    "schedule": "7:30 AM - 4:30 PM",
+    "meeting": "Muelle La Bodeguita, Puerta #3, Cartagena",
+    "published": true,
+    "order": 15,
+    "images": [
+      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop"
+    ]
   },
   {
-    "id": "7fa74f78-ab3a-4935-ad44-b0f95767b31e",
-    "name": "Plan Playa Blanca (Copia)",
-    "slug": "plan-playa-blanca-copia",
-    "shortDescription": "",
-    "fullDescription": "",
-    "images": [
-      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"
-    ],
-    "price": 150000,
-    "priceRange": "",
-    "duration": "Día completo (10 horas)",
-    "location": "Santa Marta, Playa Tortuga",
+    "id": "5b6b47b9-d2fc-49c5-9fe6-21a816ea4676",
+    "slug": "top-3-islas",
+    "name": "Top 3 Islas",
+    "shortDescription": "Recorre Bora Bora, Pao Pao e Islabela en un solo día lleno de experiencias.",
+    "fullDescription": "Explora Bora Bora, Pao Pao e Islabela en un mismo recorrido por las Islas del Rosario. Disfruta playas paradisíacas, transporte en lancha rápida, bebidas de bienvenida, almuerzo y tiempo libre para conocer tres experiencias completamente diferentes durante un solo pasadía.",
+    "price": 510000,
+    "priceRange": "$510.000 COP",
+    "duration": "Día completo (8 horas)",
+    "location": "Islas del Rosario, Cartagena",
     "category": "Playa",
-    "includes": [],
-    "excludes": [],
-    "highlights": [],
+    "includes": [
+      "Transporte en lancha rápida",
+      "Guía bilingüe",
+      "Tour panorámico por las Islas del Rosario",
+      "Bebida de bienvenida en cada isla",
+      "Agua fresca a bordo",
+      "Tres opciones de almuerzo en Islabela",
+      "Tiempo libre en cada isla"
+    ],
+    "excludes": [
+      "Impuesto portuario",
+      "Seguro",
+      "Gastos personales"
+    ],
+    "highlights": [
+      "Visita Bora Bora",
+      "Visita Pao Pao",
+      "Visita Islabela",
+      "Tres islas en un solo día"
+    ],
     "rating": 0,
     "reviewCount": 0,
-    "maxGuests": 1,
+    "maxGuests": 20,
     "difficulty": "Fácil",
-    "schedule": "",
-    "meeting": "",
+    "schedule": "8:00 AM - 4:30 PM",
+    "meeting": "Muelle La Bodeguita, Puerta #3, Cartagena",
     "published": true,
-    "order": 16
+    "order": 16,
+    "images": [
+      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop"
+    ]
+  },
+  {
+    "id": "f0cf0b55-3d92-4a89-a5ca-4d32d0d8672e",
+    "slug": "eje-cafetero-desde-medellin",
+    "name": "Eje Cafetero desde Medellín",
+    "shortDescription": "Descubre el Eje Cafetero con transporte, alojamiento y experiencias inolvidables desde Medellín.",
+    "fullDescription": "Explora uno de los destinos más emblemáticos de Colombia en un recorrido por el Eje Cafetero. Disfruta de paisajes espectaculares, pueblos llenos de tradición, fincas cafeteras, aguas termales y el impresionante Valle de Cocora. Un viaje diseñado para conectar con la naturaleza, la cultura y la gastronomía de la región.",
+    "price": 954000,
+    "priceRange": "$954.000 COP",
+    "duration": "Según itinerario del operador",
+    "location": "Eje Cafetero, Colombia",
+    "category": "Nacional",
+    "includes": [
+      "Transporte terrestre ida y regreso desde Medellín",
+      "Alojamiento seleccionado",
+      "Alimentación según el plan",
+      "Tours y actividades",
+      "Asistencia al viajero",
+      "Guía acompañante"
+    ],
+    "excludes": [
+      "Gastos personales",
+      "Servicios no especificados",
+      "Alimentación no indicada",
+      "Actividades opcionales"
+    ],
+    "highlights": [
+      "Valle de Cocora",
+      "Tour del Café",
+      "Pueblos típicos",
+      "Termales",
+      "Miradores panorámicos",
+      "Paseo en Jeep Willys"
+    ],
+    "rating": 0,
+    "reviewCount": 0,
+    "maxGuests": 20,
+    "difficulty": "Fácil",
+    "schedule": "Según itinerario",
+    "meeting": "Medellín",
+    "published": true,
+    "order": 17,
+    "images": [
+      "https://images.unsplash.com/photo-1516306580123-e6e52b1b7b5f?w=800&h=600&fit=crop"
+    ]
+  },
+  {
+    "id": "75eb63c8-bde5-4514-8e8e-524b6a44bdf8",
+    "slug": "punta-cana-desde-colombia",
+    "name": "Punta Cana desde Colombia",
+    "shortDescription": "Viaja a Punta Cana con vuelos, hotel, traslados y experiencias inolvidables en el Caribe.",
+    "fullDescription": "Vive unas vacaciones inolvidables en Punta Cana, uno de los destinos más exclusivos del Caribe. Relájate en playas de arena blanca y aguas cristalinas, disfruta de excursiones únicas y descubre la hospitalidad dominicana mientras todo está organizado para que solo te preocupes por disfrutar.",
+    "price": 3650000,
+    "priceRange": "$3.650.000 COP",
+    "duration": "Según itinerario del operador",
+    "location": "Punta Cana, República Dominicana",
+    "category": "Internacional",
+    "includes": [
+      "Tiquetes aéreos",
+      "Alojamiento seleccionado",
+      "Traslados aeropuerto - hotel - aeropuerto",
+      "Tours y actividades",
+      "Asistencia al viajero",
+      "Acompañamiento antes y durante el viaje"
+    ],
+    "excludes": [
+      "Gastos personales",
+      "Excursiones opcionales",
+      "Alimentación no especificada",
+      "Servicios no mencionados en el plan"
+    ],
+    "highlights": [
+      "Isla Saona",
+      "Aventura en Buggy",
+      "Cenote",
+      "Playa Macao",
+      "Paseo en Catamarán",
+      "Vida nocturna"
+    ],
+    "rating": 0,
+    "reviewCount": 0,
+    "maxGuests": 20,
+    "difficulty": "Fácil",
+    "schedule": "Según itinerario",
+    "meeting": "Aeropuerto de salida según ciudad seleccionada",
+    "published": true,
+    "order": 18,
+    "images": [
+      "https://images.unsplash.com/photo-1589979481223-deb893043163?w=800&h=600&fit=crop"
+    ]
+  },
+  {
+    "id": "a9c94f2b-6729-4c4c-bd52-2d9e3f15e54c",
+    "slug": "rio-de-janeiro-Magico",
+    "name": "Río de Janeiro desde Colombia",
+    "shortDescription": "Viaja a Río de Janeiro con vuelos, alojamiento y visitas a los principales atractivos de la ciudad.",
+    "fullDescription": "Vive una experiencia inolvidable en Río de Janeiro, una de las ciudades más emblemáticas de Brasil. Recorre el Cristo Redentor, disfruta de las impresionantes vistas desde el Pan de Azúcar, conoce las coloridas Escaleras de Selarón y relájate en la famosa playa de Copacabana mientras descubres la energía única de la ciudad maravillosa.",
+    "price": 5700000,
+    "priceRange": "$5.700.000 COP",
+    "duration": "Según itinerario del operador",
+    "location": "Río de Janeiro, Brasil",
+    "category": "Cultural",
+    "includes": [
+      "Tiquetes aéreos",
+      "Alojamiento seleccionado",
+      "Traslados aeropuerto - hotel - aeropuerto",
+      "Tours y actividades",
+      "Asistencia al viajero"
+    ],
+    "excludes": [
+      "Gastos personales",
+      "Alimentación no especificada",
+      "Actividades opcionales",
+      "Servicios no mencionados en el plan"
+    ],
+    "highlights": [
+      "Cristo Redentor",
+      "Pan de Azúcar",
+      "Escaleras de Selarón",
+      "Playa de Copacabana"
+    ],
+    "rating": 0,
+    "reviewCount": 0,
+    "maxGuests": 20,
+    "difficulty": "Fácil",
+    "schedule": "Según itinerario",
+    "meeting": "Aeropuerto de salida según la ciudad seleccionada",
+    "published": true,
+    "order": 19,
+    "images": [
+      "https://images.unsplash.com/photo-1483728642387-6c3bdd6c93e5?w=800&h=600&fit=crop"
+    ]
   }
 ]

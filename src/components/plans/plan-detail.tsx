@@ -15,6 +15,7 @@ import {
   Sparkles,
   Heart,
   Share2,
+  ChevronDown,
   type LucideIcon,
 } from "lucide-react";
 
@@ -39,6 +40,7 @@ import { isFavorite, toggleFavorite } from "@/lib/favorites";
 import { ShareDialog } from "@/components/shared/share-dialog";
 import { ExpandableSection } from "@/components/shared/expandable-section";
 import { useState, useCallback, useEffect } from "react";
+import { cn } from "@/lib/utils";
 import { format, addDays } from "date-fns";
 import { es } from "date-fns/locale";
 import { Calendar as CalendarUI } from "@/components/ui/calendar";
@@ -46,6 +48,17 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Plus, Minus } from "lucide-react";
 import { WHATSAPP_NUMBER } from "@/lib/config";
+import { detectUserCity } from "@/lib/geolocation";
+
+const WhatsAppIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    {...props}
+  >
+    <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.513 2.262 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.457L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.625 1.45 5.507.003 10.024-4.512 10.026-10.022.002-2.67-1.038-5.18-2.93-7.076-1.893-1.897-4.405-2.937-7.079-2.939-5.51 0-10.024 4.52-10.027 10.029-.001 1.835.507 3.572 1.47 5.114l-.993 3.626 3.908-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.174.2-.298.3-.496.099-.198.05-.372-.025-.521-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.501-.669-.51l-.57-.011c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z" />
+  </svg>
+);
 
 const getNextWeekend = () => {
   const today = new Date();
@@ -73,13 +86,266 @@ function getShortDuration(duration: string): string {
   return match ? `${match[1]} HORAS` : duration;
 }
 
+import { TourPlan } from "@/lib/data";
+
+function getVariantDetails(plan: TourPlan, variantKey: "3d2n" | "4d3n" | "5d4n") {
+  const location = plan.location;
+  const locClean = location.split(",")[0].trim().toLowerCase();
+  
+  let hotels = {
+    "3d2n": {
+      hotel: "Hotel Turista Standard",
+      stars: 3,
+      plan: "Desayuno incluido",
+      difference: "Ideal para escapadas",
+    },
+    "4d3n": {
+      hotel: "Hotel Confort Superior",
+      stars: 4,
+      plan: "Desayuno + Cena",
+      difference: "Más tiempo libre",
+    },
+    "5d4n": {
+      hotel: "Hotel Premium Resort",
+      stars: 5,
+      plan: "Todo incluido",
+      difference: "Mayor comodidad",
+    }
+  };
+
+  if (locClean.includes("san andrés") || locClean.includes("san andres")) {
+    hotels = {
+      "3d2n": {
+        hotel: "Hotel Arena Blanca",
+        stars: 4,
+        plan: "Desayuno incluido",
+        difference: "Ideal para escapadas",
+      },
+      "4d3n": {
+        hotel: "Hotel Sol Caribe Campo",
+        stars: 4,
+        plan: "Desayuno + Cena",
+        difference: "Más tiempo libre",
+      },
+      "5d4n": {
+        hotel: "Decameron Isleño",
+        stars: 5,
+        plan: "Todo incluido",
+        difference: "Mayor comodidad",
+      }
+    };
+  } else if (locClean.includes("cancún") || locClean.includes("cancun")) {
+    hotels = {
+      "3d2n": {
+        hotel: "Hotel Oasis Smart",
+        stars: 3,
+        plan: "Desayuno incluido",
+        difference: "Ideal para escapadas",
+      },
+      "4d3n": {
+        hotel: "Dreams Sands Cancun Resort",
+        stars: 4,
+        plan: "Desayuno + Cena",
+        difference: "Más tiempo libre",
+      },
+      "5d4n": {
+        hotel: "Grand Fiesta Americana Coral Beach",
+        stars: 5,
+        plan: "Todo incluido",
+        difference: "Mayor comodidad",
+      }
+    };
+  } else if (locClean.includes("punta cana")) {
+    hotels = {
+      "3d2n": {
+        hotel: "Riu Naiboa Resort",
+        stars: 3,
+        plan: "Desayuno incluido",
+        difference: "Ideal para escapadas",
+      },
+      "4d3n": {
+        hotel: "Barceló Bávaro Palace",
+        stars: 4,
+        plan: "Desayuno + Cena",
+        difference: "Más tiempo libre",
+      },
+      "5d4n": {
+        hotel: "Lopesan Costa Bávaro Resort",
+        stars: 5,
+        plan: "Todo incluido",
+        difference: "Mayor comodidad",
+      }
+    };
+  } else if (locClean.includes("eje cafetero")) {
+    hotels = {
+      "3d2n": {
+        hotel: "Finca Hotel La Dulcera",
+        stars: 3,
+        plan: "Desayuno incluido",
+        difference: "Ideal para escapadas",
+      },
+      "4d3n": {
+        hotel: "Hacienda Combia",
+        stars: 4,
+        plan: "Desayuno + Cena",
+        difference: "Más tiempo libre",
+      },
+      "5d4n": {
+        hotel: "Hotel Termales Santa Rosa",
+        stars: 5,
+        plan: "Todo incluido",
+        difference: "Mayor comodidad",
+      }
+    };
+  } else if (locClean.includes("santa marta") || locClean.includes("tayrona")) {
+    hotels = {
+      "3d2n": {
+        hotel: "Hotel Tayrona Rodadero",
+        stars: 3,
+        plan: "Desayuno incluido",
+        difference: "Ideal para escapadas",
+      },
+      "4d3n": {
+        hotel: "Ecohabs Tayrona",
+        stars: 4,
+        plan: "Desayuno + Cena",
+        difference: "Más tiempo libre",
+      },
+      "5d4n": {
+        hotel: "Marriott Resort Playa Dormida",
+        stars: 5,
+        plan: "Todo incluido",
+        difference: "Mayor comodidad",
+      }
+    };
+  } else if (locClean.includes("madrid") || locClean.includes("parís") || locClean.includes("roma")) {
+    hotels = {
+      "3d2n": {
+        hotel: "Hotel Ganivet / Ibis Paris",
+        stars: 3,
+        plan: "Desayuno incluido",
+        difference: "Ideal para escapadas",
+      },
+      "4d3n": {
+        hotel: "Plaza de España / Novotel Paris",
+        stars: 4,
+        plan: "Desayuno + Cena",
+        difference: "Más tiempo libre",
+      },
+      "5d4n": {
+        hotel: "Westin Palace / Pullman Tour Eiffel",
+        stars: 5,
+        plan: "Todo incluido",
+        difference: "Mayor comodidad",
+      }
+    };
+  } else if (locClean.includes("tokio") || locClean.includes("kioto") || locClean.includes("osaka")) {
+    hotels = {
+      "3d2n": {
+        hotel: "Toyoko Inn Shinjuku",
+        stars: 3,
+        plan: "Desayuno incluido",
+        difference: "Ideal para escapadas",
+      },
+      "4d3n": {
+        hotel: "Hotel Gracery Shinjuku",
+        stars: 4,
+        plan: "Desayuno + Cena",
+        difference: "Más tiempo libre",
+      },
+      "5d4n": {
+        hotel: "The Ritz-Carlton Kyoto",
+        stars: 5,
+        plan: "Todo incluido",
+        difference: "Mayor comodidad",
+      }
+    };
+  } else if (locClean.includes("estambul") || locClean.includes("dubái") || locClean.includes("dubai")) {
+    hotels = {
+      "3d2n": {
+        hotel: "DoubleTree by Hilton Istanbul",
+        stars: 4,
+        plan: "Desayuno incluido",
+        difference: "Ideal para escapadas",
+      },
+      "4d3n": {
+        hotel: "Cave Hotel Cappadocia",
+        stars: 4,
+        plan: "Desayuno + Cena",
+        difference: "Más tiempo libre",
+      },
+      "5d4n": {
+        hotel: "Atlantis The Palm Dubai",
+        stars: 5,
+        plan: "Todo incluido",
+        difference: "Mayor comodidad",
+      }
+    };
+  }
+
+  const label = variantKey === "3d2n" ? "3 días · 2 noches" : variantKey === "4d3n" ? "4 días · 3 noches" : "5 días · 4 noches";
+  const durationText = variantKey === "3d2n" ? "3 días / 2 noches" : variantKey === "4d3n" ? "4 días / 3 noches" : "5 días / 4 noches";
+
+  return {
+    label,
+    durationText,
+    hotel: hotels[variantKey].hotel,
+    stars: hotels[variantKey].stars,
+    plan: hotels[variantKey].plan,
+    difference: hotels[variantKey].difference,
+    schedule: plan.schedule || "Todos los viernes",
+  };
+}
+
+const getMultiplier = (v: "3d2n" | "4d3n" | "5d4n") => {
+  if (v === "3d2n") return 0.85;
+  if (v === "4d3n") return 0.92;
+  return 1.0;
+};
+
 export function PlanDetail() {
-  const { selectedItemId, navigate, searchAdults, searchChildren, searchDate, searchOrigin, searchRoomsDetail } = useNavigation();
+  const {
+    selectedItemId,
+    navigate,
+    searchAdults,
+    searchChildren,
+    searchDate,
+    searchOrigin,
+    searchRoomsDetail,
+    searchSelectedVariant,
+    setSearchSelectedVariant,
+    setSearchPriceFrom,
+    setFavoritesPulseActive,
+  } = useNavigation();
   const { data: plan, isLoading } = useQuery({
     queryKey: ["plan", selectedItemId],
     queryFn: () => fetchPlan(selectedItemId!),
     enabled: !!selectedItemId,
   });
+
+  const [roomType, setRoomType] = useState<"individual" | "doble" | "triple" | "cuadruple">("doble");
+  const [originCity, setOriginCity] = useState<string>(() => searchOrigin || "Barranquilla");
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && !searchOrigin) {
+      const detectCity = async () => {
+        try {
+          const city = await detectUserCity();
+          if (city) setOriginCity(city);
+        } catch (error) {
+          console.warn("[Geolocation] Error auto-detecting city:", error);
+        }
+      };
+      detectCity();
+    }
+  }, [searchOrigin]);
+
+  const roomTypeLabels: Record<string, string> = {
+    individual: "Individual",
+    doble: "Doble",
+    triple: "Triple",
+    cuadruple: "Cuádruple",
+  };
 
   const [isFav, setIsFav] = useState(() =>
     typeof window !== "undefined" && selectedItemId
@@ -110,7 +376,31 @@ export function PlanDetail() {
   const isBookingStyle = plan?.category === "Nacional" || plan?.category === "Internacional";
   const isGrupal = plan ? getPlanExperienceSection(plan) === "grupales" : false;
   const sectionId = plan ? getPlanExperienceSection(plan) : "";
-  const isBookingGallery = sectionId === "pasadias" || sectionId === "grupales" || sectionId === "tours";
+  const isBookingGallery = sectionId === "internacionales" || sectionId === "nacionales" || sectionId === "circuitos";
+
+  const showVariants = plan ? (sectionId === "internacionales" || sectionId === "nacionales" || sectionId === "circuitos") : false;
+
+  const [selectedVariant, setSelectedVariant] = useState<"3d2n" | "4d3n" | "5d4n">(() => {
+    if (searchSelectedVariant === "3d2n" || searchSelectedVariant === "4d3n" || searchSelectedVariant === "5d4n") {
+      return searchSelectedVariant;
+    }
+    return "5d4n";
+  });
+
+  const currentPrice = plan ? (showVariants ? Math.round(plan.price * getMultiplier(selectedVariant)) : plan.price) : 0;
+  const totalPlanPrice = guests * currentPrice;
+
+  useEffect(() => {
+    if (plan) {
+      if (showVariants) {
+        setSearchPriceFrom(currentPrice);
+        setSearchSelectedVariant(selectedVariant);
+      } else {
+        setSearchPriceFrom(plan.price);
+        setSearchSelectedVariant(null);
+      }
+    }
+  }, [selectedVariant, plan, showVariants, currentPrice, setSearchPriceFrom, setSearchSelectedVariant]);
 
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
@@ -158,33 +448,21 @@ export function PlanDetail() {
   
   const today = new Date();
   today.setHours(0,0,0,0);
-  const totalPlanPrice = guests * (plan?.price || 0);
 
   const handleWhatsAppRedirect = useCallback(() => {
     if (!plan) return;
-    const total = formatPrice(guests * plan.price);
-    const pricePerPerson = formatPrice(plan.price);
-
-    let roomsBreakdown = "";
-    if (searchRoomsDetail) {
-      try {
-        const roomsObj = JSON.parse(searchRoomsDetail);
-        if (Array.isArray(roomsObj)) {
-          roomsBreakdown = roomsObj.map((r, i) => `Hab ${i+1}: ${r.adults} ad, ${r.children} ch`).join(" | ");
-        }
-      } catch (e) {
-        console.error(e);
-      }
-    }
+    const variantDetails = showVariants ? getVariantDetails(plan, selectedVariant) : null;
+    const total = formatPrice(guests * currentPrice);
 
     const message = [
       `🌴 *CONSULTA VIVE TRAVEL*`,
       ``,
-      `📋 *Plan:* ${plan.name}`,
+      `📋 *Plan:* ${plan.name}${variantDetails ? ` (${variantDetails.label})` : ""}`,
       `📍 *Destino:* ${plan.location}`,
-      searchOrigin ? `🛫 *Origen:* ${searchOrigin}` : "",
+      originCity ? `🛫 *Origen:* ${originCity}` : "",
+      variantDetails ? `🏨 *Hospedaje:* ${variantDetails.hotel}` : "",
       `👥 *Viajeros:* ${guests} persona${guests > 1 ? "s" : ""}`,
-      roomsBreakdown ? `🏨 *Alojamiento:* ${roomsBreakdown}` : "",
+      `🛏️ *Habitación:* ${roomTypeLabels[roomType]}`,
       `📅 *Fecha de viaje:* ${plan.fecha_salida || (selectedDate ? format(selectedDate, "d MMM yyyy", { locale: es }) : "Por definir")}`,
       `💵 *Total estimado:* ${total}`,
       ``,
@@ -192,16 +470,29 @@ export function PlanDetail() {
     ].filter(Boolean).join("\n");
     
     window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, "_blank");
-  }, [plan, guests, selectedDate, searchOrigin, searchRoomsDetail]);
+  }, [plan, guests, selectedDate, originCity, roomType, showVariants, selectedVariant, currentPrice]);
 
   const handleToggleFavorite = useCallback(() => {
     if (!selectedItemId) return;
     const nowFav = toggleFavorite(selectedItemId);
     setIsFav(nowFav);
-    toast.success(nowFav ? "Guardado en tu colección" : "Eliminado de tu colección", {
-      description: nowFav ? "Encuéntralo en tu lista de favoritos" : undefined,
-    });
-  }, [selectedItemId]);
+    const isMobile = window.innerWidth < 768;
+    if (isMobile && nowFav) {
+      setFavoritesPulseActive(true);
+    } else {
+      toast.success(nowFav ? "Guardado en tu colección" : "Eliminado de tu colección", {
+        description: nowFav ? "Encuéntralo en tu lista de favoritos" : undefined,
+      });
+    }
+  }, [selectedItemId, setFavoritesPulseActive]);
+
+  const handleWhatsAppShare = useCallback(() => {
+    if (!plan) return;
+    const currentUrl = typeof window !== "undefined" ? window.location.href : "";
+    const text = `Mira este increíble plan en Vive Travel: ${plan.name}\n${currentUrl}`;
+    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
+    window.open(whatsappUrl, "_blank");
+  }, [plan]);
 
   if (isLoading) {
     return (
@@ -230,9 +521,136 @@ export function PlanDetail() {
     );
   }
 
+  const cotizadorCard = (
+    <aside className="w-full lg:w-[380px] shrink-0">
+      <div className="lg:sticky lg:top-24">
+        <Card className="border-border/50 shadow-xl py-0 gap-0 bg-white">
+          <CardContent className="p-6 space-y-5">
+            {/* Fechas, Personas y Ciudad de salida */}
+            <div className="space-y-4">
+              {!isGrupal && (
+                <Popover open={datePopoverOpen} onOpenChange={setDatePopoverOpen}>
+                  <PopoverTrigger asChild>
+                    <button className="w-full rounded-xl border border-border p-3 text-left hover:border-ocean/50 focus:outline-none focus:ring-2 focus:ring-ocean/30 bg-white">
+                      <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Fecha del plan</label>
+                      <p className="text-sm font-semibold text-foreground mt-0.5">
+                        {selectedDate ? format(selectedDate, "EEEE, d 'de' MMMM", { locale: es }) : "Seleccionar fecha"}
+                      </p>
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <CalendarUI
+                      mode="single"
+                      selected={selectedDate}
+                      onSelect={(d) => { if(d) { setSelectedDate(d); setDatePopoverOpen(false); } }}
+                      disabled={{ before: today }}
+                      locale={es}
+                      defaultMonth={selectedDate || today} />
+                  </PopoverContent>
+                </Popover>
+              )}
+
+              <Popover open={guestPopoverOpen} onOpenChange={setGuestPopoverOpen}>
+                <PopoverTrigger asChild>
+                  <button className="w-full rounded-xl border border-border p-3 text-left hover:border-ocean/50 focus:outline-none focus:ring-2 focus:ring-ocean/30 bg-white">
+                    <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Personas</label>
+                    <p className="text-sm font-semibold text-foreground mt-0.5">
+                      {guests} persona{guests > 1 ? "s" : ""}{isGrupal ? ` (máx. ${plan.maxGuests})` : ""}
+                    </p>
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent className="w-64 p-4" align="start">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-foreground">Personas</p>
+                      {isGrupal && <p className="text-xs text-muted-foreground">Máximo {plan.maxGuests}</p>}
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Button variant="outline" size="icon" className="h-8 w-8 rounded-full" onClick={() => setGuests(g => Math.max(1, g - 1))} disabled={guests <= 1}><Minus className="w-4 h-4" /></Button>
+                      <span className="w-6 text-center text-sm font-semibold">{guests}</span>
+                      <Button variant="outline" size="icon" className="h-8 w-8 rounded-full" onClick={() => setGuests(g => isGrupal ? Math.min(plan.maxGuests, g + 1) : g + 1)} disabled={isGrupal ? guests >= plan.maxGuests : false}><Plus className="w-4 h-4" /></Button>
+                    </div>
+                  </div>
+                </PopoverContent>
+              </Popover>
+
+              <Separator />
+
+              {/* Ciudad de salida */}
+              <div className="flex flex-col gap-2">
+                <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Ciudad de salida</label>
+                <select
+                  value={originCity}
+                  onChange={(e) => setOriginCity(e.target.value)}
+                  className="w-full rounded-xl border border-border p-3 text-sm font-semibold text-foreground bg-white hover:border-border/80 focus:outline-none focus:ring-2 focus:ring-foreground/10 cursor-pointer appearance-none"
+                  style={{
+                    backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2371717a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e")`,
+                    backgroundRepeat: 'no-repeat',
+                    backgroundPosition: 'right 12px center',
+                    backgroundSize: '16px'
+                  }}
+                >
+                  {!["Barranquilla", "Bogotá", "Medellín", "Cali"].includes(originCity) && (
+                    <option value={originCity}>{originCity}</option>
+                  )}
+                  <option value="Barranquilla">Barranquilla</option>
+                  <option value="Bogotá">Bogotá</option>
+                  <option value="Medellín">Medellín</option>
+                  <option value="Cali">Cali</option>
+                </select>
+              </div>
+
+              <Separator />
+
+              {/* Botón Reservar */}
+              <div className="pt-2">
+                {isGrupal ? (
+                  <Button
+                    className="relative flex items-center justify-center gap-2 h-14 px-4 rounded-xl bg-[#1DA851] hover:bg-[#199346] text-white shadow-sm transition-all duration-300 hover:shadow-md w-full font-bold text-[15px]"
+                    onClick={handleWhatsAppRedirect}
+                  >
+                    <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+                    <span>Reservar por WhatsApp</span>
+                  </Button>
+                ) : (
+                  <Button
+                    className="w-full bg-[#1DA851] hover:bg-[#199346] text-white rounded-xl h-14 text-base font-bold shadow-sm transition-all"
+                    onClick={() => setSummaryModalOpen(true)}
+                  >
+                    Reservar
+                  </Button>
+                )}
+              </div>
+
+              <Separator />
+
+              {/* Precio final (El cierre) */}
+              <div className="space-y-1">
+                <div className="flex items-baseline justify-between">
+                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                    {guests > 1 ? `Total (${guests} personas)` : "Desde"}
+                  </span>
+                  <div className="flex flex-col items-end">
+                    {/* Strikethrough higher price */}
+                    <span className="text-xs text-muted-foreground/60 line-through font-semibold leading-none">
+                      {formatPrice(Math.round(totalPlanPrice * 1.35))}
+                    </span>
+                    <span className="text-2xl sm:text-3xl font-bold text-foreground leading-none mt-1">
+                      {formatPrice(totalPlanPrice)}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </aside>
+  );
+
   return (
     <div className="py-6 sm:py-10 px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24 pb-28 lg:pb-10">
-      <div className="max-w-7xl mx-auto">
+      <div className={cn("mx-auto", isBookingGallery ? "max-w-6xl" : "max-w-7xl")}>
         {/* Back Button (Desktop) */}
         <Button
           variant="ghost"
@@ -272,19 +690,35 @@ export function PlanDetail() {
               <Button
                 variant="outline"
                 size="icon"
-                className="h-10 w-10 rounded-full bg-white/90 backdrop-blur-sm border-border/20 shadow-md hover:bg-white text-foreground"
-                onClick={() => setShareOpen(true)}
+                className="h-10 w-10 rounded-full bg-white/90 backdrop-blur-sm border-border/20 shadow-md hover:bg-white text-[#25D366] hover:text-[#20ba5a]"
+                onClick={handleWhatsAppShare}
+                aria-label="Compartir por WhatsApp"
               >
-                <Share2 className="w-5 h-5" />
+                <WhatsAppIcon className="w-5 h-5" />
               </Button>
             </div>
           </div>
 
-          <PropertyGallery
-            images={plan.images}
-            title={plan.name}
-            variant={isBookingGallery ? "booking" : "default"}
-            className="mb-0" />
+          {isBookingGallery ? (
+            <div className="flex flex-col lg:flex-row gap-6 items-stretch">
+              <div className="flex-1 min-w-0">
+                <PropertyGallery
+                  images={plan.images}
+                  title={plan.name}
+                  variant="booking"
+                  className="mb-0" />
+              </div>
+              <div className="hidden lg:block">
+                {cotizadorCard}
+              </div>
+            </div>
+          ) : (
+            <PropertyGallery
+              images={plan.images}
+              title={plan.name}
+              variant="default"
+              className="mb-0" />
+          )}
         </div>
 
         {/* Main Content + Sticky Price Card */}
@@ -313,11 +747,11 @@ export function PlanDetail() {
                   <Button
                     variant="outline"
                     size="icon"
-                    className="rounded-full h-9 w-9 border-border/50 hover:border-border"
-                    onClick={() => setShareOpen(true)}
-                    aria-label="Compartir"
+                    className="rounded-full h-9 w-9 border-border/50 hover:border-border text-[#25D366] hover:text-[#20ba5a] hover:bg-emerald-50/50"
+                    onClick={handleWhatsAppShare}
+                    aria-label="Compartir por WhatsApp"
                   >
-                    <Share2 className="w-4 h-4" />
+                    <WhatsAppIcon className="w-4 h-4" />
                   </Button>
                   <Button
                     variant="outline"
@@ -338,6 +772,81 @@ export function PlanDetail() {
             </div>
 
             <Separator className="my-5" />
+
+            {/* Durations and Variant Selection */}
+            {showVariants && (
+              <div className="mb-8 animate-in fade-in duration-350">
+                <h3 className="text-base font-bold text-zinc-800 mb-4">
+                  Selecciona tu experiencia
+                </h3>
+                <div className="flex flex-col gap-3">
+                  {(["3d2n", "4d3n", "5d4n"] as const).map((v) => {
+                    const details = getVariantDetails(plan, v);
+                    const price = Math.round(plan.price * getMultiplier(v));
+                    const isSelected = selectedVariant === v;
+                    return (
+                      <div
+                        key={v}
+                        onClick={() => setSelectedVariant(v)}
+                        className={cn(
+                          "cursor-pointer rounded-xl border p-4 transition-all duration-200 relative flex flex-col sm:grid sm:grid-cols-12 items-start sm:items-center gap-4 bg-white",
+                          isSelected
+                            ? "border-zinc-700 ring-1 ring-zinc-700/10 shadow-sm"
+                            : "border-zinc-200 hover:border-zinc-300 hover:shadow-sm"
+                        )}
+                      >
+                        {/* Check Indicator */}
+                        {isSelected && (
+                          <div className="absolute top-3 right-3 text-zinc-800 flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider">
+                            <Check className="w-3.5 h-3.5 text-zinc-800 stroke-[3]" />
+                            <span>Seleccionado</span>
+                          </div>
+                        )}
+
+                        {/* Duration & Recommendation (Col 1-3) */}
+                        <div className="sm:col-span-3 pr-8 sm:pr-0">
+                          <p className="text-[15px] font-extrabold text-zinc-900">{details.label}</p>
+                          <span className="inline-block mt-1 text-[10px] font-bold text-zinc-500 bg-zinc-100 rounded px-2 py-0.5 uppercase tracking-wide">
+                            {details.difference}
+                          </span>
+                        </div>
+
+                        {/* Hotel (Col 4-6) */}
+                        <div className="sm:col-span-3 text-xs space-y-0.5">
+                          <span className="text-zinc-400 font-medium text-[10px] uppercase tracking-wider">Hospedaje</span>
+                          <p className="font-bold text-zinc-800 leading-tight pr-2 truncate" title={details.hotel}>
+                            {details.hotel}
+                          </p>
+                          <div className="flex items-center gap-0.5 mt-0.5">
+                            <span className="text-amber-500 text-xs">
+                              {"★".repeat(details.stars)}{"☆".repeat(5 - details.stars)}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Plan & Departure (Col 7-9) */}
+                        <div className="sm:col-span-3 text-xs space-y-1">
+                          <div className="flex flex-col">
+                            <span className="text-zinc-400 font-medium text-[10px] uppercase tracking-wider">Plan</span>
+                            <span className="font-bold text-zinc-800 leading-tight">{details.plan}</span>
+                          </div>
+                          <div className="flex flex-col">
+                            <span className="text-zinc-400 font-medium text-[10px] uppercase tracking-wider">Salida</span>
+                            <span className="font-bold text-zinc-800 leading-tight">{details.schedule}</span>
+                          </div>
+                        </div>
+
+                        {/* Price (Col 10-12) */}
+                        <div className="sm:col-span-3 flex flex-col sm:items-end justify-center self-stretch sm:self-auto pt-3 sm:pt-0 border-t sm:border-t-0 border-zinc-100 mt-2 sm:mt-0">
+                          <span className="text-[9px] uppercase font-bold text-zinc-400 tracking-wider">Desde</span>
+                          <span className="text-lg font-black text-zinc-900 leading-none mt-0.5">{formatPrice(price)}</span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
 
             {/* Info Section */}
             {isBookingStyle ? (
@@ -482,26 +991,33 @@ export function PlanDetail() {
                   </ExpandableSection>
                 </div>
 
-                <Separator className="my-5" />
-
-                {/* Schedule & Meeting */}
-                <div>
-                  <h2 className="text-xl md:text-2xl font-bold text-foreground mb-3.5">
-                    Horario y punto de encuentro
-                  </h2>
-                  <ExpandableSection itemCount={2}>
-                    <div className="space-y-3">
-                      <InfoItem
-                        icon={Calendar}
-                        label="Horario"
-                        value={plan.schedule} />
-                      <InfoItem
-                        icon={Navigation}
-                        label="Punto de encuentro"
-                        value={plan.meeting} />
+                {(plan.schedule || plan.meeting) && (
+                  <>
+                    <Separator className="my-5" />
+                    {/* Schedule & Meeting */}
+                    <div>
+                      <h2 className="text-xl md:text-2xl font-bold text-foreground mb-3.5">
+                        Horario y punto de encuentro
+                      </h2>
+                      <ExpandableSection itemCount={2}>
+                        <div className="space-y-3">
+                          {plan.schedule && (
+                            <InfoItem
+                              icon={Calendar}
+                              label="Horario"
+                              value={plan.schedule} />
+                          )}
+                          {plan.meeting && (
+                            <InfoItem
+                              icon={Navigation}
+                              label="Punto de encuentro"
+                              value={plan.meeting} />
+                          )}
+                        </div>
+                      </ExpandableSection>
                     </div>
-                  </ExpandableSection>
-                </div>
+                  </>
+                )}
               </>
             )}
 
@@ -576,112 +1092,14 @@ export function PlanDetail() {
             <div className="h-4 lg:hidden" />
           </div>
 
-          
           {/* Right Sticky Reservation Flow */}
-          <aside className="w-full lg:w-[380px] shrink-0">
-              <div className="lg:sticky lg:top-24">
-                <Card className="border-border/50 shadow-xl py-0 gap-0">
-                  <CardContent className="p-6 space-y-5">
-                    <div>
-                      <div className="flex items-baseline gap-2">
-                        <span className="text-2xl sm:text-3xl font-bold text-foreground">
-                          {formatPrice(plan.price)}
-                        </span>
-                        {plan.priceRange && plan.priceRange.includes("-") && (
-                          <span className="text-sm text-muted-foreground line-through">
-                            {plan.priceRange.split("-")[1].trim()}
-                          </span>
-                        )}
-                        <span className="text-sm text-muted-foreground ml-auto">/ persona</span>
-                      </div>
-                    </div>
-
-                    <Separator />
-
-                    <div className="space-y-3">
-                      {isGrupal ? (
-                        <div className="rounded-xl border border-[#1DA851]/20 bg-[#1DA851]/5 p-4 flex flex-col items-center justify-center mb-1">
-                           <span className="text-[11px] font-bold text-[#1DA851] uppercase tracking-wider mb-3">La aventura comienza en:</span>
-                           <div className="flex gap-4 text-center">
-                             <div className="flex flex-col items-center justify-center w-10"><span className="text-xl font-bold text-foreground leading-none">{timeLeft.days}</span><span className="text-[10px] text-muted-foreground uppercase mt-1">Días</span></div>
-                             <span className="text-xl font-bold text-foreground/30 -mt-1">:</span>
-                             <div className="flex flex-col items-center justify-center w-10"><span className="text-xl font-bold text-foreground leading-none">{timeLeft.hours}</span><span className="text-[10px] text-muted-foreground uppercase mt-1">Hrs</span></div>
-                             <span className="text-xl font-bold text-foreground/30 -mt-1">:</span>
-                             <div className="flex flex-col items-center justify-center w-10"><span className="text-xl font-bold text-foreground leading-none">{timeLeft.minutes}</span><span className="text-[10px] text-muted-foreground uppercase mt-1">Min</span></div>
-                             <span className="text-xl font-bold text-foreground/30 -mt-1">:</span>
-                             <div className="flex flex-col items-center justify-center w-10"><span className="text-xl font-bold text-foreground leading-none">{timeLeft.seconds}</span><span className="text-[10px] text-muted-foreground uppercase mt-1">Seg</span></div>
-                           </div>
-                        </div>
-                      ) : (
-                        <Popover open={datePopoverOpen} onOpenChange={setDatePopoverOpen}>
-                          <PopoverTrigger asChild>
-                            <button className="w-full rounded-xl border border-border p-3 text-left hover:border-ocean/50 focus:outline-none focus:ring-2 focus:ring-ocean/30">
-                              <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Fecha del plan</label>
-                              <p className="text-sm font-medium text-foreground mt-0.5">
-                                {selectedDate ? format(selectedDate, "EEEE, d 'de' MMMM", { locale: es }) : "Seleccionar fecha"}
-                              </p>
-                            </button>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0" align="start">
-                            <CalendarUI
-                              mode="single"
-                              selected={selectedDate}
-                              onSelect={(d) => { if(d) { setSelectedDate(d); setDatePopoverOpen(false); } }}
-                              disabled={{ before: today }}
-                              locale={es}
-                              defaultMonth={selectedDate || today} />
-                          </PopoverContent>
-                        </Popover>
-                      )}
-
-                      <Popover open={guestPopoverOpen} onOpenChange={setGuestPopoverOpen}>
-                        <PopoverTrigger asChild>
-                          <button className="w-full rounded-xl border border-border p-3 text-left hover:border-ocean/50 focus:outline-none focus:ring-2 focus:ring-ocean/30">
-                            <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Personas</label>
-                            <p className="text-sm font-medium text-foreground mt-0.5">
-                              {guests} persona{guests > 1 ? "s" : ""}{isGrupal ? ` (máx. ${plan.maxGuests})` : ""}
-                            </p>
-                          </button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-64 p-4" align="start">
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <p className="text-sm font-medium text-foreground">Personas</p>
-                              {isGrupal && <p className="text-xs text-muted-foreground">Máximo {plan.maxGuests}</p>}
-                            </div>
-                            <div className="flex items-center gap-3">
-                              <Button variant="outline" size="icon" className="h-8 w-8 rounded-full" onClick={() => setGuests(g => Math.max(1, g - 1))} disabled={guests <= 1}><Minus className="w-4 h-4" /></Button>
-                              <span className="w-6 text-center text-sm font-semibold">{guests}</span>
-                              <Button variant="outline" size="icon" className="h-8 w-8 rounded-full" onClick={() => setGuests(g => isGrupal ? Math.min(plan.maxGuests, g + 1) : g + 1)} disabled={isGrupal ? guests >= plan.maxGuests : false}><Plus className="w-4 h-4" /></Button>
-                            </div>
-                          </div>
-                        </PopoverContent>
-                      </Popover>
-                    </div>
-
-                    {isGrupal ? (
-                      <div className="mt-4">
-                        <Button 
-                          className="relative flex items-center justify-center gap-2 h-14 px-4 rounded-xl bg-white border border-[#1DA851]/20 shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 group overflow-hidden w-full" 
-                          onClick={handleWhatsAppRedirect}
-                        >
-                          <div className="absolute inset-0 bg-[#1DA851]/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                          <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-[#1DA851] relative z-10 animate-[pulse_2s_ease-in-out_infinite]"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
-                          <span className="relative z-10 font-bold text-[15px] bg-clip-text text-transparent bg-gradient-to-r from-ocean-dark to-[#1DA851]">
-                            Reservar por WhatsApp
-                          </span>
-                        </Button>
-                        <p className="text-center text-[12px] text-muted-foreground mt-3 leading-tight">Serás redirigido a WhatsApp para finalizar tu reserva</p>
-                      </div>
-                    ) : (
-                      <Button className="w-full bg-ocean hover:bg-ocean-dark text-white rounded-xl h-12 text-base font-semibold" onClick={() => setSummaryModalOpen(true)}>
-                        Reservar
-                      </Button>
-                    )}
-                  </CardContent>
-                </Card>
-              </div>
-          </aside>
+          {isBookingGallery ? (
+            <div className="lg:hidden w-full">
+              {cotizadorCard}
+            </div>
+          ) : (
+            cotizadorCard
+          )}
         </div>
       </div>
 
@@ -734,6 +1152,11 @@ export function PlanDetail() {
              
              <div>
                <h3 className="font-bold text-lg text-foreground">{plan.name}</h3>
+               {showVariants && (
+                 <p className="text-sm font-semibold text-ocean mt-0.5">
+                   Opción: {getVariantDetails(plan, selectedVariant).label}
+                 </p>
+               )}
                <p className="text-sm text-muted-foreground mt-1">{plan.location}</p>
              </div>
 
@@ -759,7 +1182,7 @@ export function PlanDetail() {
              </div>
 
              <div className="flex justify-between items-center text-base">
-               <span className="font-normal">{formatPrice(plan.price)} x {guests} persona{guests > 1 ? "s" : ""}</span>
+               <span className="font-normal">{formatPrice(currentPrice)} x {guests} persona{guests > 1 ? "s" : ""}</span>
                <span className="font-medium">{formatPrice(totalPlanPrice)}</span>
              </div>
              

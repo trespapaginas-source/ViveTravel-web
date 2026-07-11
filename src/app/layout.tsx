@@ -3,15 +3,8 @@ import { Geist } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
 import { Providers } from "@/components/providers";
-import { readFromCache } from "@/lib/cache";
-import { defaultSiteContent } from "@/lib/content-defaults";
-import type { SiteContentData } from "@/lib/content-types";
-import {
-  heroImages as fallbackHero,
-  tourPlans,
-  testimonials as fallbackTestimonials,
-  pastTripImages as fallbackTrips,
-} from "@/lib/data";
+import { fetchHeroImages, fetchPlans, fetchTestimonials, fetchTripImages } from "@/lib/api";
+import siteContent from "@/data/static/site-content.json";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -58,11 +51,11 @@ export default async function RootLayout({
     initialTestimonials,
     initialTripImages,
   ] = await Promise.all([
-    readFromCache<SiteContentData>("site_content", defaultSiteContent),
-    readFromCache<any[]>("hero_images", fallbackHero),
-    readFromCache<any[]>("plans", tourPlans),
-    readFromCache<any[]>("testimonials", fallbackTestimonials),
-    readFromCache<any[]>("trip_images", fallbackTrips),
+    Promise.resolve(siteContent),
+    fetchHeroImages(),
+    fetchPlans(),
+    fetchTestimonials(),
+    fetchTripImages(),
   ]);
 
   return (

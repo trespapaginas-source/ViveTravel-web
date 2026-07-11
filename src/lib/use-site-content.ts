@@ -1,19 +1,12 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
-import { defaultSiteContent } from "@/lib/content-defaults";
 import type { SiteContentData } from "@/lib/content-types";
-import { fetchSiteContent } from "@/lib/supabase/queries";
+import siteContent from "@/data/static/site-content.json";
 
 export function useSiteContent() {
-  const { data, isLoading, error } = useQuery<SiteContentData>({
-    queryKey: ["site-content"],
-    queryFn: fetchSiteContent,
-  });
-
   return {
-    content: data ?? defaultSiteContent,
-    isLoading,
-    error,
+    content: siteContent as SiteContentData,
+    isLoading: false,
+    error: null,
   };
 }

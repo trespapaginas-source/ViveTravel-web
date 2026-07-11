@@ -19,6 +19,7 @@ import { useSiteContent } from "@/lib/use-site-content";
 const navItems = [
   { key: "home" as const, label: "Inicio" },
   { key: "cabins" as const, label: "Cabañas" },
+  { key: "transports" as const, label: "Transporte" },
   { key: "team" as const, label: "Equipo" },
   { key: "contact" as const, label: "Contacto" },
   { key: "policies" as const, label: "Políticas" },
@@ -33,7 +34,7 @@ function isItemActive(itemKey: string, currentView: ViewType): boolean {
 }
 
 export function Navbar() {
-  const { currentView, navigate } = useNavigation();
+  const { currentView, navigate, favoritesPulseActive, setFavoritesPulseActive } = useNavigation();
   const { content } = useSiteContent();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -221,22 +222,26 @@ export function Navbar() {
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => handleNav("favorites")}
+              onClick={() => {
+                setFavoritesPulseActive(false);
+                handleNav("favorites");
+              }}
               className={cn(
                 "rounded-full h-10 w-10 sm:h-9 sm:w-9 transition-colors duration-200",
+                favoritesPulseActive && "animate-heartbeat text-red-500 bg-red-50 hover:bg-red-50",
                 currentView === "favorites"
                   ? showOpaque
                     ? "bg-ocean/10 text-ocean font-semibold"
                     : "bg-white/20 text-white"
                   : showOpaque
-                  ? "text-zinc-600 hover:text-ocean hover:bg-ocean/5"
-                  : "text-white/90 hover:text-white hover:bg-white/10"
+                  ? favoritesPulseActive ? "" : "text-zinc-600 hover:text-ocean hover:bg-ocean/5"
+                  : favoritesPulseActive ? "" : "text-white/90 hover:text-white hover:bg-white/10"
               )}
               aria-label="Mis favoritos"
             >
               <Heart className={cn(
                 "w-4 h-4",
-                currentView === "favorites" && "fill-current"
+                favoritesPulseActive ? "fill-red-500 text-red-500" : (currentView === "favorites" && "fill-current")
               )} />
             </Button>
 
@@ -310,9 +315,13 @@ export function Navbar() {
                       </button>
                     ))}
                     <button
-                      onClick={() => handleNav("favorites")}
+                      onClick={() => {
+                        setFavoritesPulseActive(false);
+                        handleNav("favorites");
+                      }}
                       className={cn(
                         "flex items-center gap-2.5 px-4 py-3 rounded-xl text-left text-sm font-medium transition-colors duration-150 min-h-[44px]",
+                        favoritesPulseActive && "animate-heartbeat text-red-500 bg-red-50/50",
                         currentView === "favorites"
                           ? "bg-ocean/10 text-ocean font-semibold"
                           : "text-zinc-600 hover:bg-zinc-50 hover:text-ocean"
@@ -320,7 +329,7 @@ export function Navbar() {
                     >
                       <Heart className={cn(
                         "w-4 h-4",
-                        currentView === "favorites" && "fill-current"
+                        favoritesPulseActive ? "fill-red-500 text-red-500" : (currentView === "favorites" && "fill-current")
                       )} />
                       Mi Colección
                     </button>

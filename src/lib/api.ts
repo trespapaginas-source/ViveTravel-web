@@ -1,66 +1,81 @@
-import type { TourPlan, Cabin } from "./data";
+import type { TourPlan, Cabin, TransportVehicle } from "./data";
+import plansData from "@/data/static/plans.json";
+import cabinsData from "@/data/static/cabins.json";
+import testimonialsData from "@/data/static/testimonials.json";
+import heroImagesData from "@/data/static/hero-images.json";
+import transportsData from "@/data/static/transports.json";
+import { pastTripImages } from "@/lib/data";
 
-// ─── API helpers ──────────────────────────────────────────────────────────────
-
-const API_BASE = "/api";
+type RawRecord = Record<string, unknown>;
 
 export async function fetchPlans(): Promise<TourPlan[]> {
-  const res = await fetch(`${API_BASE}/plans`);
-  if (!res.ok) throw new Error("Error fetching plans");
-  const raw = await res.json();
-  return raw.map((p: Record<string, unknown>) => ({
-    ...p,
-    images: safeParse(p.images),
-    includes: safeParse(p.includes),
-    excludes: safeParse(p.excludes),
-    highlights: safeParse(p.highlights),
-  }));
+  return (plansData as RawRecord[]).map(normalizePlan);
+}
+
+export async function fetchTransports(): Promise<TransportVehicle[]> {
+  return transportsData as TransportVehicle[];
 }
 
 export async function fetchPlan(id: string): Promise<TourPlan | null> {
-  const res = await fetch(`${API_BASE}/plans/${id}`);
-  if (!res.ok) return null;
-  const p = await res.json();
-  return {
-    ...p,
-    images: safeParse(p.images),
-    includes: safeParse(p.includes),
-    excludes: safeParse(p.excludes),
-    highlights: safeParse(p.highlights),
-  };
+  const plan = (plansData as RawRecord[]).find((item) => item.id === id || item.slug === id);
+  return plan ? normalizePlan(plan) : null;
 }
 
 export async function fetchCabins(): Promise<Cabin[]> {
-  const res = await fetch(`${API_BASE}/cabins`);
-  if (!res.ok) throw new Error("Error fetching cabins");
-  const raw = await res.json();
-  return raw.map((c: Record<string, unknown>) => ({
-    ...c,
-    images: safeParse(c.images),
-    amenities: safeParse(c.amenities),
-    highlights: safeParse(c.highlights),
-    rules: safeParse(c.rules),
-    coordinates: {
-      lat: (c.lat as number) || 0,
-      lng: (c.lng as number) || 0,
-    },
-  }));
+  return (cabinsData as RawRecord[]).map(normalizeCabin);
 }
 
 export async function fetchCabin(id: string): Promise<Cabin | null> {
-  const res = await fetch(`${API_BASE}/cabins/${id}`);
-  if (!res.ok) return null;
-  const c = await res.json();
+  const cabin = (cabinsData as RawRecord[]).find((item) => item.id === id || item.slug === id);
+  return cabin ? normalizeCabin(cabin) : null;
+}
+
+export async function fetchHeroImages(): Promise<Array<{ id: string; url: string; caption: string }>> {
+  return heroImagesData as Array<{ id: string; url: string; caption: string }>;
+}
+
+export async function fetchTripImages(): Promise<Array<{ id: string; url: string; caption: string }>> {
+  return pastTripImages;
+}
+
+export async function fetchTestimonials(): Promise<Array<{ id: string; name: string; avatar: string; location: string; text: string; rating: number; tripName: string }>> {
+  return testimonialsData as Array<{ id: string; name: string; avatar: string; location: string; text: string; rating: number; tripName: string }>;
+}
+
+function normalizePlan(plan: RawRecord): TourPlan {
   return {
-    ...c,
-    images: safeParse(c.images),
-    amenities: safeParse(c.amenities),
-    highlights: safeParse(c.highlights),
-    rules: safeParse(c.rules),
-    coordinates: {
-      lat: c.lat || 0,
-      lng: c.lng || 0,
-    },
+    ...plan,
+    images: safeParse(plan.images),
+    includes: safeParse(plan.includes),
+    excludes: safeParse(plan.excludes),
+    highlights: safeParse(plan.highlights),
+  } as TourPlan;
+}
+
+function normalizeCabin(cabin: RawRecord): Cabin {
+  return {
+    ...cabin,
+    images: safeParse(cabin.images),
+    amenities: safeParse(cabin.amenities),
+    highlights: safeParse(cabin.highlights),
+    rules: safeParse(cabin.rules),
+    bedroomDetails: Array.isArray(cabin.bedroomDetails) ? cabin.bedroomDetails : [],
+    coordinates: normalizeCoordinates(cabin),
+  } as Cabin;
+}
+
+function normalizeCoordinates(cabin: RawRecord): { lat: number; lng: number } {
+  if (typeof cabin.coordinates === "object" && cabin.coordinates !== null) {
+    const coords = cabin.coordinates as { lat?: unknown; lng?: unknown };
+    return {
+      lat: typeof coords.lat === "number" ? coords.lat : 0,
+      lng: typeof coords.lng === "number" ? coords.lng : 0,
+    };
+  }
+
+  return {
+    lat: typeof cabin.lat === "number" ? cabin.lat : 0,
+    lng: typeof cabin.lng === "number" ? cabin.lng : 0,
   };
 }
 
@@ -75,22 +90,4 @@ function safeParse(val: unknown): string[] {
     }
   }
   return [];
-}
-
-export async function fetchHeroImages(): Promise<Array<{ id: string; url: string; caption: string }>> {
-  const res = await fetch(`${API_BASE}/hero-images`);
-  if (!res.ok) throw new Error("Error fetching hero images");
-  return res.json();
-}
-
-export async function fetchTripImages(): Promise<Array<{ id: string; url: string; caption: string }>> {
-  const res = await fetch(`${API_BASE}/trip-images`);
-  if (!res.ok) throw new Error("Error fetching trip images");
-  return res.json();
-}
-
-export async function fetchTestimonials(): Promise<Array<{ id: string; name: string; avatar: string; location: string; text: string; rating: number; tripName: string }>> {
-  const res = await fetch(`${API_BASE}/testimonials`);
-  if (!res.ok) throw new Error("Error fetching testimonials");
-  return res.json();
 }

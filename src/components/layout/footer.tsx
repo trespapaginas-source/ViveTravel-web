@@ -19,12 +19,12 @@ export function Footer() {
         {/* Main Footer */}
         <div className="py-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {/* Brand */}
-          <div className="space-y-3">
+          <div className="space-y-4">
             <img               src="/logos/vive-travel-white.png"
               alt={f.brandName}
               className="h-10 w-auto"
-             onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"; e.currentTarget.onerror = null; }} />
-            <p className="text-sm text-white/40 leading-relaxed">
+              onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"; e.currentTarget.onerror = null; }} />
+            <p className="text-[15px] text-zinc-400 leading-relaxed">
               {f.description}
             </p>
             <div className="flex gap-4">
@@ -36,7 +36,7 @@ export function Footer() {
                 <a
                   key={social.label}
                   href={social.href}
-                  className="flex items-center justify-center text-white/50 hover:text-white hover:scale-110 transition-all duration-200"
+                  className="flex items-center justify-center text-zinc-400 hover:text-white hover:scale-110 transition-all duration-200"
                   aria-label={social.label}
                   target={social.href.startsWith("http") || social.href.startsWith("https") ? "_blank" : undefined}
                   rel={social.href.startsWith("http") || social.href.startsWith("https") ? "noopener noreferrer" : undefined}
@@ -48,15 +48,16 @@ export function Footer() {
           </div>
 
           {/* Quick Links */}
-          <div className="space-y-3">
-            <h3 className="font-semibold text-sm uppercase tracking-wider text-white/60">
+          <div className="space-y-4">
+            <h3 className="font-semibold text-[13px] uppercase tracking-wider text-zinc-400">
               {f.exploreTitle}
             </h3>
-            <ul className="space-y-1.5">
+            <ul className="space-y-2">
               {[
                 { label: "Inicio", view: "home" as const },
                 { label: "Experiencias y viajes", view: "plans" as const },
                 { label: "Cabañas", view: "cabins" as const },
+                { label: "Transporte", view: "transports" as const },
                 { label: "Nuestro Equipo", view: "team" as const },
                 { label: "Contacto", view: "contact" as const },
                 { label: "Políticas", view: "policies" as const },
@@ -64,7 +65,7 @@ export function Footer() {
                 <li key={item.view}>
                   <button
                     onClick={() => navigate(item.view, item.view === "plans" ? "pasadias" : null)}
-                    className="text-sm text-white/40 hover:text-white/80 transition-colors py-1 flex items-center"
+                    className="text-[15px] text-zinc-400 hover:text-white transition-colors py-0.5 flex items-center"
                   >
                     {item.label}
                   </button>
@@ -74,37 +75,37 @@ export function Footer() {
           </div>
 
           {/* Contact */}
-          <div className="space-y-3">
-            <h3 className="font-semibold text-sm uppercase tracking-wider text-white/60">
+          <div className="space-y-4">
+            <h3 className="font-semibold text-[13px] uppercase tracking-wider text-zinc-400">
               {f.contactTitle}
             </h3>
-            <ul className="space-y-2">
-              <li className="flex items-center gap-2 text-sm text-white/40">
-                <Phone className="w-3.5 h-3.5 text-white/30 shrink-0" />
+            <ul className="space-y-3">
+              <li className="flex items-center gap-2 text-[15px] text-zinc-400">
+                <Phone className="w-4 h-4 text-zinc-500 shrink-0" />
                 <span>{f.phone}</span>
               </li>
-              <li className="flex items-center gap-2 text-sm text-white/40 break-all">
-                <Mail className="w-3.5 h-3.5 text-white/30 shrink-0" />
+              <li className="flex items-center gap-2 text-[15px] text-zinc-400 break-all">
+                <Mail className="w-4 h-4 text-zinc-500 shrink-0" />
                 <span>{f.email}</span>
               </li>
-              <li className="flex items-start gap-2 text-sm text-white/40">
-                <MapPin className="w-3.5 h-3.5 text-white/30 mt-0.5 shrink-0" />
+              <li className="flex items-start gap-2 text-[15px] text-zinc-400">
+                <MapPin className="w-4 h-4 text-zinc-500 mt-0.5 shrink-0" />
                 <span>{f.location}</span>
               </li>
             </ul>
           </div>
 
           {/* WhatsApp CTA */}
-          <div className="space-y-3">
-            <h3 className="font-semibold text-sm uppercase tracking-wider text-white/60">
+          <div className="space-y-4">
+            <h3 className="font-semibold text-[13px] uppercase tracking-wider text-zinc-400">
               {f.helpTitle}
             </h3>
-            <p className="text-sm text-white/40">
+            <p className="text-[15px] text-zinc-400 leading-relaxed">
               {f.helpDescription}
             </p>
             <Button
               asChild
-              className="w-full bg-white/10 hover:bg-white/20 text-white border-0 rounded-full h-10"
+              className="w-full bg-white/10 hover:bg-white/20 text-white border-0 rounded-full h-11 text-[15px] font-medium"
             >
               <a
                 href={f.whatsappUrl}
@@ -122,10 +123,10 @@ export function Footer() {
 
         {/* Bottom Bar */}
         <div className="py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-white/30 text-center sm:text-left">
+          <p className="text-[13px] text-zinc-500 text-center sm:text-left">
             {f.copyright.replace("{year}", new Date().getFullYear().toString())}
           </p>
-          <p className="text-xs text-white/30">
+          <p className="text-[13px] text-zinc-500">
             {f.madeWith}
           </p>
         </div>

@@ -197,55 +197,92 @@ function BookingDesktopGallery({
   onImageClick: (index: number) => void;
 }) {
   const count = images.length;
-  const visibleImages = images.slice(0, 5);
-  const extraCount = count > 5 ? count - 5 : 0;
+  const visibleImages = images.slice(0, 8);
+  const extraCount = count > 8 ? count - 8 : 0;
 
   return (
-    <div className="grid grid-cols-4 gap-2 h-[380px] lg:h-[420px] w-full rounded-2xl overflow-hidden">
-      {/* Columna Izquierda (Grande, 2 cols, 2 rows) */}
-      <div
-        className="relative col-span-2 row-span-2 cursor-pointer group overflow-hidden"
-        onClick={() => onImageClick(0)}
+    <div className="w-full rounded-2xl overflow-hidden">
+      {/* Top Grid: 1 large on left, 2 stacked on right */}
+      <div 
+        className="grid gap-2 h-[340px] w-full"
+        style={{ gridTemplateColumns: "2fr 1.15fr", gridTemplateRows: "1fr 1fr" }}
       >
-        <GalleryImage src={visibleImages[0]} alt="Imagen principal" priority />
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+        {/* Left: Main large image spanning 2 rows */}
+        <div
+          className="relative cursor-pointer group overflow-hidden"
+          style={{ gridRow: "1 / span 2" }}
+          onClick={() => onImageClick(0)}
+        >
+          <GalleryImage src={visibleImages[0]} alt="Imagen principal" priority />
+          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+        </div>
+
+        {/* Right Top */}
+        <div
+          className="relative cursor-pointer group overflow-hidden"
+          onClick={() => onImageClick(1)}
+        >
+          <GalleryImage src={visibleImages[1]} alt="Imagen 2" priority />
+          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+        </div>
+
+        {/* Right Bottom */}
+        <div
+          className="relative cursor-pointer group overflow-hidden"
+          onClick={() => onImageClick(2)}
+        >
+          <GalleryImage src={visibleImages[2]} alt="Imagen 3" priority={false} />
+          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+        </div>
       </div>
 
-      {/* Columna Central - Superior */}
-      <div
-        className="relative cursor-pointer group overflow-hidden"
-        onClick={() => onImageClick(1)}
-      >
-        <GalleryImage src={visibleImages[1]} alt="Imagen 2" priority />
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
-      </div>
+      {/* Bottom Row: 5 small images */}
+      <div className="grid grid-cols-5 gap-2 mt-2 h-[100px] w-full">
+        {/* Image 4 */}
+        <div
+          className="relative cursor-pointer group overflow-hidden"
+          onClick={() => onImageClick(3)}
+        >
+          <GalleryImage src={visibleImages[3]} alt="Imagen 4" priority={false} />
+          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+        </div>
 
-      {/* Columna Derecha - Superior */}
-      <div
-        className="relative cursor-pointer group overflow-hidden"
-        onClick={() => onImageClick(2)}
-      >
-        <GalleryImage src={visibleImages[2]} alt="Imagen 3" priority />
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
-      </div>
+        {/* Image 5 */}
+        <div
+          className="relative cursor-pointer group overflow-hidden"
+          onClick={() => onImageClick(4)}
+        >
+          <GalleryImage src={visibleImages[4]} alt="Imagen 5" priority={false} />
+          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+        </div>
 
-      {/* Columna Central - Inferior */}
-      <div
-        className="relative cursor-pointer group overflow-hidden"
-        onClick={() => onImageClick(3)}
-      >
-        <GalleryImage src={visibleImages[3]} alt="Imagen 4" priority={false} />
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
-      </div>
+        {/* Image 6 */}
+        <div
+          className="relative cursor-pointer group overflow-hidden"
+          onClick={() => onImageClick(5)}
+        >
+          <GalleryImage src={visibleImages[5]} alt="Imagen 6" priority={false} />
+          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+        </div>
 
-      {/* Columna Derecha - Inferior */}
-      <div
-        className="relative cursor-pointer group overflow-hidden"
-        onClick={() => onImageClick(4)}
-      >
-        <GalleryImage src={visibleImages[4]} alt="Imagen 5" priority={false} />
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
-        {extraCount > 0 && <MorePhotosOverlay count={extraCount} />}
+        {/* Image 7 */}
+        <div
+          className="relative cursor-pointer group overflow-hidden"
+          onClick={() => onImageClick(6)}
+        >
+          <GalleryImage src={visibleImages[6]} alt="Imagen 7" priority={false} />
+          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+        </div>
+
+        {/* Image 8 with Overlay */}
+        <div
+          className="relative cursor-pointer group overflow-hidden"
+          onClick={() => onImageClick(7)}
+        >
+          <GalleryImage src={visibleImages[7]} alt="Imagen 8" priority={false} />
+          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+          {extraCount > 0 && <MorePhotosOverlay count={extraCount} />}
+        </div>
       </div>
     </div>
   );
@@ -506,20 +543,25 @@ export function PropertyGallery({ images, title, className, variant = "default" 
       "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&h=600&fit=crop&q=80",
       "https://images.unsplash.com/photo-1506929562872-bb421503ef21?w=800&h=600&fit=crop&q=80",
       "https://images.unsplash.com/photo-1473116763249-2faaef81ccda?w=800&h=600&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1519046904884-53103b34b206?w=800&h=600&fit=crop&q=80"
+      "https://images.unsplash.com/photo-1519046904884-53103b34b206?w=800&h=600&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?w=800&h=600&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1439066615861-d1af74d74000?w=800&h=600&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1470233572422-67b28243076a?w=800&h=600&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1505118380757-91f5f5632de0?w=800&h=600&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1515238152791-8216bfdf89a7?w=800&h=600&fit=crop&q=80"
     ];
     const filled = [...images];
     
-    // Add all placeholder images that aren't already present, ensuring total length > 5
-    defaultExamples.forEach((img) => {
-      if (!filled.includes(img)) {
-        filled.push(img);
+    // Fill until we have at least 10 images to ensure visibleImages gets 8 and extraCount has remaining
+    let idx = 0;
+    while (filled.length < 10) {
+      const fallback = defaultExamples[idx % defaultExamples.length];
+      if (!filled.includes(fallback)) {
+        filled.push(fallback);
+      } else {
+        filled.push(fallback + `&sig=${filled.length}`);
       }
-    });
-
-    // Make sure we have at least 6 elements to guarantee showing "+1" or more remaining photos
-    while (filled.length < 6) {
-      filled.push(defaultExamples[filled.length % defaultExamples.length]);
+      idx++;
     }
     
     galleryImages = filled;

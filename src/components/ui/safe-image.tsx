@@ -21,12 +21,13 @@ export function SafeImage({
   const [fallbackError, setFallbackError] = useState(false);
   const [loaded, setLoaded] = useState(false);
 
-  // Reset error states if src changes
-  useEffect(() => {
+  const [prevSrc, setPrevSrc] = useState(src);
+  if (src !== prevSrc) {
+    setPrevSrc(src);
     setError(false);
     setFallbackError(false);
     setLoaded(false);
-  }, [src]);
+  }
 
   // If no source provided initially, act as error
   const currentSrc = error || !src ? fallbackSrc : src;
@@ -39,7 +40,6 @@ export function SafeImage({
         </div>
       )}
       
-      {/* eslint-disable-next-line @next/next/no-img-element */}
       {!fallbackError && currentSrc && (
         <img
           src={currentSrc}

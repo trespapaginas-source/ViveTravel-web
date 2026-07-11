@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, memo } from "react";
-import { MapPin, Clock, Users, Compass, Heart, ArrowRight, Sun, Moon, Calendar } from "lucide-react";
+import { MapPin, Clock, Users, Compass, Heart, ArrowRight, Sun, Moon, Calendar, Hotel, Tag } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -31,14 +31,17 @@ import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 import { sortPlans, getGridCols, ITEMS_PER_PAGE } from "@/lib/sorting";
 import { formatShortDuration, formatShortLocation } from "@/lib/utils";
+import { WHATSAPP_NUMBER } from "@/lib/config";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
 
 const categoryColors: Record<string, string> = {
-  Naturaleza: "bg-ocean/80 text-white",
-  Playa: "bg-ocean/80 text-white",
-  Aventura: "bg-ocean/80 text-white",
-  Ecoturismo: "bg-ocean/80 text-white",
-  Experiencia: "bg-ocean/80 text-white",
-  Cultural: "bg-ocean/80 text-white",
+  Naturaleza: "bg-ocean/85 text-white",
+  Playa: "bg-ocean/85 text-white",
+  Aventura: "bg-ocean/85 text-white",
+  Ecoturismo: "bg-ocean/85 text-white",
+  Experiencia: "bg-ocean/85 text-white",
+  Cultural: "bg-ocean/85 text-white",
 };
 
 function formatPrice(price: number): string {
@@ -50,29 +53,268 @@ function formatPrice(price: number): string {
   }).format(price);
 }
 
+// ─── Commercial metadata extraction helpers ───────────────────────────────────
+
+const getKeyLabels = (plan: TourPlan) => {
+  const labels: string[] = [];
+  const searchStr = [
+    plan.name,
+    plan.category,
+    plan.shortDescription,
+    ...plan.includes,
+    ...plan.highlights
+  ].join(" ").toLowerCase();
+  
+  if (searchStr.includes("todo incluido") || searchStr.includes("alimentación completa")) {
+    labels.push("Todo Incluido");
+  }
+  if (searchStr.includes("vuelo") || searchStr.includes("tiquete aéreo") || searchStr.includes("tiquetes aéreos")) {
+    labels.push("Vuelos Incluidos");
+  }
+  if (
+    searchStr.includes("pasadía") ||
+    searchStr.includes("pasadia") ||
+    plan.duration.toLowerCase().includes("día completo") ||
+    plan.duration.toLowerCase().includes("medio día")
+  ) {
+    labels.push("Pasadía");
+  }
+  if (searchStr.includes("grupal") || plan.category.toLowerCase().includes("grupal")) {
+    labels.push("Salida Grupal");
+  }
+  if (
+    searchStr.includes("alojamiento") ||
+    searchStr.includes("hotel") ||
+    searchStr.includes("hospedaje") ||
+    searchStr.includes("eco-habs") ||
+    searchStr.includes("ryokan")
+  ) {
+    labels.push("Alojamiento Incluido");
+  }
+  
+  // fallback if none matched
+  if (labels.length === 0) {
+    if (plan.includes.length > 0) labels.push(plan.includes[0]);
+    if (plan.includes.length > 1) labels.push(plan.includes[1]);
+  }
+  
+  return labels.slice(0, 3);
+};
+
+const getPrincipalHotel = (plan: TourPlan) => {
+  const searchStr = [
+    plan.name,
+    plan.category,
+    plan.shortDescription,
+    plan.fullDescription,
+    ...plan.includes,
+    ...plan.highlights
+  ].join(" ").toLowerCase();
+  
+  if (searchStr.includes("resort 5 estrellas") || searchStr.includes("resort 5★")) return "Resort 5★";
+  if (searchStr.includes("hacienda típica")) return "Hacienda Típica";
+  if (searchStr.includes("eco-habs")) return "Eco-Habs Tayrona";
+  if (searchStr.includes("ryokan")) return "Ryokan Tradicional";
+  if (searchStr.includes("hotel 4★") || searchStr.includes("hoteles 4★")) return "Hotel 4★";
+  
+  const hotelMatch = plan.includes.find(item =>
+    item.toLowerCase().includes("hotel") ||
+    item.toLowerCase().includes("alojamiento") ||
+    item.toLowerCase().includes("hospedaje") ||
+    item.toLowerCase().includes("resort")
+  );
+  
+  if (hotelMatch) {
+    // clean up generic description
+    if (hotelMatch.toLowerCase().includes("hotel 3 noches") || hotelMatch.toLowerCase().includes("alojamiento 3 noches")) {
+      return "Hotel Turista Superior";
+    }
+    return hotelMatch;
+  }
+  
+  const section = getPlanExperienceSection(plan);
+  if (section === "internacionales") return "Resort / Hotel Premium";
+  if (section === "nacionales") return "Hotel Turista Superior";
+  if (section === "circuitos") return "Hotel Categoría Superior";
+  return null;
+};
+
+const getWhatsAppUrl = (
+  plan: TourPlan,
+  searchParams?: {
+    destination?: string | null;
+    date?: string | null;
+    adults?: string | null;
+    children?: string | null;
+  }
+) => {
+  const destination = searchParams?.destination || plan.location;
+  let dateText = "fecha a convenir";
+  if (searchParams?.date) {
+    try {
+      dateText = format(new Date(searchParams.date + "T12:00:00"), "d MMM yyyy", { locale: es });
+    } catch (_) {}
+  } else if (plan.fecha_salida) {
+    dateText = plan.fecha_salida;
+  }
+  
+  const adultsStr = searchParams?.adults || "2";
+  const childrenStr = searchParams?.children || "0";
+  const totalTravelers = parseInt(adultsStr, 10) + parseInt(childrenStr, 10);
+  const travelersText = `${totalTravelers} viajero${totalTravelers !== 1 ? "s" : ""}`;
+  
+  const text = `Hola Vive Travel Atlántico, me interesa cotizar el plan *${plan.name}* para *${destination}*, aproximado para el mes/fecha de *${dateText}*, para *${travelersText}*. ¿Me podrían dar más información?`;
+  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
+};
+
+// Intelligent pre-selection scoring engine
+const scorePlans = (
+  plans: TourPlan[],
+  queryDest: string | null,
+  queryDate: string | null,
+  adultsStr: string | null,
+  childrenStr: string | null,
+  categoryStr: string | null,
+  activityStr: string | null
+): TourPlan[] => {
+  if (!queryDest) return plans;
+
+  const destLower = queryDest.toLowerCase().trim();
+  const dateObj = queryDate ? new Date(queryDate + "T12:00:00") : null;
+  const searchMonthIndex = dateObj ? dateObj.getMonth() : null; 
+  
+  const totalTravelers = parseInt(adultsStr || "2", 10) + parseInt(childrenStr || "0", 10);
+
+  const scored = plans.map((plan) => {
+    let score = 0;
+    
+    const planLoc = plan.location.toLowerCase();
+    const planName = plan.name.toLowerCase();
+    const planDesc = plan.shortDescription.toLowerCase();
+    
+    // 1. Destination match
+    if (planLoc.includes(destLower)) {
+      score += 1000;
+      if (planLoc === destLower) {
+        score += 200;
+      }
+    } else {
+      const queryWords = destLower.split(/\s+/);
+      const matchedWords = queryWords.filter(w => planLoc.includes(w) || planName.includes(w));
+      score += matchedWords.length * 150;
+    }
+    
+    if (planName.includes(destLower)) {
+      score += 300;
+    }
+    
+    if (planDesc.includes(destLower)) {
+      score += 100;
+    }
+
+    // 2. Date match
+    if (plan.fecha_salida && searchMonthIndex !== null) {
+      const monthsEsAbbr = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
+      const monthsEsFull = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+      const exitLower = plan.fecha_salida.toLowerCase();
+      
+      let planMonthIndex = -1;
+      monthsEsAbbr.forEach((m, idx) => {
+        if (exitLower.includes(m)) planMonthIndex = idx;
+      });
+      monthsEsFull.forEach((m, idx) => {
+        if (exitLower.includes(m)) planMonthIndex = idx;
+      });
+      
+      if (planMonthIndex === searchMonthIndex) {
+        score += 400; 
+      } else {
+        score -= 100; 
+      }
+    } else if (searchMonthIndex !== null) {
+      score += 100;
+    }
+
+    // 3. Travelers capacity match
+    if (plan.maxGuests) {
+      if (totalTravelers <= plan.maxGuests) {
+        score += 100;
+      } else {
+        score -= 200; 
+      }
+    } else {
+      score += 50;
+    }
+
+    // 4. Category relevance
+    const planSection = getPlanExperienceSection(plan);
+    if (categoryStr && planSection === categoryStr) {
+      score += 300;
+    }
+
+    // 5. Commercial priority (1. Nacionales, 2. Internacionales, 3. Pasadías, 4. Tours, 5. Grupales)
+    if (planSection === "nacionales") score += 60;
+    else if (planSection === "internacionales") score += 50;
+    else if (planSection === "pasadias") score += 40;
+    else if (planSection === "tours") score += 30;
+    else if (planSection === "grupales") score += 20;
+
+    return { plan, score };
+  });
+
+  return scored
+    .sort((a, b) => b.score - a.score)
+    .map(item => item.plan);
+};
+
+
+
 // ─── Horizontal Card (1-column list view) ─────────────────────────────────────
 const PlanCardHorizontal = memo(function PlanCardHorizontal({
   plan,
   onNavigate,
+  searchParams,
 }: {
   plan: TourPlan;
   onNavigate: (id: string) => void;
+  searchParams?: {
+    destination?: string | null;
+    date?: string | null;
+    adults?: string | null;
+    children?: string | null;
+  };
 }) {
   const [isFav, setIsFav] = useState(() =>
     typeof window !== "undefined" ? isFavorite(plan.id) : false
   );
+
+  const { setFavoritesPulseActive } = useNavigation();
 
   const handleFavorite = useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation();
       const nowFav = toggleFavorite(plan.id);
       setIsFav(nowFav);
-      toast.success(nowFav ? "Guardado en tu colección" : "Eliminado de tu colección", {
-        description: nowFav ? "Encuéntralo en tu lista de favoritos" : undefined,
-      });
+      const isMobile = window.innerWidth < 768;
+      if (isMobile && nowFav) {
+        setFavoritesPulseActive(true);
+      } else {
+        toast.success(nowFav ? "Guardado en tu colección" : "Eliminado de tu colección", {
+          description: nowFav ? "Encuéntralo en tu lista de favoritos" : undefined,
+        });
+      }
     },
-    [plan.id]
+    [plan.id, setFavoritesPulseActive]
   );
+
+  const handleWhatsAppClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    window.open(getWhatsAppUrl(plan, searchParams), "_blank");
+  };
+
+  const planHotel = getPrincipalHotel(plan);
+  const keyLabels = getKeyLabels(plan);
+  const section = getPlanExperienceSection(plan);
 
   return (
     <Card
@@ -81,17 +323,17 @@ const PlanCardHorizontal = memo(function PlanCardHorizontal({
     >
       {/* Image */}
       <div className="relative w-full sm:w-[260px] md:w-[300px] shrink-0 overflow-hidden aspect-[3/2] sm:aspect-auto">
-        <img           src={plan.images[0]}
+        <img
+          src={plan.images[0]}
           alt={plan.name}
           loading="lazy"
           decoding="async"
           className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-         onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"; e.currentTarget.onerror = null; }} />
+          onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"; e.currentTarget.onerror = null; }} />
         <div className="absolute inset-0 bg-gradient-to-r from-transparent to-black/10" />
 
         {/* Duration Badge (Only for National/International) */}
         {(() => {
-          const section = getPlanExperienceSection(plan);
           if (section !== "nacionales" && section !== "internacionales") return null;
 
           const parts = plan.duration.split(/[,·-]/).map((p) => p.trim());
@@ -118,7 +360,7 @@ const PlanCardHorizontal = memo(function PlanCardHorizontal({
         })()}
 
         {/* Date Badge for Grupales — top left */}
-        {getPlanExperienceSection(plan) === "grupales" && plan.fecha_salida && (
+        {section === "grupales" && plan.fecha_salida && (
           <div className="absolute top-2.5 left-2.5 z-10 bg-white/95 backdrop-blur-md px-2.5 py-1 rounded-full flex items-center gap-1.5 text-[11px] font-semibold text-slate-700 shadow-sm border border-black/5">
             <Calendar className="w-3.5 h-3.5 shrink-0 text-slate-600" />
             <span>{plan.fecha_salida}</span>
@@ -126,7 +368,7 @@ const PlanCardHorizontal = memo(function PlanCardHorizontal({
         )}
 
         {/* Cupos Limitados Badge */}
-        {getPlanExperienceSection(plan) === "grupales" && plan.maxGuests && (
+        {section === "grupales" && plan.maxGuests && (
           <div className="absolute bottom-3 left-3 z-10 bg-red-500/90 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 animate-[pulse_2s_ease-in-out_infinite] shadow-sm">
             <Users className="w-2.5 h-2.5" />
             Solo {plan.maxGuests} cupos
@@ -151,6 +393,33 @@ const PlanCardHorizontal = memo(function PlanCardHorizontal({
       {/* Content — right side */}
       <CardContent className="flex-1 p-4 sm:p-5 flex flex-col justify-between min-w-0">
         <div>
+          {/* Category & Hotel */}
+          {(() => {
+            const isLongTrip = section === "internacionales" || section === "nacionales" || section === "circuitos";
+            if (isLongTrip) return null;
+
+            const isShortTrip = section === "pasadias" || section === "grupales" || section === "tours";
+            const showCategory = !isShortTrip;
+            const showHotel = !!planHotel;
+
+            if (!showCategory && !showHotel) return null;
+
+            return (
+              <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                {showCategory && (
+                  <span className="text-[10px] font-extrabold uppercase tracking-wider text-ocean bg-ocean/10 px-2 py-0.5 rounded-md">
+                    {plan.category}
+                  </span>
+                )}
+                {showHotel && (
+                  <span className="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md truncate max-w-[200px]">
+                    🏨 {planHotel}
+                  </span>
+                )}
+              </div>
+            );
+          })()}
+
           <h3 className="font-bold text-lg sm:text-[20px] text-foreground leading-tight line-clamp-1 group-hover:text-ocean transition-colors duration-200">
             {plan.name}
           </h3>
@@ -169,26 +438,59 @@ const PlanCardHorizontal = memo(function PlanCardHorizontal({
               <MapPin className="w-3.5 h-3.5" />
               <span className="line-clamp-1">{formatShortLocation(plan.location)}</span>
             </div>
-            {getPlanExperienceSection(plan) === "grupales" && (
+            {getPlanExperienceSection(plan) === "grupales" && plan.maxGuests && (
               <div className="flex items-center gap-1.5">
                 <Users className="w-3.5 h-3.5" />
                 <span>Máx. {plan.maxGuests}</span>
               </div>
             )}
           </div>
+
+          {/* Key tags */}
+          {keyLabels.length > 0 && (
+            <div className="flex flex-wrap gap-1 mt-3">
+              {keyLabels.map((lbl, idx) => (
+                <Badge key={idx} variant="outline" className="text-[10px] py-0 px-1.5 text-zinc-650 bg-zinc-50 border-zinc-200 font-semibold">
+                  {lbl}
+                </Badge>
+              ))}
+            </div>
+          )}
         </div>
 
-        {/* Bottom row: Price */}
-        <div className="flex items-center justify-end mt-4 pt-3 border-t border-border/30">
-          <div className="text-right flex items-baseline gap-2 justify-end">
+        {/* Bottom row: Price and Actions */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between mt-4 pt-3 border-t border-border/30 gap-3">
+          <div className="text-left flex items-baseline gap-1.5 justify-start sm:justify-end">
+            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Desde</span>
             {plan.priceRange && plan.priceRange.includes("-") && (
               <span className="text-xs text-muted-foreground line-through">
                 {plan.priceRange.split("-")[1].trim()}
               </span>
             )}
-            <p className="text-foreground font-bold text-lg leading-tight">
+            <p className="text-foreground font-black text-lg leading-tight">
               {formatPrice(plan.price)}
             </p>
+          </div>
+
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            <Button
+              size="sm"
+              variant="outline"
+              className="rounded-xl text-xs font-bold flex-1 sm:flex-initial h-9 border-zinc-200 hover:bg-zinc-50"
+              onClick={(e) => {
+                e.stopPropagation();
+                onNavigate(plan.id);
+              }}
+            >
+              Ver detalle
+            </Button>
+            <Button
+              size="sm"
+              className="rounded-xl text-xs font-bold flex-1 sm:flex-initial h-9 bg-yellow-400 hover:bg-yellow-500 text-zinc-950 border-none shadow-sm shadow-yellow-400/10"
+              onClick={handleWhatsAppClick}
+            >
+              Cotizar
+            </Button>
           </div>
         </div>
       </CardContent>
@@ -200,143 +502,231 @@ const PlanCardHorizontal = memo(function PlanCardHorizontal({
 const PlanCardVertical = memo(function PlanCardVertical({
   plan,
   onNavigate,
+  searchParams,
 }: {
   plan: TourPlan;
   onNavigate: (id: string) => void;
+  searchParams?: {
+    destination?: string | null;
+    date?: string | null;
+    adults?: string | null;
+    children?: string | null;
+  };
 }) {
   const [isFav, setIsFav] = useState(() =>
     typeof window !== "undefined" ? isFavorite(plan.id) : false
   );
+
+  const { setFavoritesPulseActive } = useNavigation();
 
   const handleFavorite = useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation();
       const nowFav = toggleFavorite(plan.id);
       setIsFav(nowFav);
-      toast.success(nowFav ? "Guardado en tu colección" : "Eliminado de tu colección", {
-        description: nowFav ? "Encuéntralo en tu lista de favoritos" : undefined,
-      });
+      const isMobile = window.innerWidth < 768;
+      if (isMobile && nowFav) {
+        setFavoritesPulseActive(true);
+      } else {
+        toast.success(nowFav ? "Guardado en tu colección" : "Eliminado de tu colección", {
+          description: nowFav ? "Encuéntralo en tu lista de favoritos" : undefined,
+        });
+      }
     },
-    [plan.id]
+    [plan.id, setFavoritesPulseActive]
   );
+
+  const handleWhatsAppClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    window.open(getWhatsAppUrl(plan, searchParams), "_blank");
+  };
+
+  const planHotel = getPrincipalHotel(plan);
+  const keyLabels = getKeyLabels(plan);
+  const section = getPlanExperienceSection(plan);
 
   return (
     <Card
-      className="overflow-hidden group border-border/50 hover:border-border hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5 py-0 gap-0 cursor-pointer"
+      className="overflow-hidden group border-border/50 hover:border-border hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5 py-0 gap-0 cursor-pointer flex flex-col justify-between"
       onClick={() => onNavigate(plan.id)}
     >
-      {/* Image */}
-      <div className="relative aspect-[3/2] overflow-hidden">
-        <img           src={plan.images[0]}
-          alt={plan.name}
-          loading="lazy"
-          decoding="async"
-          sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
-          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-         onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"; e.currentTarget.onerror = null; }} />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+      {/* Top half content */}
+      <div>
+        {/* Image */}
+        <div className="relative aspect-[3/2] overflow-hidden">
+          <img
+            src={plan.images[0]}
+            alt={plan.name}
+            loading="lazy"
+            decoding="async"
+            sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
+            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+            onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"; e.currentTarget.onerror = null; }} />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
-        {/* Duration Badge (Only for National/International) */}
-        {(() => {
-          const section = getPlanExperienceSection(plan);
-          if (section !== "nacionales" && section !== "internacionales") return null;
+          {/* Duration Badge (Only for National/International) */}
+          {(() => {
+            if (section !== "nacionales" && section !== "internacionales") return null;
 
-          const parts = plan.duration.split(/[,·-]/).map((p) => p.trim());
-          const days = parts[0] || plan.duration;
-          const nights = parts.length > 1 ? parts[1] : null;
+            const parts = plan.duration.split(/[,·-]/).map((p) => p.trim());
+            const days = parts[0] || plan.duration;
+            const nights = parts.length > 1 ? parts[1] : null;
 
-          return (
-            <div className="absolute top-2.5 left-2.5 z-10 bg-white/95 backdrop-blur-md px-2 py-1 sm:px-2.5 sm:py-1 rounded-full flex items-center gap-1.5 text-[11px] sm:text-[12px] font-medium text-slate-700 shadow-sm border border-black/5">
-              <div className="flex items-center gap-1">
-                <Sun className="w-3 h-3 text-slate-600" />
-                <span>{days}</span>
+            return (
+              <div className="absolute top-2.5 left-2.5 z-10 bg-white/95 backdrop-blur-md px-2 py-1 sm:px-2.5 sm:py-1 rounded-full flex items-center gap-1.5 text-[11px] sm:text-[12px] font-medium text-slate-700 shadow-sm border border-black/5">
+                <div className="flex items-center gap-1">
+                  <Sun className="w-3 h-3 text-slate-600" />
+                  <span>{days}</span>
+                </div>
+                {nights && (
+                  <>
+                    <span className="text-slate-300 font-bold">·</span>
+                    <div className="flex items-center gap-1">
+                      <Moon className="w-3 h-3 text-slate-600" />
+                      <span>{nights}</span>
+                    </div>
+                  </>
+                )}
               </div>
-              {nights && (
-                <>
-                  <span className="text-slate-300 font-bold">·</span>
-                  <div className="flex items-center gap-1">
-                    <Moon className="w-3 h-3 text-slate-600" />
-                    <span>{nights}</span>
-                  </div>
-                </>
-              )}
-            </div>
-          );
-        })()}
+            );
+          })()}
 
-        {/* Date Badge for Grupales — top left */}
-        {getPlanExperienceSection(plan) === "grupales" && plan.fecha_salida && (
-          <div className="absolute top-2.5 left-2.5 z-10 bg-white/95 backdrop-blur-md px-2.5 py-1 rounded-full flex items-center gap-1.5 text-[11px] font-semibold text-slate-700 shadow-sm border border-black/5">
-            <Calendar className="w-3.5 h-3.5 shrink-0 text-slate-600" />
-            <span>{plan.fecha_salida}</span>
-          </div>
-        )}
-
-        {/* Cupos Limitados Badge */}
-        {getPlanExperienceSection(plan) === "grupales" && plan.maxGuests && (
-          <div className="absolute bottom-3 left-3 z-10 bg-red-500/90 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 animate-[pulse_2s_ease-in-out_infinite] shadow-sm">
-            <Users className="w-2.5 h-2.5" />
-            Solo {plan.maxGuests} cupos
-          </div>
-        )}
-
-        {/* Favorite Button — top right */}
-        <div className="absolute top-2.5 right-2.5 z-10">
-          <button
-            onClick={handleFavorite}
-            className="w-10 h-10 rounded-full bg-white/95 backdrop-blur-md flex items-center justify-center shadow-sm hover:bg-white hover:scale-105 active:scale-95 transition-all duration-200 min-w-[40px] shrink-0 border border-black/5"
-            aria-label={isFav ? "Eliminar de favoritos" : "Guardar en favoritos"}
-          >
-            <Heart
-              className={`w-4 h-4 transition-colors duration-200 ${
-                isFav ? "fill-indigo text-indigo" : "text-muted-foreground"
-              }`} />
-          </button>
-        </div>
-
-
-      </div>
-
-      <CardContent className="p-3.5 sm:p-4 space-y-2.5">
-        {/* Name */}
-        <h3 className="font-bold text-[17px] text-foreground leading-tight line-clamp-1 group-hover:text-ocean transition-colors duration-200">
-          {plan.name}
-        </h3>
-
-        {/* Short Description */}
-        <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
-          {plan.shortDescription}
-        </p>
-
-        {/* Meta Info — compact inline */}
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] sm:text-xs text-muted-foreground pt-1">
-          <div className="flex items-center gap-1">
-            <Clock className="w-3 h-3" />
-            <span>{formatShortDuration(plan.duration)}</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <MapPin className="w-3 h-3" />
-            <span className="line-clamp-1">{formatShortLocation(plan.location)}</span>
-          </div>
-          {getPlanExperienceSection(plan) === "grupales" && (
-            <div className="flex items-center gap-1">
-              <Users className="w-3 h-3" />
-              <span>Máx. {plan.maxGuests}</span>
+          {/* Date Badge for Grupales — top left */}
+          {section === "grupales" && plan.fecha_salida && (
+            <div className="absolute top-2.5 left-2.5 z-10 bg-white/95 backdrop-blur-md px-2.5 py-1 rounded-full flex items-center gap-1.5 text-[11px] font-semibold text-slate-700 shadow-sm border border-black/5">
+              <Calendar className="w-3.5 h-3.5 shrink-0 text-slate-600" />
+              <span>{plan.fecha_salida}</span>
             </div>
           )}
+
+          {/* Cupos Limitados Badge */}
+          {section === "grupales" && plan.maxGuests && (
+            <div className="absolute bottom-3 left-3 z-10 bg-red-500/90 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 animate-[pulse_2s_ease-in-out_infinite] shadow-sm">
+              <Users className="w-2.5 h-2.5" />
+              Solo {plan.maxGuests} cupos
+            </div>
+          )}
+
+          {/* Favorite Button — top right */}
+          <div className="absolute top-2.5 right-2.5 z-10">
+            <button
+              onClick={handleFavorite}
+              className="w-10 h-10 rounded-full bg-white/95 backdrop-blur-md flex items-center justify-center shadow-sm hover:bg-white hover:scale-105 active:scale-95 transition-all duration-200 min-w-[40px] shrink-0 border border-black/5"
+              aria-label={isFav ? "Eliminar de favoritos" : "Guardar en favoritos"}
+            >
+              <Heart
+                className={`w-4 h-4 transition-colors duration-200 ${
+                  isFav ? "fill-indigo text-indigo" : "text-muted-foreground"
+                }`} />
+            </button>
+          </div>
         </div>
 
-        {/* Bottom: Price */}
-        <div className="flex items-center justify-end pt-2 mt-2 border-t border-border/30">
-          <div className="text-right flex items-baseline gap-2 justify-end">
-            {plan.priceRange && plan.priceRange.includes("-") && (
-              <span className="text-[11px] sm:text-[12px] text-muted-foreground line-through">
-                {plan.priceRange.split("-")[1].trim()}
-              </span>
+        <CardContent className="p-3.5 sm:p-4 pb-0 space-y-2">
+          {/* Category & Hotel */}
+          {(() => {
+            const isLongTrip = section === "internacionales" || section === "nacionales" || section === "circuitos";
+            if (isLongTrip) return null;
+
+            const isShortTrip = section === "pasadias" || section === "grupales" || section === "tours";
+            const showCategory = !isShortTrip;
+            const showHotel = !!planHotel;
+
+            if (!showCategory && !showHotel) return null;
+
+            return (
+              <div className="flex items-center gap-1.5 flex-wrap">
+                {showCategory && (
+                  <span className="text-[9px] font-extrabold uppercase tracking-wider text-ocean bg-ocean/10 px-2 py-0.5 rounded-md">
+                    {plan.category}
+                  </span>
+                )}
+                {showHotel && (
+                  <span className="text-[9px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md truncate max-w-[140px]">
+                    🏨 {planHotel}
+                  </span>
+                )}
+              </div>
+            );
+          })()}
+
+          {/* Name */}
+          <h3 className="font-bold text-[17px] text-foreground leading-tight line-clamp-1 group-hover:text-ocean transition-colors duration-200">
+            {plan.name}
+          </h3>
+
+          {/* Short Description */}
+          <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+            {plan.shortDescription}
+          </p>
+
+          {/* Meta Info — compact inline */}
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] sm:text-xs text-muted-foreground pt-1">
+            <div className="flex items-center gap-1">
+              <Clock className="w-3 h-3" />
+              <span>{formatShortDuration(plan.duration)}</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <MapPin className="w-3 h-3" />
+              <span className="line-clamp-1">{formatShortLocation(plan.location)}</span>
+            </div>
+            {getPlanExperienceSection(plan) === "grupales" && plan.maxGuests && (
+              <div className="flex items-center gap-1">
+                <Users className="w-3 h-3" />
+                <span>Máx. {plan.maxGuests}</span>
+              </div>
             )}
-            <p className="text-foreground font-bold text-[15px] sm:text-[17px] leading-tight">
-              {formatPrice(plan.price)}
-            </p>
+          </div>
+
+          {/* Key tags */}
+          {keyLabels.length > 0 && (
+            <div className="flex flex-wrap gap-1 pt-1.5">
+              {keyLabels.map((lbl, idx) => (
+                <Badge key={idx} variant="outline" className="text-[9px] py-0 px-1 text-zinc-650 bg-zinc-50 border-zinc-200 font-semibold">
+                  {lbl}
+                </Badge>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </div>
+
+      {/* Bottom: Price and Actions */}
+      <CardContent className="p-3.5 sm:p-4 pt-0">
+        <div className="pt-2.5 mt-2.5 border-t border-border/30 space-y-2.5">
+          <div className="flex items-baseline justify-between">
+            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Desde</span>
+            <div className="flex items-baseline gap-1.5">
+              {plan.priceRange && plan.priceRange.includes("-") && (
+                <span className="text-[11px] text-muted-foreground line-through">
+                  {plan.priceRange.split("-")[1].trim()}
+                </span>
+              )}
+              <p className="text-foreground font-black text-base sm:text-[17px] leading-tight">
+                {formatPrice(plan.price)}
+              </p>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-2 gap-2">
+            <Button
+              size="sm"
+              variant="outline"
+              className="rounded-xl text-[11px] font-bold h-8.5 border-zinc-200 hover:bg-zinc-50 py-1"
+              onClick={(e) => {
+                e.stopPropagation();
+                onNavigate(plan.id);
+              }}
+            >
+              Ver detalle
+            </Button>
+            <Button
+              size="sm"
+              className="rounded-xl text-[11px] font-bold h-8.5 bg-yellow-400 hover:bg-yellow-500 text-zinc-950 border-none shadow-sm shadow-yellow-400/10 py-1"
+              onClick={handleWhatsAppClick}
+            >
+              Cotizar
+            </Button>
           </div>
         </div>
       </CardContent>
@@ -346,7 +736,21 @@ const PlanCardVertical = memo(function PlanCardVertical({
 
 // ─── Main Plans List ───────────────────────────────────────────────────────────
 export function PlansList() {
-  const { selectedItemId, navigate, searchDestination } = useNavigation();
+  const {
+    selectedItemId,
+    navigate,
+    searchDestination,
+    searchOrigin,
+    searchDate,
+    searchDateEnd,
+    searchAdults,
+    searchChildren,
+    searchCategory,
+    searchActivity,
+    setSearchIsSticky,
+    clearSearch,
+  } = useNavigation();
+  
   const activeSection = getExperienceSection(selectedItemId);
 
   const { data: tourPlans = [], isLoading } = useQuery({
@@ -371,23 +775,50 @@ export function PlansList() {
     [tourPlans]
   );
 
+  // Score and sort plans if search is active
+  const scoredAllPlans = useMemo(() => {
+    if (!searchDestination) return [];
+
+    const query = searchDestination.toLowerCase().trim();
+    const queryWords = query.split(/\s+/).filter(Boolean);
+
+    const filtered = publishedPlans.filter((plan) => {
+      const planLoc = plan.location.toLowerCase();
+      const planName = plan.name.toLowerCase();
+      const planDesc = plan.shortDescription.toLowerCase();
+
+      const hasDirectMatch = planLoc.includes(query) || planName.includes(query) || planDesc.includes(query);
+      const hasWordMatch = queryWords.length > 0 && queryWords.some((w) => planLoc.includes(w) || planName.includes(w));
+
+      return hasDirectMatch || hasWordMatch;
+    });
+
+    return scorePlans(
+      filtered,
+      searchDestination,
+      searchDate,
+      searchAdults,
+      searchChildren,
+      searchCategory,
+      searchActivity
+    );
+  }, [publishedPlans, searchDestination, searchDate, searchAdults, searchChildren, searchCategory, searchActivity]);
+
   const sectionPlans = useMemo(
     () => {
-      let list = publishedPlans.filter(
-        (plan) => getPlanExperienceSection(plan) === activeSection.id
-      );
       if (searchDestination) {
-        const query = searchDestination.toLowerCase().trim();
-        list = list.filter(
-          (plan) =>
-            plan.location.toLowerCase().includes(query) ||
-            plan.name.toLowerCase().includes(query) ||
-            plan.shortDescription.toLowerCase().includes(query)
+        // If searching, we show plans from the active tab filtered from the scored list
+        return scoredAllPlans.filter(
+          (plan) => getPlanExperienceSection(plan) === activeSection.id
+        );
+      } else {
+        // Normal category filter
+        return publishedPlans.filter(
+          (plan) => getPlanExperienceSection(plan) === activeSection.id
         );
       }
-      return list;
     },
-    [publishedPlans, activeSection.id, searchDestination]
+    [publishedPlans, scoredAllPlans, activeSection.id, searchDestination]
   );
 
   const filterSections = useMemo(
@@ -427,10 +858,16 @@ export function PlansList() {
     setViewMode(mode);
   }, []);
 
-  const handleClearAll = useCallback(() => {
+  const handleClearFilters = useCallback(() => {
     clearAll();
     setCurrentPage(1);
   }, [clearAll]);
+
+  const handleClearAll = useCallback(() => {
+    clearAll();
+    clearSearch();
+    setCurrentPage(1);
+  }, [clearAll, clearSearch]);
 
   const handleSectionChange = useCallback(
     (section: ExperienceSectionId) => {
@@ -450,8 +887,28 @@ export function PlansList() {
     navigate("plan-detail", planId);
   }, [navigate]);
 
+  const handleModifySearch = useCallback(() => {
+    navigate("home");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    setSearchIsSticky(false);
+  }, [navigate, setSearchIsSticky]);
+
   const gridCols = getGridCols(viewMode);
   const isHorizontal = viewMode === "1";
+
+  // Identify best matched plan overall for summary display
+  const bestMatchOverall = useMemo(() => {
+    if (scoredAllPlans.length > 0) return scoredAllPlans[0];
+    if (sectionPlans.length > 0) return sectionPlans[0];
+    return undefined;
+  }, [scoredAllPlans, sectionPlans]);
+
+  const searchParams = useMemo(() => ({
+    destination: searchDestination,
+    date: searchDate,
+    adults: searchAdults,
+    children: searchChildren
+  }), [searchDestination, searchDate, searchAdults, searchChildren]);
 
   if (isLoading) {
     return (
@@ -521,7 +978,7 @@ export function PlansList() {
             filters={filters}
             onToggleCheckbox={toggleCheckbox}
             onChangeRange={changeRange}
-            onClearAll={handleClearAll}
+            onClearAll={handleClearFilters}
             activeCount={activeCount} />
 
           {/* Plans Grid */}
@@ -535,7 +992,7 @@ export function PlansList() {
                   filters={filters}
                   onToggleCheckbox={toggleCheckbox}
                   onChangeRange={changeRange}
-                  onClearAll={handleClearAll}
+                  onClearAll={handleClearFilters}
                   activeCount={activeCount}
                   resultCount={filteredPlans.length} />
               </div>
@@ -558,32 +1015,34 @@ export function PlansList() {
                   <PlanCardHorizontal
                     key={plan.id}
                     plan={plan}
-                    onNavigate={handleNavigate} />
+                    onNavigate={handleNavigate}
+                    searchParams={searchParams} />
                 ) : (
                   <PlanCardVertical
                     key={plan.id}
                     plan={plan}
-                    onNavigate={handleNavigate} />
+                    onNavigate={handleNavigate}
+                    searchParams={searchParams} />
                 )
               )}
             </div>
 
             {/* Empty State */}
             {filteredPlans.length === 0 && (
-              <div className="text-center py-16">
-                <Compass className="w-10 h-10 text-muted-foreground mx-auto mb-4" />
-                <p className="text-muted-foreground text-lg mb-2">
+              <div className="flex flex-col items-center justify-center text-center py-16 px-6 border border-dashed border-zinc-200 rounded-2xl bg-zinc-50/50 max-w-md mx-auto my-8">
+                <Compass className="w-12 h-12 text-zinc-400 mb-4 stroke-[1.5]" />
+                <h3 className="text-zinc-900 font-bold text-[18px] mb-1.5">
                   No hay experiencias con estos filtros
+                </h3>
+                <p className="text-zinc-500 text-sm mb-6 max-w-xs leading-relaxed">
+                  Intenta ajustar los filtros en la barra lateral o limpiar la búsqueda para encontrar más opciones disponibles.
                 </p>
-                <p className="text-muted-foreground text-sm mb-4">
-                  Intenta ajustar los filtros para encontrar más opciones
-                </p>
-                <button
+                <Button
                   onClick={handleClearAll}
-                  className="text-sm text-foreground hover:text-foreground transition-colors underline underline-offset-2"
+                  className="bg-zinc-950 hover:bg-zinc-900 text-white font-bold px-6 py-2.5 rounded-xl shadow-sm hover:shadow transition-all duration-200 h-11"
                 >
                   Limpiar filtros
-                </button>
+                </Button>
               </div>
             )}
 
@@ -598,3 +1057,4 @@ export function PlansList() {
     </section>
   );
 }
+
