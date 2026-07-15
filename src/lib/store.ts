@@ -93,7 +93,6 @@ export const useNavigation = create<NavigationState>((set) => ({
       }
       return updates;
     });
-    window.scrollTo({ top: 0, behavior: "smooth" });
   },
   navigateWithSearch: (view, itemId, searchParams) => {
     set({
@@ -114,7 +113,6 @@ export const useNavigation = create<NavigationState>((set) => ({
       previousView: null,
       previousItemId: null,
     });
-    window.scrollTo({ top: 0, behavior: "smooth" });
   },
   goHome: () => {
     set({
@@ -126,7 +124,6 @@ export const useNavigation = create<NavigationState>((set) => ({
       previousView: null,
       previousItemId: null,
     });
-    window.scrollTo({ top: 0, behavior: "smooth" });
   },
   clearSearch: () => {
     set({

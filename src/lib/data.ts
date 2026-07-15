@@ -69,6 +69,9 @@ export interface Cabin {
   checkOut: string;
   cancellationPolicy: string;
   bedroomDetails?: BedroomInfo[];
+  mapsUrl?: string;
+  propertyType?: string;
+  icsUrl?: string;
   published?: boolean;
   order?: number;
 }

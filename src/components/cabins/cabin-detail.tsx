@@ -2,6 +2,7 @@
 
 import { Cabin } from "@/lib/data";
 import { fetchCabin } from "@/lib/api";
+import { AvailabilityCalendar } from "@/components/cabins/availability-calendar";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigation } from "@/lib/store";
 import { PropertyGallery } from "@/components/shared/property-gallery";
@@ -24,6 +25,7 @@ import {
 import {
   ArrowLeft,
   MapPin,
+  Navigation,
   Users,
   BedDouble,
   Bath,
@@ -164,7 +166,14 @@ function getHighlightIcon(highlight: string) {
 
 function getLocationData(locationStr: string) {
   const lower = locationStr.toLowerCase();
-  
+
+  if (lower.includes("sabana grande")) {
+    return {
+      text: "Sabana Grande, Atlántico, Colombia",
+      query: "Sabana Grande, Atlántico, Colombia",
+      description: "Tranquilo corregimiento del Atlántico rodeado de naturaleza, ideal para descansar lejos del ruido de la ciudad y disfrutar de la calidez rural del Caribe colombiano."
+    };
+  }
   if (lower.includes("santa verónica") || lower.includes("santa veronica")) {
     return {
       text: "Santa Verónica, Atlántico, Colombia",
@@ -544,6 +553,11 @@ export function CabinDetail() {
 
             <Separator className="my-6" />
 
+            {/* Availability calendar (real-time, from ICS feed) */}
+            <AvailabilityCalendar cabinId={cabin.id} cabinName={cabin.name} />
+
+            <Separator className="my-6" />
+
             {/* ¿Dónde vas a dormir? */}
             {displayRooms.length > 0 && (
               <>
@@ -676,6 +690,17 @@ export function CabinDetail() {
                   allowFullScreen
                   src={`https://maps.google.com/maps?q=${encodeURIComponent(locationData.query)}&t=&z=14&ie=UTF8&iwloc=&output=embed`} />
               </div>
+              {cabin.mapsUrl && (
+                <a
+                  href={cabin.mapsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 text-sm font-medium text-ocean hover:text-ocean-dark transition-colors mb-4"
+                >
+                  <Navigation className="w-4 h-4" />
+                  Ver ubicación exacta en Google Maps
+                </a>
+              )}
               <div>
                 <h3 className="font-semibold text-foreground text-base mb-1.5">
                   Aspectos destacados del vecindario

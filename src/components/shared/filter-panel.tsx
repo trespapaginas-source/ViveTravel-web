@@ -799,16 +799,36 @@ export function FilterMobileSheet(props: {
 
 // ─── useFilterState Hook ───────────────────────────────────────────────────────
 
-export function useFilterState(sections: FilterSection[]) {
+export function useFilterState(
+  sections: FilterSection[],
+  options?: { initialLocation?: string | null }
+) {
+  const initialLocation = options?.initialLocation ?? null;
+
   const defaultState = useMemo(
     () => createDefaultFilterState(sections),
     [sections]
   );
 
-  const [filters, setFilters] = useState<FilterState>(defaultState);
+  // Seed location filter from the hero search destination. When the user lands
+  // on the list from a hero search, the destination is pre-checked so it shows
+  // up as an active chip and filters results — but all other locations stay
+  // visible and selectable.
+  const seededState = useMemo<FilterState>(() => {
+    if (!initialLocation) return defaultState;
+    return {
+      ...defaultState,
+      checkboxes: {
+        ...defaultState.checkboxes,
+        location: [initialLocation],
+      },
+    };
+  }, [defaultState, initialLocation]);
 
-  // Sync filter state when sections change (e.g. data loads)
-  // Using React-recommended pattern: adjust state during render when props change
+  const [filters, setFilters] = useState<FilterState>(seededState);
+
+  // Sync filter state when sections change (e.g. data loads) OR when the
+  // initial location changes (new hero search). React-recommended pattern:
   // https://react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes
   const sectionsKey = sections
     .map((s) =>
@@ -820,7 +840,7 @@ export function useFilterState(sections: FilterSection[]) {
   const [prevKey, setPrevKey] = useState(sectionsKey);
   if (prevKey !== sectionsKey) {
     setPrevKey(sectionsKey);
-    setFilters(defaultState);
+    setFilters(seededState);
   }
 
   const toggleCheckbox = useCallback(

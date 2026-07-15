@@ -1,70 +1,69 @@
 [
   {
-    "id": "6c489180-fb06-4e3e-981b-4b5fe5c4f338",
-    "name": "Cabaña Manglar Eco-Lodge",
-    "slug": "cabana-manglar-eco-lodge",
-    "shortDescription": "Eco-cabaña rodeada de manglares con experiencia de turismo sostenible y naturaleza pura.",
-    "fullDescription": "Sumérgete en la naturaleza sin renunciar al confort en esta eco-cabaña ubicada en medio de un bosque de manglares restaurado. La Cabaña Manglar Eco-Lodge fue construida con materiales sostenibles y energía solar, ofreciendo una experiencia única de turismo responsable. Disfruta de un muelle privado para kayaks, observación de aves desde tu terraza, y ducha al aire libre con agua caliente solar. La cabaña tiene una cama king size con mosquitero, cocina básica y un ambiente de total desconexión. Ideal para parejas que buscan reconectarse con la naturaleza.",
+    "id": "cabin-los-chuquitos",
+    "name": "Cabaña Los Chuquitos",
+    "slug": "cabana-los-chuquitos",
+    "shortDescription": "Cabaña acogedora en Sabana Grande, Atlántico, ideal para descansar en familia rodeado de naturaleza.",
+    "fullDescription": "Cabaña Los Chuquitos es un espacio cálido y acogedor ubicado en Sabana Grande, Atlántico, diseñado para que disfrutes de una escapada tranquila lejos del ruido de la ciudad. Construida con materiales de la región y decorada con un estilo rústico-costeño, la cabaña cuenta con amplias zonas comunes, terraza exterior y áreas verdes perfectas para compartir en familia o con amigos. Su ubicación privilegiada te permite disfrutar de la brisa del Caribe, paseos cercanos y la calidez de la gente de la región. Un lugar ideal para reconectar con la naturaleza y vivir una experiencia auténtica del Atlántico.",
     "images": [
-      "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1584132967334-10e028bd69f7?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1596178065887-1198b6148b2b?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1449844908741-f8a8e4c0c5b5?w=800&h=600&fit=crop"
     ],
-    "pricePerNight": 195000,
-    "priceRange": "$195.000 - $250.000 COP / noche",
-    "location": "Barranquilla, Palmarito",
-    "capacity": 2,
-    "bedrooms": 1,
+    "pricePerNight": 180000,
+    "priceRange": "$180.000 - $240.000 COP / noche",
+    "location": "Sabana Grande, Atlántico",
+    "capacity": 6,
+    "bedrooms": 2,
     "bathrooms": 1,
     "amenities": [
-      "Internet satelital",
-      "Energía solar",
-      "Muelle privado para kayaks",
-      "Terraza de observación",
-      "Ducha al aire libre",
-      "Cocina básica",
-      "Mosquiteros",
-      "Kayak incluido",
-      "Binoculares para avistamiento",
+      "Aire acondicionado",
+      "Cocina equipada",
+      "Terraza exterior",
+      "Zonas verdes",
+      "Estacionamiento",
+      "WiFi",
+      "Parrilla/BBQ",
       "Hamaca",
-      "Agua caliente solar"
+      "Ventiladores de techo"
     ],
     "highlights": [
-      "100% sostenible",
-      "Rodeada de manglares",
-      "Muelle privado",
-      "Observación de aves"
+      "Rodeada de naturaleza",
+      "Ideal para familias",
+      "Estilo rústico-costeño",
+      "Zonas verdes amplias"
     ],
     "rules": [
-      "No fumar",
-      "No mascotas",
-      "Respetar la fauna local",
-      "No música alta",
-      "Check-in: 2:00 PM, Check-out: 12:00 PM"
+      "No fiestas ni eventos",
+      "No fumar dentro de la cabaña",
+      "Mascotas permitidas previa autorización",
+      "Check-in: 3:00 PM, Check-out: 11:00 AM",
+      "Máximo 6 huéspedes"
     ],
-    "rating": 4.8,
-    "reviewCount": 67,
+    "rating": 4.6,
+    "reviewCount": 42,
     "coordinates": {
-      "lat": 10.99,
-      "lng": -74.96
+      "lat": 10.78,
+      "lng": -75.08
     },
-    "checkIn": "2:00 PM",
-    "checkOut": "12:00 PM",
+    "checkIn": "3:00 PM",
+    "checkOut": "11:00 AM",
     "cancellationPolicy": "Cancelación gratuita hasta 5 días antes del check-in",
+    "propertyType": "Cabaña",
     "bedroomDetails": [
       {
         "id": "room-0",
-        "beds": "1 cama doble",
-        "image": "/static-media/cabana-manglar-room-1.jpeg",
+        "beds": "1 cama doble, 1 cama individual",
+        "image": "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=800&h=600&fit=crop",
         "order": 0,
-        "title": "Habitación 1",
+        "title": "Habitación Principal",
         "active": true
       },
       {
-        "id": "room-1779768857297",
-        "beds": "1 cama king",
-        "image": "/static-media/cabana-manglar-room-2.jpg",
+        "id": "room-1",
+        "beds": "2 camas individuales",
+        "image": "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=800&h=600&fit=crop",
         "order": 1,
         "title": "Habitación 2",
         "active": true
@@ -74,73 +73,80 @@
     "order": 0
   },
   {
-    "id": "cf20a041-7a96-4b81-a681-883353d0d39f",
-    "name": "Cabaña Caribe Coral",
-    "slug": "cabana-caribe-coral",
-    "shortDescription": "Cabaña frente al mar con diseño caribeño, piscina privada y acceso directo a la playa.",
-    "fullDescription": "Disfruta de la auténtica experiencia caribeña en esta hermosa cabaña frente al mar. Diseñada con materiales locales y una decoración que fusiona lo rústico con lo moderno, la Cabaña Caribe Coral ofrece todo lo que necesitas para unas vacaciones perfectas. Cuenta con piscina privada con vista al mar, terraza con hamacas, cocina totalmente equipada y habitaciones con aire acondicionado. Despierta con el sonido de las olas y relájate en tu oasis privado en la costa del Atlántico.",
+    "id": "cabin-los-peladitos",
+    "name": "Cabaña Los Peladitos",
+    "slug": "cabana-los-peladitos",
+    "shortDescription": "Cabaña amplia y fresca en Sabana Grande, Atlántico, perfecta para grupos y reuniones familiares.",
+    "fullDescription": "Cabaña Los Peladitos te recibe con un ambiente fresco y espacioso en el corazón de Sabana Grande, Atlántico. Diseñada para grupos y familias numerosas, esta cabaña combina la comodidad de un alojamiento moderno con el encanto de la arquitectura costeña. Cuenta con grandes áreas sociales, cocina totalmente equipada, zona de parrilla y un jardín amplio donde los más pequeños pueden jugar con libertad. Es el lugar ideal para celebrar encuentros familiares, cumpleaños o simplemente disfrutar de un fin de semana de descanso con todos los servicios a la mano en un entorno natural y tranquilo.",
     "images": [
-      "https://images.unsplash.com/photo-1499793983394-e58f8b6a1109?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1602002418816-5c0aeef426aa?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1502672023488-70e25813eb80?w=800&h=600&fit=crop"
     ],
-    "pricePerNight": 280000,
-    "priceRange": "$280.000 - $380.000 COP / noche",
-    "location": "Barranquilla, Salgar",
-    "capacity": 6,
-    "bedrooms": 2,
+    "pricePerNight": 220000,
+    "priceRange": "$220.000 - $300.000 COP / noche",
+    "location": "Sabana Grande, Atlántico",
+    "capacity": 8,
+    "bedrooms": 3,
     "bathrooms": 2,
     "amenities": [
-      "Piscina privada",
       "Aire acondicionado",
-      "Cocina equipada",
-      "Terraza con hamacas",
-      "Acceso directo a la playa",
-      "WiFi gratuito",
+      "Cocina completa",
+      "Zona de parrilla",
+      "Jardín amplio",
       "Estacionamiento",
-      "Parrilla/BBQ",
-      "TV Smart 55\"",
-      "Toallas de playa"
+      "WiFi",
+      "TV Smart",
+      "Lavadora",
+      " nevera"
     ],
     "highlights": [
-      "Frente al mar",
-      "Piscina privada",
-      "Diseño caribeño auténtico",
-      "Acceso directo a la playa"
+      "Amplia para grupos",
+      "Zona de parrilla",
+      "Jardín con zonas verdes",
+      "Ideal para reuniones familiares"
     ],
     "rules": [
-      "No fiestas ni eventos",
+      "No fiestas ruidosas después de las 10:00 PM",
       "No fumar dentro de la cabaña",
-      "No mascotas",
+      "Mascotas permitidas previa autorización",
       "Check-in: 3:00 PM, Check-out: 11:00 AM",
-      "Máximo 6 huéspedes",
-      "Silencio después de las 10:00 PM"
+      "Máximo 8 huéspedes"
     ],
-    "rating": 4.9,
-    "reviewCount": 98,
+    "rating": 4.7,
+    "reviewCount": 58,
     "coordinates": {
-      "lat": 10.95,
-      "lng": -75.05
+      "lat": 10.78,
+      "lng": -75.08
     },
     "checkIn": "3:00 PM",
     "checkOut": "11:00 AM",
-    "cancellationPolicy": "Cancelación gratuita hasta 7 días antes del check-in",
+    "cancellationPolicy": "Cancelación gratuita hasta 5 días antes del check-in",
+    "propertyType": "Cabaña",
     "bedroomDetails": [
       {
         "id": "room-0",
-        "beds": "1 cama doble, 1 cama individual",
-        "image": "https://images.unsplash.com/photo-1499793983394-e58f8b6a1109?w=800&h=600&fit=crop",
+        "beds": "1 cama king",
+        "image": "https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=800&h=600&fit=crop",
         "order": 0,
-        "title": "Habitación 1",
+        "title": "Habitación Principal",
         "active": true
       },
       {
         "id": "room-1",
-        "beds": "1 cama doble, 1 cama individual",
-        "image": "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800&h=600&fit=crop",
+        "beds": "2 camas dobles",
+        "image": "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800&h=600&fit=crop",
         "order": 1,
         "title": "Habitación 2",
+        "active": true
+      },
+      {
+        "id": "room-2",
+        "beds": "2 literas",
+        "image": "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=800&h=600&fit=crop",
+        "order": 2,
+        "title": "Habitación 3",
         "active": true
       }
     ],
@@ -148,79 +154,62 @@
     "order": 1
   },
   {
-    "id": "26874a59-e309-4a63-b48a-e93fe2504a92",
-    "name": "Cabaña Sol y Arena Familiar",
-    "slug": "cabana-sol-arena-familiar",
-    "shortDescription": "Amplia cabaña familiar con 3 habitaciones, piscina compartida y zona de juegos infantiles.",
-    "fullDescription": "La cabaña perfecta para familias que buscan diversión y descanso. Con tres amplias habitaciones, sala de estar, cocina completa y una terraza gigante con vista al mar, esta cabaña tiene espacio de sobra para toda la familia. Los más pequeños disfrutarán del área de juegos infantiles y la piscina compartida del complejo, mientras los adultos relax en las hamacas o preparan una parrillada en la zona BBQ. Ubicada en un complejo residencial con seguridad 24/7, estacionamiento y acceso a la playa por sendero peatonal.",
+    "id": "cabin-los-canaguates",
+    "name": "Cabaña Los Cañaguates",
+    "slug": "cabana-los-canaguates",
+    "shortDescription": "Cabaña rodeada de vegetación en Sabana Grande, Atlántico, un refugio perfecto para descansar.",
+    "fullDescription": "Cabaña Los Cañaguates es un refugio rodeado de vegetación y tranquilidad en Sabana Grande, Atlántico. Su diseño aprovecha al máximo la ventilación natural y la luz, creando un ambiente fresco y relajante durante todo el día. La cabaña dispone de espacios interiores cómodos y una terraza exterior con hamacas donde podrás leer, descansar o simplemente disfrutar del sonido de la naturaleza. Es ideal para parejas o familias pequeñas que buscan desconectar de la rutina, hacer caminatas por los alrededores y vivir la paz del campo atlanticense sin perder las comodidades básicas.",
     "images": [
-      "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1540541338287-41700207dee6?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1595576508898-0ad5c879a061?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1518780664697-55e3ad937233?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1484154218962-a197022b5858?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1599809275671-b5942cabc7a2?w=800&h=600&fit=crop"
     ],
-    "pricePerNight": 350000,
-    "priceRange": "$350.000 - $450.000 COP / noche",
-    "location": "Barranquilla, Puerto Colombia",
-    "capacity": 8,
-    "bedrooms": 3,
-    "bathrooms": 2,
+    "pricePerNight": 160000,
+    "priceRange": "$160.000 - $220.000 COP / noche",
+    "location": "Sabana Grande, Atlántico",
+    "capacity": 4,
+    "bedrooms": 1,
+    "bathrooms": 1,
     "amenities": [
-      "Piscina compartida",
-      "Zona de juegos infantiles",
-      "Cocina completa",
-      "Aire acondicionado en todas las habitaciones",
-      "Terraza con vista al mar",
-      "Zona BBQ",
-      "Seguridad 24/7",
-      "Estacionamiento para 2 vehículos",
-      "WiFi gratuito",
-      "Lavadora"
+      "Aire acondicionado",
+      "Cocina equipada",
+      "Terraza con hamacas",
+      "Jardín con vegetación",
+      "Estacionamiento",
+      "WiFi",
+      "Ventiladores de techo"
     ],
     "highlights": [
-      "Ideal para familias",
-      "3 habitaciones amplias",
-      "Zona de juegos infantiles",
-      "Seguridad 24/7"
+      "Rodeada de vegetación",
+      "Ambiente fresco y natural",
+      "Ideal para parejas",
+      "Terraza con hamacas"
     ],
     "rules": [
-      "No fiestas después de las 10:00 PM",
+      "No fiestas ni eventos",
       "No fumar dentro de la cabaña",
-      "Mascotas permitidas",
-      "Check-in: 3:00 PM, Check-out: 11:00 AM"
+      "No mascotas",
+      "Check-in: 3:00 PM, Check-out: 11:00 AM",
+      "Máximo 4 huéspedes"
     ],
-    "rating": 4.7,
-    "reviewCount": 134,
+    "rating": 4.5,
+    "reviewCount": 36,
     "coordinates": {
-      "lat": 10.92,
-      "lng": -75.12
+      "lat": 10.78,
+      "lng": -75.08
     },
     "checkIn": "3:00 PM",
     "checkOut": "11:00 AM",
-    "cancellationPolicy": "Cancelación gratuita hasta 10 días antes del check-in",
+    "cancellationPolicy": "Cancelación gratuita hasta 3 días antes del check-in",
+    "propertyType": "Cabaña",
     "bedroomDetails": [
       {
-        "id": "room-1",
-        "beds": "1 Cama King Size, Aire Acondicionado, Vista al Mar",
-        "image": "https://images.unsplash.com/photo-1590490360182-c33d57733427?w=800&h=600&fit=crop",
+        "id": "room-0",
+        "beds": "1 cama doble",
+        "image": "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=800&h=600&fit=crop",
         "order": 0,
-        "title": "Master Suite Principal",
-        "active": true
-      },
-      {
-        "id": "room-2",
-        "beds": "2 Camas Dobles, Baño Privado",
-        "image": "https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=800&h=600&fit=crop",
-        "order": 1,
-        "title": "Dormitorio Familiar Doble",
-        "active": true
-      },
-      {
-        "id": "room-3",
-        "beds": "2 Literas Sencillas (4 Camas)",
-        "image": "https://images.unsplash.com/photo-1598928506311-c55ded91a20c?w=800&h=600&fit=crop",
-        "order": 2,
-        "title": "Habitación Infantil",
+        "title": "Habitación Principal",
         "active": true
       }
     ],
@@ -228,62 +217,82 @@
     "order": 2
   },
   {
-    "id": "9a827434-e20f-4bb0-83e9-021158fbe64a",
-    "name": "Cabaña Brisa del Mar",
-    "slug": "cabana-brisa-del-mar",
-    "shortDescription": "Cabaña romántica para parejas con jacuzzi privado, decoración bohemia y atardeceres increíbles.",
-    "fullDescription": "Un refugio romántico diseñado para parejas que buscan escapar de la rutina. La Cabaña Brisa del Mar combina decoración bohemia chic con todas las comodidades modernas. Su pieza estrella es el jacuzzi privado en la terraza con vista al mar, perfecto para disfrutar de los atardeceres más hermosos del Caribe. La cabaña cuenta con una habitación principal con cama king size, baño con ducha de lluvia, cocina americana equipada y un espacio de lectura con hamaca. Incluye botella de vino de bienvenida y desayuno continental incluido.",
+    "id": "cabin-villa-sofia",
+    "name": "Cabaña Villa Sofía",
+    "slug": "cabana-villa-sofia",
+    "shortDescription": "Elegante cabaña en Sabana Grande, Atlántico, con acabados modernos y espacios amplios para toda la familia.",
+    "fullDescription": "Cabaña Villa Sofía combina la calidez del entorno rural con acabados modernos y elegantes, ofreciendo una experiencia de alojamiento superior en Sabana Grande, Atlántico. Sus espacios amplios y luminosos están pensados para el confort: sala de estar con TV, cocina totalmente equipada con breakfast bar, y habitaciones con aire acondicionado y baño privado. La zona exterior cuenta con terraza techada, zona de parrilla y jardín paisajístico. Es la opción perfecta para familias o grupos que buscan un alojamiento de alta gama con todas las comodidades, en un entorno natural y privado.",
     "images": [
-      "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1540541338287-41700207dee6?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1613977257363-707ba9348227?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1600210492493-0946911123ea?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=800&h=600&fit=crop"
     ],
-    "pricePerNight": 320000,
-    "priceRange": "$320.000 - $420.000 COP / noche",
-    "location": "Barranquilla, Santa Verónica",
-    "capacity": 2,
-    "bedrooms": 1,
-    "bathrooms": 1,
+    "pricePerNight": 280000,
+    "priceRange": "$280.000 - $360.000 COP / noche",
+    "location": "Sabana Grande, Atlántico",
+    "capacity": 8,
+    "bedrooms": 3,
+    "bathrooms": 2,
     "amenities": [
-      "Jacuzzi privado en terraza",
-      "Vino de bienvenida",
-      "Desayuno continental incluido",
-      "Cama king size",
-      "Ducha de lluvia",
-      "Cocina americana",
-      "Hamaca de lectura",
-      "Aire acondicionado",
-      "WiFi gratuito"
+      "Aire acondicionado en todas las habitaciones",
+      "Cocina totalmente equipada",
+      "Baño privado en suite",
+      "Terraza techada",
+      "Zona de parrilla",
+      "Jardín paisajístico",
+      "Estacionamiento privado",
+      "WiFi de alta velocidad",
+      "TV Smart 55\"",
+      "Lavadora y secadora"
     ],
     "highlights": [
-      "Jacuzzi privado con vista al mar",
-      "Romántica y bohemia",
-      "Desayuno incluido",
-      "Atardeceres únicos"
+      "Acabados modernos y elegantes",
+      "Baños privados en suite",
+      "Alta gama",
+      "Jardín paisajístico"
     ],
     "rules": [
-      "Solo adultos (18+)",
-      "No niños",
+      "No fiestas ni eventos",
+      "No fumar dentro de la cabaña",
       "No mascotas",
-      "No fiestas",
-      "Check-in: 3:00 PM, Check-out: 12:00 PM"
+      "Check-in: 3:00 PM, Check-out: 11:00 AM",
+      "Máximo 8 huéspedes",
+      "Silencio después de las 10:00 PM"
     ],
-    "rating": 5,
-    "reviewCount": 45,
+    "rating": 4.9,
+    "reviewCount": 71,
     "coordinates": {
-      "lat": 10.82,
-      "lng": -75.05
+      "lat": 10.78,
+      "lng": -75.08
     },
     "checkIn": "3:00 PM",
-    "checkOut": "12:00 PM",
-    "cancellationPolicy": "Cancelación gratuita hasta 5 días antes del check-in",
+    "checkOut": "11:00 AM",
+    "cancellationPolicy": "Cancelación gratuita hasta 7 días antes del check-in",
+    "propertyType": "Cabaña",
     "bedroomDetails": [
       {
         "id": "room-0",
-        "beds": "1 cama doble",
-        "image": "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800&h=600&fit=crop",
+        "beds": "1 cama king, baño privado",
+        "image": "https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=800&h=600&fit=crop",
         "order": 0,
-        "title": "Habitación 1",
+        "title": "Master Suite",
+        "active": true
+      },
+      {
+        "id": "room-1",
+        "beds": "1 cama doble, baño privado",
+        "image": "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800&h=600&fit=crop",
+        "order": 1,
+        "title": "Habitación 2",
+        "active": true
+      },
+      {
+        "id": "room-2",
+        "beds": "2 camas dobles",
+        "image": "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=800&h=600&fit=crop",
+        "order": 2,
+        "title": "Habitación 3",
         "active": true
       }
     ],
@@ -291,63 +300,184 @@
     "order": 3
   },
   {
-    "id": "2abccd17-c50c-4e8c-9b84-e8e1aadf8ad6",
-    "name": "Cabaña Palma Costeña",
-    "slug": "cabana-palma-costena",
-    "shortDescription": "Cabaña típica costeña con techo de palma, perfecta para una experiencia auténtica y económica.",
-    "fullDescription": "Vive la auténtica experiencia costeña en esta cabaña tradicional con techo de palma y paredes de madera. La Cabaña Palma Costeña te transporta a la esencia del Caribe colombiano, con su decoración artesanal, muebles de madera local y ambiente fresco y natural. Ubicada en un terreno amplio con palmeras y jardín tropical, ofrece sombra natural y brisa marina constante. Cuenta con lo esencial para una estadía cómoda: cama matrimonial, ventilador de techo, cocina al aire libre y ducha con agua fría/caliente. Ideal para viajeros que buscan autenticidad sin gastar de más.",
+    "id": "cabin-luxury-house",
+    "name": "Cabaña Luxury House",
+    "slug": "cabana-luxury-house",
+    "shortDescription": "Cabaña de lujo en Santa Verónica, Atlántico, con piscina privada y acabados premium frente al mar.",
+    "fullDescription": "Cabaña Luxury House es el epítome del descanso de alta gama en Santa Verónica, Atlántico. Esta cabaña de lujo cuenta con piscina privada, amplios ventanales con vista al jardín, y acabados premium en cada detalle. El interior combina un diseño contemporáneo con materiales nobles: cocina abierta de lujo, sala con sofás de diseño, y habitaciones suite con baño de mármol. La terraza exterior con loungers y zona de parrilla invita a disfrutar del clima caribeño durante todo el día. Ubicada en una zona exclusiva cerca del mar, es la opción ideal para quienes buscan una experiencia vacacional sin concesiones.",
     "images": [
-      "https://images.unsplash.com/photo-1586105251261-72a756497a11?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1596178065887-1198b6148b2b?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=800&h=600&fit=crop"
     ],
-    "pricePerNight": 120000,
-    "priceRange": "$120.000 - $160.000 COP / noche",
-    "location": "Barranquilla, Tubará",
-    "capacity": 4,
-    "bedrooms": 1,
-    "bathrooms": 1,
+    "pricePerNight": 450000,
+    "priceRange": "$450.000 - $600.000 COP / noche",
+    "location": "Santa Verónica, Atlántico",
+    "capacity": 10,
+    "bedrooms": 4,
+    "bathrooms": 3,
     "amenities": [
-      "Techo de palma tradicional",
-      "Cocina al aire libre",
-      "Jardín tropical",
-      "Ventilador de techo",
-      "Hamaca",
-      "Estacionamiento",
-      "Ducha con agua fría/caliente"
+      "Piscina privada",
+      "Aire acondicionado en todas las áreas",
+      "Cocina de lujo abierta",
+      "Baños de mármol",
+      "Terraza con loungers",
+      "Zona de parrilla premium",
+      "Jardín privado",
+      "Estacionamiento privado",
+      "WiFi de alta velocidad",
+      "TV Smart 65\""
     ],
     "highlights": [
-      "Experiencia auténtica costeña",
-      "Techo de palma tradicional",
-      "Económica",
-      "Jardín tropical privado"
+      "Piscina privada",
+      "Acabados premium",
+      "Cerca del mar",
+      "Diseño contemporáneo"
     ],
     "rules": [
-      "No fiestas",
+      "No fiestas ni eventos sin autorización previa",
       "No fumar dentro de la cabaña",
-      "Mascotas permitidas",
-      "Check-in: 2:00 PM, Check-out: 11:00 AM"
+      "No mascotas",
+      "Check-in: 3:00 PM, Check-out: 12:00 PM",
+      "Máximo 10 huéspedes",
+      "Silencio después de las 11:00 PM"
     ],
-    "rating": 4.4,
-    "reviewCount": 78,
+    "rating": 5.0,
+    "reviewCount": 39,
     "coordinates": {
-      "lat": 10.87,
-      "lng": -75.03
+      "lat": 10.82,
+      "lng": -75.05
     },
-    "checkIn": "2:00 PM",
-    "checkOut": "11:00 AM",
-    "cancellationPolicy": "Cancelación gratuita hasta 3 días antes del check-in",
+    "checkIn": "3:00 PM",
+    "checkOut": "12:00 PM",
+    "cancellationPolicy": "Cancelación gratuita hasta 7 días antes del check-in",
+    "propertyType": "Cabaña",
     "bedroomDetails": [
       {
         "id": "room-0",
-        "beds": "1 cama doble, 1 litera",
-        "image": "https://images.unsplash.com/photo-1586105251261-72a756497a11?w=800&h=600&fit=crop",
+        "beds": "1 cama king, baño de mármol",
+        "image": "https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=800&h=600&fit=crop",
         "order": 0,
-        "title": "Habitación 1",
+        "title": "Master Suite",
+        "active": true
+      },
+      {
+        "id": "room-1",
+        "beds": "1 cama queen, baño privado",
+        "image": "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800&h=600&fit=crop",
+        "order": 1,
+        "title": "Habitación 2",
+        "active": true
+      },
+      {
+        "id": "room-2",
+        "beds": "2 camas dobles",
+        "image": "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=800&h=600&fit=crop",
+        "order": 2,
+        "title": "Habitación 3",
+        "active": true
+      },
+      {
+        "id": "room-3",
+        "beds": "2 camas individuales, 1 litera",
+        "image": "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=800&h=600&fit=crop",
+        "order": 3,
+        "title": "Habitación 4",
         "active": true
       }
     ],
     "published": true,
     "order": 4
+  },
+  {
+    "id": "casa-casamare-cartagena",
+    "name": "Casa Mare",
+    "slug": "casa-mare-cartagena",
+    "shortDescription": "Casa colonial en Cartagena, con la elegancia y el encanto histórico de la ciudad amurallada.",
+    "fullDescription": "Casa Mare es una joya colonial ubicada en el corazón de Cartagena de Indias, una casa que respira la historia y el encanto de la ciudad amurallada. Con sus altos techos de madera, patios interiores con fuentes, y balcones que miran hacia las calles empedradas, esta casa colonial te transporta a la época dorada del Caribe colombiano. Cada espacio ha sido restaurado cuidando los detalles originales: pisos de baldosas antiguas, puertas talladas a mano y mobiliario de época combinados con comodidades modernas. Disfruta de la terraza superior con vista a los techos de Cartagena, perfecto para atardeceres románticos. Una experiencia única para quienes quieren vivir Cartagena desde su esencia más auténtica.",
+    "images": [
+      "https://images.unsplash.com/photo-1519558325182-7445b1d9c7ba?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1568084680786-a84f91d1153c?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1601836510015-a7f9daf8e7d8?w=800&h=600&fit=crop"
+    ],
+    "pricePerNight": 380000,
+    "priceRange": "$380.000 - $500.000 COP / noche",
+    "location": "Cartagena, Bolívar",
+    "capacity": 8,
+    "bedrooms": 4,
+    "bathrooms": 3,
+    "amenities": [
+      "Patio colonial con fuente",
+      "Techos altos de madera",
+      "Balcones con vista a la calle",
+      "Cocina totalmente equipada",
+      "Terraza superior con vista panorámica",
+      "Aire acondicionado",
+      "WiFi de alta velocidad",
+      "TV Smart",
+      "Restauración de época preservada"
+    ],
+    "highlights": [
+      "Casa colonial auténtica",
+      "En el centro histórico de Cartagena",
+      "Patio con fuente",
+      "Terraza con vista panorámica"
+    ],
+    "rules": [
+      "No fiestas ni eventos",
+      "No fumar dentro de la casa",
+      "No mascotas",
+      "Check-in: 3:00 PM, Check-out: 11:00 AM",
+      "Máximo 8 huéspedes",
+      "Respetar el patrimonio histórico"
+    ],
+    "rating": 4.9,
+    "reviewCount": 64,
+    "coordinates": {
+      "lat": 10.42,
+      "lng": -75.55
+    },
+    "checkIn": "3:00 PM",
+    "checkOut": "11:00 AM",
+    "cancellationPolicy": "Cancelación gratuita hasta 7 días antes del check-in",
+    "propertyType": "Casa Colonial",
+    "bedroomDetails": [
+      {
+        "id": "room-0",
+        "beds": "1 cama king",
+        "image": "https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=800&h=600&fit=crop",
+        "order": 0,
+        "title": "Master Suite",
+        "active": true
+      },
+      {
+        "id": "room-1",
+        "beds": "1 cama doble",
+        "image": "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800&h=600&fit=crop",
+        "order": 1,
+        "title": "Habitación Colonial",
+        "active": true
+      },
+      {
+        "id": "room-2",
+        "beds": "2 camas dobles",
+        "image": "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=800&h=600&fit=crop",
+        "order": 2,
+        "title": "Habitación 3",
+        "active": true
+      },
+      {
+        "id": "room-3",
+        "beds": "2 camas individuales",
+        "image": "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=800&h=600&fit=crop",
+        "order": 3,
+        "title": "Habitación 4",
+        "active": true
+      }
+    ],
+    "published": true,
+    "order": 5
   }
 ]

@@ -200,18 +200,18 @@ const CabinCardHorizontal = memo(function CabinCardHorizontal({
           <div className="flex items-center gap-2 w-full sm:w-auto">
             <Button
               size="sm"
-              variant="outline"
-              className="rounded-xl text-xs font-bold flex-1 sm:flex-initial h-9 border-zinc-200 hover:bg-zinc-50"
+              className="rounded-xl text-xs font-bold flex-1 sm:flex-initial h-9 bg-ocean hover:bg-ocean-dark text-white border-none shadow-sm"
               onClick={(e) => {
                 e.stopPropagation();
                 onSelect();
               }}
             >
-              Ver detalle
+              Ver disponibilidad
             </Button>
             <Button
               size="sm"
-              className="rounded-xl text-xs font-bold flex-1 sm:flex-initial h-9 bg-yellow-400 hover:bg-yellow-500 text-zinc-950 border-none shadow-sm shadow-yellow-400/10"
+              variant="outline"
+              className="rounded-xl text-xs font-bold flex-1 sm:flex-initial h-9 border-zinc-200 hover:bg-zinc-50"
               onClick={handleWhatsAppClick}
             >
               Cotizar
@@ -347,18 +347,18 @@ const CabinCardVertical = memo(function CabinCardVertical({
           <div className="grid grid-cols-2 gap-2">
             <Button
               size="sm"
-              variant="outline"
-              className="rounded-xl text-[11px] font-bold h-8.5 border-zinc-200 hover:bg-zinc-50 py-1"
+              className="rounded-xl text-[11px] font-bold h-8.5 bg-ocean hover:bg-ocean-dark text-white border-none shadow-sm py-1"
               onClick={(e) => {
                 e.stopPropagation();
                 onSelect();
               }}
             >
-              Ver detalle
+              Ver disponibilidad
             </Button>
             <Button
               size="sm"
-              className="rounded-xl text-[11px] font-bold h-8.5 bg-yellow-400 hover:bg-yellow-500 text-zinc-950 border-none shadow-sm shadow-yellow-400/10 py-1"
+              variant="outline"
+              className="rounded-xl text-[11px] font-bold h-8.5 border-zinc-200 hover:bg-zinc-50 py-1"
               onClick={handleWhatsAppClick}
             >
               Cotizar
@@ -398,32 +398,39 @@ export function CabinsList() {
     [cabins]
   );
 
-  const searchedCabins = useMemo(() => {
-    let list = publishedCabins;
-    if (searchDestination) {
-      const query = searchDestination.toLowerCase().trim();
-      list = list.filter(
-        (cabin) =>
-          cabin.location.toLowerCase().includes(query) ||
-          cabin.name.toLowerCase().includes(query) ||
-          cabin.shortDescription.toLowerCase().includes(query)
-      );
-    }
-    return list;
-  }, [publishedCabins, searchDestination]);
+  // Normalize the destination coming from the hero search so it matches a real
+  // cabin location value (the hero uses labels like "Santa Verónica, Atlántico"
+  // while cabins store "Santa Verónica, Atlántico" too — we normalize to the
+  // city/subzone used by the filter options).
+  const normalizedSearchDestination = useMemo(() => {
+    if (!searchDestination) return null;
+    const trimmed = searchDestination.trim();
+    // Match against actual cabin locations to find the value used in filters
+    const exact = publishedCabins.find(
+      (c) => c.location.toLowerCase() === trimmed.toLowerCase()
+    );
+    if (exact) return exact.location;
+    // Fallback: match by inclusion
+    const partial = publishedCabins.find((c) =>
+      c.location.toLowerCase().includes(trimmed.toLowerCase())
+    );
+    return partial ? partial.location : trimmed;
+  }, [searchDestination, publishedCabins]);
 
+  // Filter sections are always built from the FULL pool so that all options
+  // (locations, amenities, etc.) remain visible regardless of the search.
   const filterSections = useMemo(
-    () => buildCabinFilters(searchedCabins),
-    [searchedCabins]
+    () => buildCabinFilters(publishedCabins),
+    [publishedCabins]
   );
 
   const { filters, toggleCheckbox, changeRange, clearAll, activeCount } =
-    useFilterState(filterSections);
+    useFilterState(filterSections, { initialLocation: normalizedSearchDestination });
 
-  // Apply filters
+  // Apply filters (location checkbox now carries the hero search destination)
   const filteredCabins = useMemo(
-    () => filterCabins(searchedCabins, filters),
-    [searchedCabins, filters]
+    () => filterCabins(publishedCabins, filters),
+    [publishedCabins, filters]
   );
 
   // Apply sorting
@@ -533,7 +540,7 @@ export function CabinsList() {
               filters={filters}
               onToggleCheckbox={toggleCheckbox}
               onChangeRange={changeRange}
-              onClearAll={handleClearFilters}
+              onClearAll={handleClearAll}
               activeCount={activeCount}
               resultCount={filteredCabins.length} />
           </div>
@@ -547,7 +554,7 @@ export function CabinsList() {
             filters={filters}
             onToggleCheckbox={toggleCheckbox}
             onChangeRange={changeRange}
-            onClearAll={handleClearFilters}
+            onClearAll={handleClearAll}
             activeCount={activeCount} />
 
           {/* Cabins Grid */}

@@ -3,6 +3,7 @@
 import { lazy, Suspense, useRef, useState, useEffect, type ReactNode } from "react";
 import { useNavigation } from "@/lib/store";
 import { usePrefetchData } from "@/hooks/use-prefetch-data";
+import { useScrollOnNavigate } from "@/hooks/use-scroll-on-navigate";
 import { Navbar } from "@/components/layout/navbar";
 import { StickySummaryBar } from "@/components/layout/sticky-summary-bar";
 import { Footer } from "@/components/layout/footer";
@@ -162,6 +163,8 @@ export default function HomePage() {
 
   // Prefetch plans & cabins data in background so navigation is instant
   usePrefetchData();
+  // Scroll to top on view changes (moved out of the zustand store for SSR safety)
+  useScrollOnNavigate();
 
   return (
     <div className="min-h-screen flex flex-col">
