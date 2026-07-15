@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useNavigation } from "@/lib/store";
 import { ImageCarousel } from "@/components/shared/image-carousel";
 import { SectionHeader } from "@/components/shared/section-header";
+import { PageBanner } from "@/components/shared/page-banner";
 import {
   FilterSidebar,
   FilterMobileSheet,
@@ -525,13 +526,16 @@ export function CabinsList() {
   }
 
   return (
-    <section className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 bg-white animate-in fade-in duration-300">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <SectionHeader
-          title="Nuestras Cabañas"
-          subtitle="Descubre el alojamiento perfecto para tu escapada al Caribe colombiano. Desde refugios románticos hasta espacios familiares frente al mar." />
-
+    <div className="bg-white animate-in fade-in duration-300">
+      <PageBanner
+        eyebrow="Alojamientos"
+        title="Nuestras Cabañas"
+        subtitle="Descubre el alojamiento perfecto para tu escapada al Caribe colombiano. Desde refugios románticos hasta espacios familiares frente al mar."
+        image="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=1600&h=600&fit=crop"
+        fallbackImage="https://images.unsplash.com/photo-1542718610-a1d656d1884c?w=1600&h=600&fit=crop"
+      />
+      <section className="py-10 sm:py-14 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
         {/* Mobile filter button */}
         <div className="flex items-center justify-between mb-4 lg:mb-6">
           <div className="flex items-center gap-2">
@@ -628,7 +632,8 @@ export function CabinsList() {
             Contáctanos
           </Button>
         </div>
-      </div>
-    </section>
+        </div>
+      </section>
+    </div>
   );
 }

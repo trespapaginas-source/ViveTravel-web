@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { SectionHeader } from "@/components/shared/section-header";
+import { PageBanner } from "@/components/shared/page-banner";
 import {
   FilterSidebar,
   FilterMobileSheet,
@@ -936,16 +937,16 @@ export function PlansList() {
   }
 
   return (
-    <section className="py-4 lg:py-16 px-4 sm:px-6 lg:px-8 bg-white">
+    <div className="bg-white">
+      <PageBanner
+        eyebrow="Descubre"
+        title="Experiencias y viajes"
+        subtitle="Explora nuestra selección de destinos diseñados para ti."
+        image="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1600&h=600&fit=crop"
+        fallbackImage="https://images.unsplash.com/photo-1530789253388-582c481c54b0?w=1600&h=600&fit=crop"
+      />
+    <section className="py-4 lg:py-16 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto flex flex-col">
-        {/* Header - Order 2 in Mobile, 1 in Desktop */}
-        <div className="order-2 lg:order-1">
-          <SectionHeader
-            title="Experiencias y viajes"
-            subtitle="Explora nuestra selección de destinos diseñados para ti."
-            className="mb-3 lg:mb-8" />
-        </div>
-
         {/* Tabs - Order 1 in Mobile, 2 in Desktop */}
         <div className="order-1 lg:order-2 mb-5 lg:mb-6 w-full overflow-hidden mt-1 lg:mt-0 relative after:absolute after:right-0 after:top-0 after:bottom-0 after:w-8 after:bg-gradient-to-l after:from-white after:to-transparent after:pointer-events-none lg:after:hidden">
           <div className="flex overflow-x-auto items-center md:justify-center gap-2.5 pb-2 -mb-2 px-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
@@ -1055,6 +1056,7 @@ export function PlansList() {
         </div>
       </div>
     </section>
+    </div>
   );
 }
 

@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { PageBanner } from "@/components/shared/page-banner";
 import { Badge } from "@/components/ui/badge";
 import { 
   ShieldCheck, 
@@ -83,7 +84,15 @@ export function TransportsView() {
   }
 
   return (
-    <div className="py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pt-20 sm:pt-24 pb-28 lg:pb-16">
+    <div className="bg-white">
+      <PageBanner
+        eyebrow="Transporte privado"
+        title="Tu destino, nuestro compromiso"
+        subtitle="Servicio de transporte privado con la mejor atención, comodidad y puntualidad. Te llevamos a donde necesites, cuando lo necesites."
+        image="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=1600&h=600&fit=crop"
+        fallbackImage="/images/carretera-colombia.jpg"
+      />
+    <div className="py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pb-28 lg:pb-16">
       {/* Back Button */}
       <Button
         variant="ghost"
@@ -93,46 +102,6 @@ export function TransportsView() {
         <ArrowLeft className="w-4 h-4" />
         Volver al inicio
       </Button>
-
-      {/* Hero Banner with Colombian Road Background */}
-      <div className="relative rounded-[1.5rem] sm:rounded-[2rem] overflow-hidden text-white p-6 sm:p-8 lg:p-10 mb-8 shadow-lg">
-        {/* Background Image of a gorgeous winding Colombian mountain highway */}
-        <div 
-          className="absolute inset-0 bg-cover bg-center transition-transform duration-500 scale-105"
-          style={{ backgroundImage: `url("/images/carretera-colombia.jpg")` }}
-        />
-        {/* Semi-transparent dark overlay to ensure readability */}
-        <div className="absolute inset-0 bg-zinc-950/75" />
-
-        <div className="relative z-10 max-w-3xl space-y-4">
-          <Badge className="bg-emerald-500 hover:bg-emerald-600 text-white border-0 text-[10px] font-bold uppercase tracking-wider py-0.5 px-2.5">
-            Nuevo Servicio
-          </Badge>
-          <h1 className="text-2xl sm:text-4xl font-black leading-tight tracking-tight text-white">
-            Tu destino,<br />
-            <span className="text-emerald-400">nuestro compromiso</span>
-          </h1>
-          <p className="text-sm sm:text-base text-zinc-200 leading-relaxed font-light max-w-2xl">
-            Ofrecemos servicio de transporte privado con la mejor atención, comodidad y puntualidad. Nos encargamos de llevarte a donde necesites, cuando lo necesites.
-          </p>
-          <div className="flex flex-wrap gap-3 pt-1">
-            <div className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-xl py-2 px-3.5 flex items-center gap-2.5">
-              <MapPin className="w-4 h-4 text-emerald-400" />
-              <div>
-                <p className="text-[9px] text-zinc-300 uppercase tracking-widest font-bold leading-none">Zona de Operación</p>
-                <p className="text-xs font-semibold mt-0.5 text-white">Barranquilla y Cartagena</p>
-              </div>
-            </div>
-            <div className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-xl py-2 px-3.5 flex items-center gap-2.5">
-              <Clock className="w-4 h-4 text-emerald-400" />
-              <div>
-                <p className="text-[9px] text-zinc-300 uppercase tracking-widest font-bold leading-none">Tarifas</p>
-                <p className="text-xs font-semibold mt-0.5 text-white">Desde $600.000 COP</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
 
       {/* Fleet Vehicles Grid */}
       <div className="space-y-8 mb-16">
@@ -269,6 +238,7 @@ export function TransportsView() {
           </Button>
         </div>
       </div>
+    </div>
     </div>
   );
 }
