@@ -13,6 +13,7 @@ import { format, addDays, isBefore } from "date-fns";
 import { es } from "date-fns/locale";
 import { getPlanExperienceSection } from "@/lib/experience-sections";
 import { detectUserCity } from "@/lib/geolocation";
+import { useDragScroll } from "@/lib/use-drag-scroll";
 
 type SearchTab = "internacionales" | "nacionales" | "circuitos" | "pasadias" | "grupales" | "alojamientos" | "tours";
 
@@ -74,6 +75,7 @@ const POPULAR_DESTINATIONS: Record<Exclude<SearchTab, "grupales">, { featured: s
 export function HeroSection() {
   const { navigateWithSearch } = useNavigation();
   const [activeTab, setActiveTab] = useState<SearchTab>("internacionales");
+  const tabsDragScroll = useDragScroll<HTMLDivElement>();
 
   // Initial parameters state
   const [tabParams, setTabParams] = useState<Record<SearchTab, TabParams>>({
@@ -338,7 +340,15 @@ export function HeroSection() {
           {/* Buscador Modular de Pestañas */}
           <div className="w-full bg-white/95 backdrop-blur-md p-4 sm:p-6 sm:pb-8 rounded-2xl sm:rounded-3xl border border-white/20 shadow-2xl text-left animate-in fade-in slide-in-from-bottom-2 duration-500" style={{ animationDelay: "400ms", animationFillMode: "both" }}>
             {/* Tabs List */}
-            <div className="flex bg-zinc-150/80 p-1.5 rounded-xl w-full md:w-fit mb-5 gap-1 overflow-x-auto max-w-full [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+            <div
+              ref={tabsDragScroll.ref}
+              onMouseDown={tabsDragScroll.onMouseDown}
+              onMouseMove={tabsDragScroll.onMouseMove}
+              onMouseUp={tabsDragScroll.onMouseUp}
+              onMouseLeave={tabsDragScroll.onMouseLeave}
+              onClickCapture={tabsDragScroll.onClickCapture}
+              className="flex bg-zinc-150/80 p-1.5 rounded-xl w-full md:w-fit mb-5 gap-1 overflow-x-auto max-w-full cursor-grab active:cursor-grabbing select-none [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+            >
               {(
                 [
                   { id: "internacionales", label: "Planes Internacionales" },
@@ -1010,7 +1020,7 @@ export function HeroSection() {
               )}>
                 <Button
                   onClick={handleSearch}
-                  className="w-full py-3 h-[46px] bg-yellow-400 hover:bg-yellow-500 text-zinc-900 hover:text-zinc-900 font-extrabold rounded-xl shadow-md shadow-yellow-400/20 hover:shadow-lg hover:shadow-yellow-400/30 transition-all duration-200 active:scale-95 border-none cursor-pointer text-sm"
+                  className="w-full py-3 h-[46px] bg-ocean hover:bg-ocean-dark text-white font-extrabold rounded-xl shadow-md transition-all duration-200 active:scale-95 border-none cursor-pointer text-sm"
                 >
                   <Search className="w-4 h-4 mr-1.5 shrink-0" />
                   {activeTab === "grupales" ? "Ver Viaje" : "Buscar"}

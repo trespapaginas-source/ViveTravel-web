@@ -62,7 +62,7 @@ export function Testimonials() {
               </div>
               <div className="hidden sm:flex items-center gap-0.5">
                 {Array.from({ length: t.rating || 5 }).map((_, i) => (
-                  <Star key={i} className="w-4 h-4 text-amber-400 fill-amber-400" />
+                  <Star key={i} className="w-4 h-4 text-foreground fill-foreground" />
                 ))}
               </div>
             </div>
@@ -70,7 +70,7 @@ export function Testimonials() {
             {/* Mobile stars */}
             <div className="flex sm:hidden items-center gap-0.5 mb-4">
               {Array.from({ length: t.rating || 5 }).map((_, i) => (
-                <Star key={i} className="w-4 h-4 text-amber-400 fill-amber-400" />
+                <Star key={i} className="w-4 h-4 text-foreground fill-foreground" />
               ))}
             </div>
 

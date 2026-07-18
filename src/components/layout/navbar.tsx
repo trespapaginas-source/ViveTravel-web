@@ -38,6 +38,7 @@ export function Navbar() {
   const { content } = useSiteContent();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [experiencesOpen, setExperiencesOpen] = useState(() => isItemActive("plans", currentView));
   const tickingRef = useRef(false);
   const pathname = usePathname();
   const router = useRouter();
@@ -228,7 +229,7 @@ export function Navbar() {
               }}
               className={cn(
                 "rounded-full h-10 w-10 sm:h-9 sm:w-9 transition-colors duration-200",
-                favoritesPulseActive && "animate-heartbeat text-red-500 bg-red-50 hover:bg-red-50",
+                favoritesPulseActive && "animate-heartbeat text-ocean bg-ocean/10 hover:bg-ocean/10",
                 currentView === "favorites"
                   ? showOpaque
                     ? "bg-ocean/10 text-ocean font-semibold"
@@ -241,7 +242,7 @@ export function Navbar() {
             >
               <Heart className={cn(
                 "w-4 h-4",
-                favoritesPulseActive ? "fill-red-500 text-red-500" : (currentView === "favorites" && "fill-current")
+                favoritesPulseActive ? "fill-ocean text-ocean" : (currentView === "favorites" && "fill-current")
               )} />
             </Button>
 
@@ -286,34 +287,66 @@ export function Navbar() {
                       onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"; e.currentTarget.onerror = null; }}
                     />
                   </div>
-                  <nav className="flex flex-col p-4 gap-1.5 overflow-y-auto">
-                    <div className="px-4 pt-2 pb-1 text-[11px] font-semibold uppercase tracking-wider text-zinc-400">
-                      {content.navbar.navItems.find(i => i.key === "plans")?.label || "Experiencias y viajes"}
-                    </div>
-                    {EXPERIENCE_SECTIONS.map((section) => (
-                      <button
-                        key={section.id}
-                        onClick={() => handleExperienceNav(section.id)}
-                        className="px-4 py-3 rounded-xl text-left text-sm font-medium transition-colors duration-150 min-h-[44px] flex items-center text-zinc-600 hover:bg-zinc-50 hover:text-ocean"
-                      >
-                        {section.label}
-                      </button>
-                    ))}
+                  <nav className="flex flex-col p-4 gap-1 overflow-y-auto">
+                    {content.navbar.navItems.map((item) => {
+                      if (item.key === "plans") {
+                        return (
+                          <div key="plans">
+                            <button
+                              onClick={() => setExperiencesOpen((o) => !o)}
+                              className={cn(
+                                "w-full px-4 py-3 rounded-xl flex items-center justify-between text-left text-sm font-medium transition-colors duration-150 min-h-[44px]",
+                                isItemActive("plans", currentView)
+                                  ? "bg-ocean/10 text-ocean font-semibold"
+                                  : "text-zinc-600 hover:bg-zinc-50 hover:text-ocean"
+                              )}
+                              aria-expanded={experiencesOpen}
+                            >
+                              {item.label}
+                              <ChevronDown
+                                className={cn(
+                                  "w-4 h-4 shrink-0 transition-transform duration-200",
+                                  experiencesOpen && "rotate-180"
+                                )}
+                              />
+                            </button>
+                            <div
+                              className={cn(
+                                "grid transition-all duration-200 ease-out",
+                                experiencesOpen ? "grid-rows-[1fr] opacity-100 mt-1" : "grid-rows-[0fr] opacity-0"
+                              )}
+                            >
+                              <div className="overflow-hidden flex flex-col gap-0.5 pl-3">
+                                {EXPERIENCE_SECTIONS.map((section) => (
+                                  <button
+                                    key={section.id}
+                                    onClick={() => handleExperienceNav(section.id)}
+                                    className="px-4 py-2.5 rounded-lg text-left text-sm transition-colors duration-150 min-h-[40px] flex items-center text-zinc-500 hover:bg-zinc-50 hover:text-ocean"
+                                  >
+                                    {section.label}
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      }
+                      return (
+                        <button
+                          key={item.key}
+                          onClick={() => handleNav(item.key as any)}
+                          className={cn(
+                            "px-4 py-3 rounded-xl text-left text-sm font-medium transition-colors duration-150 min-h-[44px] flex items-center",
+                            isItemActive(item.key, currentView)
+                              ? "bg-ocean/10 text-ocean font-semibold"
+                              : "text-zinc-600 hover:bg-zinc-50 hover:text-ocean"
+                          )}
+                        >
+                          {item.label}
+                        </button>
+                      );
+                    })}
                     <div className="h-px bg-zinc-100 my-2" />
-                    {content.navbar.navItems.filter(i => i.key !== "plans").map((item) => (
-                      <button
-                        key={item.key}
-                        onClick={() => handleNav(item.key as any)}
-                        className={cn(
-                          "px-4 py-3 rounded-xl text-left text-sm font-medium transition-colors duration-150 min-h-[44px] flex items-center",
-                          isItemActive(item.key, currentView)
-                            ? "bg-ocean/10 text-ocean font-semibold"
-                            : "text-zinc-600 hover:bg-zinc-50 hover:text-ocean"
-                        )}
-                      >
-                        {item.label}
-                      </button>
-                    ))}
                     <button
                       onClick={() => {
                         setFavoritesPulseActive(false);
@@ -321,7 +354,7 @@ export function Navbar() {
                       }}
                       className={cn(
                         "flex items-center gap-2.5 px-4 py-3 rounded-xl text-left text-sm font-medium transition-colors duration-150 min-h-[44px]",
-                        favoritesPulseActive && "animate-heartbeat text-red-500 bg-red-50/50",
+                        favoritesPulseActive && "animate-heartbeat text-ocean bg-ocean/10",
                         currentView === "favorites"
                           ? "bg-ocean/10 text-ocean font-semibold"
                           : "text-zinc-600 hover:bg-zinc-50 hover:text-ocean"
@@ -329,7 +362,7 @@ export function Navbar() {
                     >
                       <Heart className={cn(
                         "w-4 h-4",
-                        favoritesPulseActive ? "fill-red-500 text-red-500" : (currentView === "favorites" && "fill-current")
+                        favoritesPulseActive ? "fill-ocean text-ocean" : (currentView === "favorites" && "fill-current")
                       )} />
                       Mi Colección
                     </button>

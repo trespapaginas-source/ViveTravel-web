@@ -89,221 +89,6 @@ function getShortDuration(duration: string): string {
 
 import { TourPlan } from "@/lib/data";
 
-function getVariantDetails(plan: TourPlan, variantKey: "3d2n" | "4d3n" | "5d4n") {
-  const location = plan.location;
-  const locClean = location.split(",")[0].trim().toLowerCase();
-  
-  let hotels = {
-    "3d2n": {
-      hotel: "Hotel Turista Standard",
-      stars: 3,
-      plan: "Desayuno incluido",
-      difference: "Ideal para escapadas",
-    },
-    "4d3n": {
-      hotel: "Hotel Confort Superior",
-      stars: 4,
-      plan: "Desayuno + Cena",
-      difference: "Más tiempo libre",
-    },
-    "5d4n": {
-      hotel: "Hotel Premium Resort",
-      stars: 5,
-      plan: "Todo incluido",
-      difference: "Mayor comodidad",
-    }
-  };
-
-  if (locClean.includes("san andrés") || locClean.includes("san andres")) {
-    hotels = {
-      "3d2n": {
-        hotel: "Hotel Arena Blanca",
-        stars: 4,
-        plan: "Desayuno incluido",
-        difference: "Ideal para escapadas",
-      },
-      "4d3n": {
-        hotel: "Hotel Sol Caribe Campo",
-        stars: 4,
-        plan: "Desayuno + Cena",
-        difference: "Más tiempo libre",
-      },
-      "5d4n": {
-        hotel: "Decameron Isleño",
-        stars: 5,
-        plan: "Todo incluido",
-        difference: "Mayor comodidad",
-      }
-    };
-  } else if (locClean.includes("cancún") || locClean.includes("cancun")) {
-    hotels = {
-      "3d2n": {
-        hotel: "Hotel Oasis Smart",
-        stars: 3,
-        plan: "Desayuno incluido",
-        difference: "Ideal para escapadas",
-      },
-      "4d3n": {
-        hotel: "Dreams Sands Cancun Resort",
-        stars: 4,
-        plan: "Desayuno + Cena",
-        difference: "Más tiempo libre",
-      },
-      "5d4n": {
-        hotel: "Grand Fiesta Americana Coral Beach",
-        stars: 5,
-        plan: "Todo incluido",
-        difference: "Mayor comodidad",
-      }
-    };
-  } else if (locClean.includes("punta cana")) {
-    hotels = {
-      "3d2n": {
-        hotel: "Riu Naiboa Resort",
-        stars: 3,
-        plan: "Desayuno incluido",
-        difference: "Ideal para escapadas",
-      },
-      "4d3n": {
-        hotel: "Barceló Bávaro Palace",
-        stars: 4,
-        plan: "Desayuno + Cena",
-        difference: "Más tiempo libre",
-      },
-      "5d4n": {
-        hotel: "Lopesan Costa Bávaro Resort",
-        stars: 5,
-        plan: "Todo incluido",
-        difference: "Mayor comodidad",
-      }
-    };
-  } else if (locClean.includes("eje cafetero")) {
-    hotels = {
-      "3d2n": {
-        hotel: "Finca Hotel La Dulcera",
-        stars: 3,
-        plan: "Desayuno incluido",
-        difference: "Ideal para escapadas",
-      },
-      "4d3n": {
-        hotel: "Hacienda Combia",
-        stars: 4,
-        plan: "Desayuno + Cena",
-        difference: "Más tiempo libre",
-      },
-      "5d4n": {
-        hotel: "Hotel Termales Santa Rosa",
-        stars: 5,
-        plan: "Todo incluido",
-        difference: "Mayor comodidad",
-      }
-    };
-  } else if (locClean.includes("santa marta") || locClean.includes("tayrona")) {
-    hotels = {
-      "3d2n": {
-        hotel: "Hotel Tayrona Rodadero",
-        stars: 3,
-        plan: "Desayuno incluido",
-        difference: "Ideal para escapadas",
-      },
-      "4d3n": {
-        hotel: "Ecohabs Tayrona",
-        stars: 4,
-        plan: "Desayuno + Cena",
-        difference: "Más tiempo libre",
-      },
-      "5d4n": {
-        hotel: "Marriott Resort Playa Dormida",
-        stars: 5,
-        plan: "Todo incluido",
-        difference: "Mayor comodidad",
-      }
-    };
-  } else if (locClean.includes("madrid") || locClean.includes("parís") || locClean.includes("roma")) {
-    hotels = {
-      "3d2n": {
-        hotel: "Hotel Ganivet / Ibis Paris",
-        stars: 3,
-        plan: "Desayuno incluido",
-        difference: "Ideal para escapadas",
-      },
-      "4d3n": {
-        hotel: "Plaza de España / Novotel Paris",
-        stars: 4,
-        plan: "Desayuno + Cena",
-        difference: "Más tiempo libre",
-      },
-      "5d4n": {
-        hotel: "Westin Palace / Pullman Tour Eiffel",
-        stars: 5,
-        plan: "Todo incluido",
-        difference: "Mayor comodidad",
-      }
-    };
-  } else if (locClean.includes("tokio") || locClean.includes("kioto") || locClean.includes("osaka")) {
-    hotels = {
-      "3d2n": {
-        hotel: "Toyoko Inn Shinjuku",
-        stars: 3,
-        plan: "Desayuno incluido",
-        difference: "Ideal para escapadas",
-      },
-      "4d3n": {
-        hotel: "Hotel Gracery Shinjuku",
-        stars: 4,
-        plan: "Desayuno + Cena",
-        difference: "Más tiempo libre",
-      },
-      "5d4n": {
-        hotel: "The Ritz-Carlton Kyoto",
-        stars: 5,
-        plan: "Todo incluido",
-        difference: "Mayor comodidad",
-      }
-    };
-  } else if (locClean.includes("estambul") || locClean.includes("dubái") || locClean.includes("dubai")) {
-    hotels = {
-      "3d2n": {
-        hotel: "DoubleTree by Hilton Istanbul",
-        stars: 4,
-        plan: "Desayuno incluido",
-        difference: "Ideal para escapadas",
-      },
-      "4d3n": {
-        hotel: "Cave Hotel Cappadocia",
-        stars: 4,
-        plan: "Desayuno + Cena",
-        difference: "Más tiempo libre",
-      },
-      "5d4n": {
-        hotel: "Atlantis The Palm Dubai",
-        stars: 5,
-        plan: "Todo incluido",
-        difference: "Mayor comodidad",
-      }
-    };
-  }
-
-  const label = variantKey === "3d2n" ? "3 días · 2 noches" : variantKey === "4d3n" ? "4 días · 3 noches" : "5 días · 4 noches";
-  const durationText = variantKey === "3d2n" ? "3 días / 2 noches" : variantKey === "4d3n" ? "4 días / 3 noches" : "5 días / 4 noches";
-
-  return {
-    label,
-    durationText,
-    hotel: hotels[variantKey].hotel,
-    stars: hotels[variantKey].stars,
-    plan: hotels[variantKey].plan,
-    difference: hotels[variantKey].difference,
-    schedule: plan.schedule || "Todos los viernes",
-  };
-}
-
-const getMultiplier = (v: "3d2n" | "4d3n" | "5d4n") => {
-  if (v === "3d2n") return 0.85;
-  if (v === "4d3n") return 0.92;
-  return 1.0;
-};
-
 export function PlanDetail() {
   const {
     selectedItemId,
@@ -313,8 +98,6 @@ export function PlanDetail() {
     searchDate,
     searchOrigin,
     searchRoomsDetail,
-    searchSelectedVariant,
-    setSearchSelectedVariant,
     setSearchPriceFrom,
     setFavoritesPulseActive,
   } = useNavigation();
@@ -379,29 +162,14 @@ export function PlanDetail() {
   const sectionId = plan ? getPlanExperienceSection(plan) : "";
   const isBookingGallery = sectionId === "internacionales" || sectionId === "nacionales" || sectionId === "circuitos";
 
-  const showVariants = plan ? (sectionId === "internacionales" || sectionId === "nacionales" || sectionId === "circuitos") : false;
-
-  const [selectedVariant, setSelectedVariant] = useState<"3d2n" | "4d3n" | "5d4n">(() => {
-    if (searchSelectedVariant === "3d2n" || searchSelectedVariant === "4d3n" || searchSelectedVariant === "5d4n") {
-      return searchSelectedVariant;
-    }
-    return "5d4n";
-  });
-
-  const currentPrice = plan ? (showVariants ? Math.round(plan.price * getMultiplier(selectedVariant)) : plan.price) : 0;
+  const currentPrice = plan ? plan.price : 0;
   const totalPlanPrice = guests * currentPrice;
 
   useEffect(() => {
     if (plan) {
-      if (showVariants) {
-        setSearchPriceFrom(currentPrice);
-        setSearchSelectedVariant(selectedVariant);
-      } else {
-        setSearchPriceFrom(plan.price);
-        setSearchSelectedVariant(null);
-      }
+      setSearchPriceFrom(plan.price);
     }
-  }, [selectedVariant, plan, showVariants, currentPrice, setSearchPriceFrom, setSearchSelectedVariant]);
+  }, [plan, setSearchPriceFrom]);
 
 
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
@@ -453,16 +221,14 @@ export function PlanDetail() {
 
   const handleWhatsAppRedirect = useCallback(() => {
     if (!plan) return;
-    const variantDetails = showVariants ? getVariantDetails(plan, selectedVariant) : null;
     const total = formatPrice(guests * currentPrice);
 
     const message = [
       `🌴 *CONSULTA VIVE TRAVEL*`,
       ``,
-      `📋 *Plan:* ${plan.name}${variantDetails ? ` (${variantDetails.label})` : ""}`,
+      `📋 *Plan:* ${plan.name}`,
       `📍 *Destino:* ${plan.location}`,
       originCity ? `🛫 *Origen:* ${originCity}` : "",
-      variantDetails ? `🏨 *Hospedaje:* ${variantDetails.hotel}` : "",
       `👥 *Viajeros:* ${guests} persona${guests > 1 ? "s" : ""}`,
       `🛏️ *Habitación:* ${roomTypeLabels[roomType]}`,
       `📅 *Fecha de viaje:* ${plan.fecha_salida || (selectedDate ? format(selectedDate, "d MMM yyyy", { locale: es }) : "Por definir")}`,
@@ -470,9 +236,9 @@ export function PlanDetail() {
       ``,
       `Hola, acabo de cotizar esta experiencia en su sitio web. ¿Podrían confirmarme disponibilidad de cupos y opciones de pago?`
     ].filter(Boolean).join("\n");
-    
+
     window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, "_blank");
-  }, [plan, guests, selectedDate, originCity, roomType, showVariants, selectedVariant, currentPrice]);
+  }, [plan, guests, selectedDate, originCity, roomType, currentPrice]);
 
   const handleToggleFavorite = useCallback(() => {
     if (!selectedItemId) return;
@@ -774,81 +540,6 @@ export function PlanDetail() {
             </div>
 
             <Separator className="my-5" />
-
-            {/* Durations and Variant Selection */}
-            {showVariants && (
-              <div className="mb-8 animate-in fade-in duration-350">
-                <h3 className="text-base font-bold text-zinc-800 mb-4">
-                  Selecciona tu experiencia
-                </h3>
-                <div className="flex flex-col gap-3">
-                  {(["3d2n", "4d3n", "5d4n"] as const).map((v) => {
-                    const details = getVariantDetails(plan, v);
-                    const price = Math.round(plan.price * getMultiplier(v));
-                    const isSelected = selectedVariant === v;
-                    return (
-                      <div
-                        key={v}
-                        onClick={() => setSelectedVariant(v)}
-                        className={cn(
-                          "cursor-pointer rounded-xl border p-4 transition-all duration-200 relative flex flex-col sm:grid sm:grid-cols-12 items-start sm:items-center gap-4 bg-white",
-                          isSelected
-                            ? "border-zinc-700 ring-1 ring-zinc-700/10 shadow-sm"
-                            : "border-zinc-200 hover:border-zinc-300 hover:shadow-sm"
-                        )}
-                      >
-                        {/* Check Indicator */}
-                        {isSelected && (
-                          <div className="absolute top-3 right-3 text-zinc-800 flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider">
-                            <Check className="w-3.5 h-3.5 text-zinc-800 stroke-[3]" />
-                            <span>Seleccionado</span>
-                          </div>
-                        )}
-
-                        {/* Duration & Recommendation (Col 1-3) */}
-                        <div className="sm:col-span-3 pr-8 sm:pr-0">
-                          <p className="text-[15px] font-extrabold text-zinc-900">{details.label}</p>
-                          <span className="inline-block mt-1 text-[10px] font-bold text-zinc-500 bg-zinc-100 rounded px-2 py-0.5 uppercase tracking-wide">
-                            {details.difference}
-                          </span>
-                        </div>
-
-                        {/* Hotel (Col 4-6) */}
-                        <div className="sm:col-span-3 text-xs space-y-0.5">
-                          <span className="text-zinc-400 font-medium text-[10px] uppercase tracking-wider">Hospedaje</span>
-                          <p className="font-bold text-zinc-800 leading-tight pr-2 truncate" title={details.hotel}>
-                            {details.hotel}
-                          </p>
-                          <div className="flex items-center gap-0.5 mt-0.5">
-                            <span className="text-amber-500 text-xs">
-                              {"★".repeat(details.stars)}{"☆".repeat(5 - details.stars)}
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* Plan & Departure (Col 7-9) */}
-                        <div className="sm:col-span-3 text-xs space-y-1">
-                          <div className="flex flex-col">
-                            <span className="text-zinc-400 font-medium text-[10px] uppercase tracking-wider">Plan</span>
-                            <span className="font-bold text-zinc-800 leading-tight">{details.plan}</span>
-                          </div>
-                          <div className="flex flex-col">
-                            <span className="text-zinc-400 font-medium text-[10px] uppercase tracking-wider">Salida</span>
-                            <span className="font-bold text-zinc-800 leading-tight">{details.schedule}</span>
-                          </div>
-                        </div>
-
-                        {/* Price (Col 10-12) */}
-                        <div className="sm:col-span-3 flex flex-col sm:items-end justify-center self-stretch sm:self-auto pt-3 sm:pt-0 border-t sm:border-t-0 border-zinc-100 mt-2 sm:mt-0">
-                          <span className="text-[9px] uppercase font-bold text-zinc-400 tracking-wider">Desde</span>
-                          <span className="text-lg font-black text-zinc-900 leading-none mt-0.5">{formatPrice(price)}</span>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
 
             {/* Info Section */}
             {isBookingStyle ? (
@@ -1154,11 +845,6 @@ export function PlanDetail() {
              
              <div>
                <h3 className="font-bold text-lg text-foreground">{plan.name}</h3>
-               {showVariants && (
-                 <p className="text-sm font-semibold text-ocean mt-0.5">
-                   Opción: {getVariantDetails(plan, selectedVariant).label}
-                 </p>
-               )}
                <p className="text-sm text-muted-foreground mt-1">{plan.location}</p>
              </div>
 

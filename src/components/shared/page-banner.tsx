@@ -20,8 +20,8 @@ interface PageBannerProps {
  * white title rendered with a drop-shadow for legibility over any image.
  *
  * Editorial style (Airbnb/Booking-like): the photo speaks, the text floats.
- * Height is contained (~260px mobile / ~340px desktop) so it doesn't push the
- * content too far down.
+ * Height is contained (~160px mobile / ~340px desktop) so it doesn't push the
+ * content too far down; mobile uses a slimmer, more delicate treatment.
  */
 export function PageBanner({
   eyebrow,
@@ -34,7 +34,7 @@ export function PageBanner({
   return (
     <section
       className={cn(
-        "relative w-full h-[240px] sm:h-[300px] lg:h-[340px] overflow-hidden",
+        "relative w-full h-[160px] sm:h-[300px] lg:h-[340px] overflow-hidden",
         "flex items-end",
         className
       )}
@@ -53,25 +53,25 @@ export function PageBanner({
       />
 
       {/* Text content */}
-      <div className="relative w-full px-4 sm:px-6 lg:px-8 pb-8 sm:pb-10 lg:pb-12">
+      <div className="relative w-full px-4 sm:px-6 lg:px-8 pb-3.5 sm:pb-10 lg:pb-12">
         <div className="max-w-7xl mx-auto">
           {eyebrow && (
             <p
-              className="text-[11px] sm:text-xs font-semibold uppercase tracking-[0.18em] text-white/90 mb-1.5"
+              className="text-[9px] sm:text-xs font-semibold uppercase tracking-[0.18em] text-white/90 mb-1 sm:mb-1.5"
               style={{ textShadow: "0 1px 8px rgba(0,0,0,0.5)" }}
             >
               {eyebrow}
             </p>
           )}
           <h1
-            className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight leading-[1.05]"
+            className="text-xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight leading-tight sm:leading-[1.05]"
             style={{ textShadow: "0 2px 16px rgba(0,0,0,0.45)" }}
           >
             {title}
           </h1>
           {subtitle && (
             <p
-              className="mt-2.5 text-sm sm:text-base text-white/90 max-w-2xl leading-relaxed"
+              className="mt-1 sm:mt-2.5 text-xs sm:text-base text-white/90 max-w-2xl leading-snug sm:leading-relaxed line-clamp-1 sm:line-clamp-none"
               style={{ textShadow: "0 1px 10px rgba(0,0,0,0.5)" }}
             >
               {subtitle}

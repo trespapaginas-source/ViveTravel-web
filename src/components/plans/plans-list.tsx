@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, memo } from "react";
-import { MapPin, Clock, Users, Compass, Heart, ArrowRight, Sun, Moon, Calendar, Hotel, Tag } from "lucide-react";
+import { MapPin, Clock, Users, Compass, Heart, ArrowRight, Sun, Moon, Calendar, Hotel, Tag, Plane, CheckCircle2, Star } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,8 @@ import {
 } from "@/components/shared/filter-panel";
 import { ListToolbar, type ViewMode, type SortOption } from "@/components/shared/list-toolbar";
 import { ListPagination } from "@/components/shared/list-pagination";
+import { CardImageCarousel } from "@/components/shared/card-image-carousel";
+import { useDragScroll } from "@/lib/use-drag-scroll";
 import { useNavigation } from "@/lib/store";
 import { type TourPlan } from "@/lib/data";
 import { fetchPlans } from "@/lib/api";
@@ -31,7 +33,7 @@ import { useState, useCallback, useEffect } from "react";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 import { sortPlans, getGridCols, ITEMS_PER_PAGE } from "@/lib/sorting";
-import { formatShortDuration, formatShortLocation } from "@/lib/utils";
+import { formatShortDuration, cn } from "@/lib/utils";
 import { WHATSAPP_NUMBER } from "@/lib/config";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
@@ -101,6 +103,49 @@ const getKeyLabels = (plan: TourPlan) => {
   
   return labels.slice(0, 3);
 };
+
+// Icons differentiate inclusion types; color stays neutral for every label so
+// the ocean accent is reserved for the card's truly primary actions (price, CTA).
+const NEUTRAL_LABEL_STYLE = "bg-zinc-50 text-zinc-600 border-zinc-200";
+
+const KEY_LABEL_STYLES: Record<string, { icon: typeof CheckCircle2; className: string }> = {
+  "Todo Incluido": { icon: CheckCircle2, className: NEUTRAL_LABEL_STYLE },
+  "Vuelos Incluidos": { icon: Plane, className: NEUTRAL_LABEL_STYLE },
+  "Pasadía": { icon: Sun, className: NEUTRAL_LABEL_STYLE },
+  "Salida Grupal": { icon: Users, className: NEUTRAL_LABEL_STYLE },
+  "Alojamiento Incluido": { icon: Hotel, className: NEUTRAL_LABEL_STYLE },
+};
+
+const DEFAULT_KEY_LABEL_STYLE = { icon: Tag, className: NEUTRAL_LABEL_STYLE };
+
+const getKeyLabelStyle = (label: string) => KEY_LABEL_STYLES[label] || DEFAULT_KEY_LABEL_STYLE;
+
+// Splits a location string like "Madrid, París y Roma" into ordered stops
+// ["Madrid", "París", "Roma"] so multi-city routes can render as a breadcrumb.
+// Only "City, City y City" lists qualify (signaled by " y ") — a plain
+// "City, Country" value (e.g. "Cancún, México") is a single destination,
+// not a route, and must be returned whole rather than split on the comma.
+const getLocationStops = (location: string): string[] => {
+  if (!/\sy\s/i.test(location)) return [location.trim()];
+  return location
+    .split(",")
+    .flatMap((part) => part.split(/\s+y\s+/i))
+    .map((s) => s.trim())
+    .filter(Boolean);
+};
+
+// The upper bound of a "$X - $Y" priceRange, used as informational context
+// (season/room variance) — never as a struck-through fake "before" price.
+const getPriceRangeUpper = (plan: TourPlan): string | null => {
+  if (!plan.priceRange || !plan.priceRange.includes("-")) return null;
+  return plan.priceRange.split("-")[1]?.trim() || null;
+};
+
+// "Salidas ..." schedules describe departure cadence for circuitos/viajes;
+// other plans reuse the same field for daily time windows ("7:00 AM - 11:00 AM"),
+// which isn't relevant to show as a departure chip.
+const getDepartureCadence = (plan: TourPlan): string | null =>
+  plan.schedule?.toLowerCase().startsWith("salidas") ? plan.schedule : null;
 
 const getPrincipalHotel = (plan: TourPlan) => {
   const searchStr = [
@@ -324,14 +369,8 @@ const PlanCardHorizontal = memo(function PlanCardHorizontal({
     >
       {/* Image */}
       <div className="relative w-full sm:w-[260px] md:w-[300px] shrink-0 overflow-hidden aspect-[3/2] sm:aspect-auto">
-        <img
-          src={plan.images[0]}
-          alt={plan.name}
-          loading="lazy"
-          decoding="async"
-          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-          onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"; e.currentTarget.onerror = null; }} />
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent to-black/10" />
+        <CardImageCarousel images={plan.images} alt={plan.name} />
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent to-black/10 pointer-events-none" />
 
         {/* Duration Badge (Only for National/International) */}
         {(() => {
@@ -370,7 +409,7 @@ const PlanCardHorizontal = memo(function PlanCardHorizontal({
 
         {/* Cupos Limitados Badge */}
         {section === "grupales" && plan.maxGuests && (
-          <div className="absolute bottom-3 left-3 z-10 bg-red-500/90 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 animate-[pulse_2s_ease-in-out_infinite] shadow-sm">
+          <div className="absolute bottom-3 left-3 z-10 bg-zinc-900/90 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 animate-[pulse_2s_ease-in-out_infinite] shadow-sm">
             <Users className="w-2.5 h-2.5" />
             Solo {plan.maxGuests} cupos
           </div>
@@ -421,9 +460,18 @@ const PlanCardHorizontal = memo(function PlanCardHorizontal({
             );
           })()}
 
-          <h3 className="font-bold text-lg sm:text-[20px] text-foreground leading-tight line-clamp-1 group-hover:text-ocean transition-colors duration-200">
-            {plan.name}
-          </h3>
+          <div className="flex items-start justify-between gap-2">
+            <h3 className="font-bold text-lg sm:text-[20px] text-foreground leading-tight line-clamp-1 group-hover:text-ocean transition-colors duration-200">
+              {plan.name}
+            </h3>
+            {plan.rating > 0 && (
+              <div className="flex items-center gap-1 text-xs font-bold text-foreground shrink-0 mt-0.5">
+                <Star className="w-3.5 h-3.5 fill-foreground text-foreground" />
+                <span>{plan.rating.toFixed(1)}</span>
+                <span className="text-muted-foreground font-normal">({plan.reviewCount})</span>
+              </div>
+            )}
+          </div>
 
           <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2 leading-relaxed mt-1.5">
             {plan.shortDescription}
@@ -431,15 +479,24 @@ const PlanCardHorizontal = memo(function PlanCardHorizontal({
 
           {/* Meta Info */}
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground mt-3">
-            <div className="flex items-center gap-1.5">
-              <Clock className="w-3.5 h-3.5" />
-              <span>{formatShortDuration(plan.duration)}</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <MapPin className="w-3.5 h-3.5" />
-              <span className="line-clamp-1">{formatShortLocation(plan.location)}</span>
-            </div>
-            {getPlanExperienceSection(plan) === "grupales" && plan.maxGuests && (
+            {section !== "nacionales" && section !== "internacionales" && (
+              <div className="flex items-center gap-1.5">
+                <Clock className="w-3.5 h-3.5" />
+                <span>{formatShortDuration(plan.duration)}</span>
+              </div>
+            )}
+            {(() => {
+              const stops = getLocationStops(plan.location);
+              return (
+                <div className="flex items-center gap-1.5 min-w-0">
+                  <MapPin className="w-3.5 h-3.5 shrink-0" />
+                  <span className="line-clamp-1">
+                    {stops.length > 1 ? stops.join(" → ") : stops[0]}
+                  </span>
+                </div>
+              );
+            })()}
+            {section === "grupales" && plan.maxGuests && (
               <div className="flex items-center gap-1.5">
                 <Users className="w-3.5 h-3.5" />
                 <span>Máx. {plan.maxGuests}</span>
@@ -447,30 +504,44 @@ const PlanCardHorizontal = memo(function PlanCardHorizontal({
             )}
           </div>
 
+          {/* Departure cadence */}
+          {getDepartureCadence(plan) && (
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-1.5">
+              <Calendar className="w-3.5 h-3.5 shrink-0" />
+              <span className="line-clamp-1">{getDepartureCadence(plan)}</span>
+            </div>
+          )}
+
           {/* Key tags */}
           {keyLabels.length > 0 && (
             <div className="flex flex-wrap gap-1 mt-3">
-              {keyLabels.map((lbl, idx) => (
-                <Badge key={idx} variant="outline" className="text-[10px] py-0 px-1.5 text-zinc-650 bg-zinc-50 border-zinc-200 font-semibold">
-                  {lbl}
-                </Badge>
-              ))}
+              {keyLabels.map((lbl, idx) => {
+                const { icon: Icon, className } = getKeyLabelStyle(lbl);
+                return (
+                  <Badge key={idx} variant="outline" className={cn("text-[10px] py-0 px-1.5 font-semibold", className)}>
+                    <Icon className="w-2.5 h-2.5" />
+                    {lbl}
+                  </Badge>
+                );
+              })}
             </div>
           )}
         </div>
 
         {/* Bottom row: Price and Actions */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between mt-4 pt-3 border-t border-border/30 gap-3">
-          <div className="text-left flex items-baseline gap-1.5 justify-start sm:justify-end">
-            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Desde</span>
-            {plan.priceRange && plan.priceRange.includes("-") && (
-              <span className="text-xs text-muted-foreground line-through">
-                {plan.priceRange.split("-")[1].trim()}
+          <div className="text-left flex flex-col items-start sm:items-end">
+            <div className="flex items-baseline gap-1.5">
+              <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Desde</span>
+              <p className="text-foreground font-black text-lg leading-tight">
+                {formatPrice(plan.price)}
+              </p>
+            </div>
+            {getPriceRangeUpper(plan) && (
+              <span className="text-[10px] text-muted-foreground">
+                hasta {getPriceRangeUpper(plan)} según temporada
               </span>
             )}
-            <p className="text-foreground font-black text-lg leading-tight">
-              {formatPrice(plan.price)}
-            </p>
           </div>
 
           <div className="flex items-center gap-2 w-full sm:w-auto">
@@ -487,7 +558,7 @@ const PlanCardHorizontal = memo(function PlanCardHorizontal({
             </Button>
             <Button
               size="sm"
-              className="rounded-xl text-xs font-bold flex-1 sm:flex-initial h-9 bg-yellow-400 hover:bg-yellow-500 text-zinc-950 border-none shadow-sm shadow-yellow-400/10"
+              className="rounded-xl text-xs font-bold flex-1 sm:flex-initial h-9 bg-ocean hover:bg-ocean-dark text-white border-none shadow-sm"
               onClick={handleWhatsAppClick}
             >
               Cotizar
@@ -555,15 +626,8 @@ const PlanCardVertical = memo(function PlanCardVertical({
       <div>
         {/* Image */}
         <div className="relative aspect-[3/2] overflow-hidden">
-          <img
-            src={plan.images[0]}
-            alt={plan.name}
-            loading="lazy"
-            decoding="async"
-            sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
-            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-            onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"; e.currentTarget.onerror = null; }} />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+          <CardImageCarousel images={plan.images} alt={plan.name} />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
 
           {/* Duration Badge (Only for National/International) */}
           {(() => {
@@ -602,7 +666,7 @@ const PlanCardVertical = memo(function PlanCardVertical({
 
           {/* Cupos Limitados Badge */}
           {section === "grupales" && plan.maxGuests && (
-            <div className="absolute bottom-3 left-3 z-10 bg-red-500/90 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 animate-[pulse_2s_ease-in-out_infinite] shadow-sm">
+            <div className="absolute bottom-3 left-3 z-10 bg-zinc-900/90 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 animate-[pulse_2s_ease-in-out_infinite] shadow-sm">
               <Users className="w-2.5 h-2.5" />
               Solo {plan.maxGuests} cupos
             </div>
@@ -652,9 +716,18 @@ const PlanCardVertical = memo(function PlanCardVertical({
           })()}
 
           {/* Name */}
-          <h3 className="font-bold text-[17px] text-foreground leading-tight line-clamp-1 group-hover:text-ocean transition-colors duration-200">
-            {plan.name}
-          </h3>
+          <div className="flex items-start justify-between gap-1.5">
+            <h3 className="font-bold text-[17px] text-foreground leading-tight line-clamp-1 group-hover:text-ocean transition-colors duration-200">
+              {plan.name}
+            </h3>
+            {plan.rating > 0 && (
+              <div className="flex items-center gap-1 text-[11px] font-bold text-foreground shrink-0 mt-0.5">
+                <Star className="w-3 h-3 fill-foreground text-foreground" />
+                <span>{plan.rating.toFixed(1)}</span>
+                <span className="text-muted-foreground font-normal">({plan.reviewCount})</span>
+              </div>
+            )}
+          </div>
 
           {/* Short Description */}
           <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
@@ -663,15 +736,24 @@ const PlanCardVertical = memo(function PlanCardVertical({
 
           {/* Meta Info — compact inline */}
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] sm:text-xs text-muted-foreground pt-1">
-            <div className="flex items-center gap-1">
-              <Clock className="w-3 h-3" />
-              <span>{formatShortDuration(plan.duration)}</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <MapPin className="w-3 h-3" />
-              <span className="line-clamp-1">{formatShortLocation(plan.location)}</span>
-            </div>
-            {getPlanExperienceSection(plan) === "grupales" && plan.maxGuests && (
+            {section !== "nacionales" && section !== "internacionales" && (
+              <div className="flex items-center gap-1">
+                <Clock className="w-3 h-3" />
+                <span>{formatShortDuration(plan.duration)}</span>
+              </div>
+            )}
+            {(() => {
+              const stops = getLocationStops(plan.location);
+              return (
+                <div className="flex items-center gap-1 min-w-0">
+                  <MapPin className="w-3 h-3 shrink-0" />
+                  <span className="line-clamp-1">
+                    {stops.length > 1 ? stops.join(" → ") : stops[0]}
+                  </span>
+                </div>
+              );
+            })()}
+            {section === "grupales" && plan.maxGuests && (
               <div className="flex items-center gap-1">
                 <Users className="w-3 h-3" />
                 <span>Máx. {plan.maxGuests}</span>
@@ -679,14 +761,26 @@ const PlanCardVertical = memo(function PlanCardVertical({
             )}
           </div>
 
+          {/* Departure cadence */}
+          {getDepartureCadence(plan) && (
+            <div className="flex items-center gap-1 text-[10px] sm:text-xs text-muted-foreground">
+              <Calendar className="w-3 h-3 shrink-0" />
+              <span className="line-clamp-1">{getDepartureCadence(plan)}</span>
+            </div>
+          )}
+
           {/* Key tags */}
           {keyLabels.length > 0 && (
             <div className="flex flex-wrap gap-1 pt-1.5">
-              {keyLabels.map((lbl, idx) => (
-                <Badge key={idx} variant="outline" className="text-[9px] py-0 px-1 text-zinc-650 bg-zinc-50 border-zinc-200 font-semibold">
-                  {lbl}
-                </Badge>
-              ))}
+              {keyLabels.map((lbl, idx) => {
+                const { icon: Icon, className } = getKeyLabelStyle(lbl);
+                return (
+                  <Badge key={idx} variant="outline" className={cn("text-[9px] py-0 px-1 font-semibold", className)}>
+                    <Icon className="w-2.5 h-2.5" />
+                    {lbl}
+                  </Badge>
+                );
+              })}
             </div>
           )}
         </CardContent>
@@ -695,20 +789,20 @@ const PlanCardVertical = memo(function PlanCardVertical({
       {/* Bottom: Price and Actions */}
       <CardContent className="p-3.5 sm:p-4 pt-0">
         <div className="pt-2.5 mt-2.5 border-t border-border/30 space-y-2.5">
-          <div className="flex items-baseline justify-between">
+          <div className="flex items-start justify-between">
             <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Desde</span>
-            <div className="flex items-baseline gap-1.5">
-              {plan.priceRange && plan.priceRange.includes("-") && (
-                <span className="text-[11px] text-muted-foreground line-through">
-                  {plan.priceRange.split("-")[1].trim()}
-                </span>
-              )}
+            <div className="flex flex-col items-end">
               <p className="text-foreground font-black text-base sm:text-[17px] leading-tight">
                 {formatPrice(plan.price)}
               </p>
+              {getPriceRangeUpper(plan) && (
+                <span className="text-[9px] text-muted-foreground">
+                  hasta {getPriceRangeUpper(plan)} según temporada
+                </span>
+              )}
             </div>
           </div>
-          
+
           <div className="grid grid-cols-2 gap-2">
             <Button
               size="sm"
@@ -723,7 +817,7 @@ const PlanCardVertical = memo(function PlanCardVertical({
             </Button>
             <Button
               size="sm"
-              className="rounded-xl text-[11px] font-bold h-8.5 bg-yellow-400 hover:bg-yellow-500 text-zinc-950 border-none shadow-sm shadow-yellow-400/10 py-1"
+              className="rounded-xl text-[11px] font-bold h-8.5 bg-ocean hover:bg-ocean-dark text-white border-none shadow-sm py-1"
               onClick={handleWhatsAppClick}
             >
               Cotizar
@@ -753,6 +847,7 @@ export function PlansList() {
   } = useNavigation();
   
   const activeSection = getExperienceSection(selectedItemId);
+  const tabsDragScroll = useDragScroll<HTMLDivElement>();
 
   const { data: tourPlans = [], isLoading } = useQuery({
     queryKey: ["plans"],
@@ -949,7 +1044,15 @@ export function PlansList() {
       <div className="max-w-7xl mx-auto flex flex-col">
         {/* Tabs - Order 1 in Mobile, 2 in Desktop */}
         <div className="order-1 lg:order-2 mb-5 lg:mb-6 w-full overflow-hidden mt-1 lg:mt-0 relative after:absolute after:right-0 after:top-0 after:bottom-0 after:w-8 after:bg-gradient-to-l after:from-white after:to-transparent after:pointer-events-none lg:after:hidden">
-          <div className="flex overflow-x-auto items-center md:justify-center gap-2.5 pb-2 -mb-2 px-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+          <div
+            ref={tabsDragScroll.ref}
+            onMouseDown={tabsDragScroll.onMouseDown}
+            onMouseMove={tabsDragScroll.onMouseMove}
+            onMouseUp={tabsDragScroll.onMouseUp}
+            onMouseLeave={tabsDragScroll.onMouseLeave}
+            onClickCapture={tabsDragScroll.onClickCapture}
+            className="flex overflow-x-auto items-center md:justify-center gap-2.5 pb-2 -mb-2 px-1 cursor-grab active:cursor-grabbing select-none [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+          >
             {EXPERIENCE_SECTIONS.map((section) => (
               <button
                 key={section.id}

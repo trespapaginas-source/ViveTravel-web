@@ -6,6 +6,7 @@ import { fetchCabins } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigation } from "@/lib/store";
 import { ImageCarousel } from "@/components/shared/image-carousel";
+import { CardImageCarousel } from "@/components/shared/card-image-carousel";
 import { SectionHeader } from "@/components/shared/section-header";
 import { PageBanner } from "@/components/shared/page-banner";
 import {
@@ -136,13 +137,7 @@ const CabinCardHorizontal = memo(function CabinCardHorizontal({
     >
       {/* Image */}
       <div className="relative w-full sm:w-[260px] md:w-[300px] shrink-0 overflow-hidden aspect-[3/2] sm:aspect-auto">
-        <img
-          src={cabin.images[0]}
-          alt={cabin.name}
-          loading="lazy"
-          decoding="async"
-          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-          onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"; e.currentTarget.onerror = null; }} />
+        <CardImageCarousel images={cabin.images} alt={cabin.name} />
         {/* Favorite Button */}
         <button
           onClick={handleFavorite}
@@ -276,14 +271,8 @@ const CabinCardVertical = memo(function CabinCardVertical({
       <div>
         {/* Image */}
         <div className="relative aspect-[3/2] overflow-hidden">
-          <img
-            src={cabin.images[0]}
-            alt={cabin.name}
-            loading="lazy"
-            decoding="async"
-            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-            onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"; e.currentTarget.onerror = null; }} />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+          <CardImageCarousel images={cabin.images} alt={cabin.name} />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
           {/* Favorite Button */}
           <button
             onClick={handleFavorite}

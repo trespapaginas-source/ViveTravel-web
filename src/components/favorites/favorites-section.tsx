@@ -5,6 +5,7 @@ import { getFavorites } from "@/lib/favorites";
 import { fetchCabin, fetchPlan } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 import { ImageCarousel } from "@/components/shared/image-carousel";
+import { CardImageCarousel } from "@/components/shared/card-image-carousel";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { SectionHeader } from "@/components/shared/section-header";
@@ -129,11 +130,8 @@ function FavoriteCabinCard({
         onClick={onSelect}
       >
         <div className="relative aspect-[3/2] overflow-hidden">
-          <img             src={cabin.images[0]}
-            alt={cabin.name}
-            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-           onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"; e.currentTarget.onerror = null; }} />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+          <CardImageCarousel images={cabin.images} alt={cabin.name} />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
           <button
             onClick={onRemove}
             className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-sm hover:bg-white hover:scale-105 transition-all duration-200 min-w-[32px] min-h-[32px]"
@@ -217,11 +215,8 @@ function FavoritePlanCard({
         onClick={onSelect}
       >
         <div className="relative aspect-[3/2] overflow-hidden">
-          <img             src={plan.images[0]}
-            alt={plan.name}
-            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-           onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"; e.currentTarget.onerror = null; }} />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+          <CardImageCarousel images={plan.images} alt={plan.name} />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
           <button
             onClick={onRemove}
             className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-sm hover:bg-white hover:scale-105 transition-all duration-200 min-w-[32px] min-h-[32px]"

@@ -85,7 +85,7 @@ export function AvailabilityCalendar({
           Disponible
         </span>
         <span className="inline-flex items-center gap-1.5">
-          <CircleSlash className="w-3.5 h-3.5 text-red-500" />
+          <CircleSlash className="w-3.5 h-3.5 text-zinc-400" />
           Ocupado / bloqueado
         </span>
         {data?.source === "cache" && (
@@ -128,7 +128,7 @@ export function AvailabilityCalendar({
               modifiersStyles={{
                 booked: {
                   textDecoration: "line-through",
-                  color: "#ef4444",
+                  color: "#9CA3AF",
                   opacity: 0.55,
                 },
               }}

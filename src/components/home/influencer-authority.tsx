@@ -23,7 +23,7 @@ export function InfluencerAuthority() {
               <div className="absolute bottom-6 left-6 md:hidden flex flex-col">
                 <span className="text-white font-bold text-2xl drop-shadow-md">{influencer.name}</span>
                 <span className="text-white/90 text-sm drop-shadow-md flex items-center gap-1.5 mt-1">
-                  <BadgeCheck className="w-4 h-4 text-sky-400 fill-sky-400" />
+                  <BadgeCheck className="w-4 h-4 text-ocean-light fill-ocean-light" />
                   {influencer.role}
                 </span>
               </div>
@@ -35,7 +35,7 @@ export function InfluencerAuthority() {
                 <span className="bg-ocean/10 text-ocean text-xs font-bold uppercase tracking-wider py-1.5 px-4 rounded-full">
                   {influencer.role}
                 </span>
-                <BadgeCheck className="w-6 h-6 text-sky-500 fill-sky-500" />
+                <BadgeCheck className="w-6 h-6 text-ocean fill-ocean" />
               </div>
 
               <h2 className="hidden md:block text-3xl md:text-4xl font-bold text-foreground mb-4">
@@ -59,7 +59,7 @@ export function InfluencerAuthority() {
                   <span>{influencer.instagramLabel}</span>
                 </a>
                 <div className="flex items-center justify-center gap-2 text-sm text-slate-600 font-medium bg-slate-100 py-3 px-6 rounded-full w-full sm:w-auto">
-                  <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
+                  <Star className="w-4 h-4 text-foreground fill-foreground" />
                   <span>{influencer.statsLabel}</span>
                 </div>
               </div>

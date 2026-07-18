@@ -31,7 +31,7 @@ export function PromotionsBanner() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Banner Carousel Container */}
-        <div className="relative group rounded-3xl overflow-hidden shadow-md border border-zinc-200 aspect-[2560/675] bg-zinc-50">
+        <div className="relative group rounded-3xl overflow-hidden shadow-md border border-zinc-200 h-[119px] sm:h-auto sm:aspect-[2560/675] bg-zinc-50">
           {/* Slides */}
           <div className="w-full h-full relative">
             {banners.map((banner, index) => (

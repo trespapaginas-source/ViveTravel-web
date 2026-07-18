@@ -1,7 +1,7 @@
 "use client";
 
 import { memo, useCallback } from "react";
-import { Clock, MapPin, ArrowRight } from "lucide-react";
+import { Clock, MapPin, ArrowRight, Star } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { formatShortDuration, formatShortLocation, cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import { motion } from "framer-motion";
 import { useSiteContent } from "@/lib/use-site-content";
+import { CardImageCarousel } from "@/components/shared/card-image-carousel";
 
 function formatPrice(price: number) {
   return new Intl.NumberFormat("es-CO", {
@@ -26,7 +27,7 @@ const PlanCard = memo(function PlanCard({
   plan,
   onNavigate,
 }: {
-  plan: { id: string; name: string; images: string[]; category: string; duration: string; location: string; shortDescription: string; price: number };
+  plan: { id: string; name: string; images: string[]; category: string; duration: string; location: string; shortDescription: string; price: number; rating: number; reviewCount: number };
   onNavigate: (id: string) => void;
 }) {
   return (
@@ -36,31 +37,27 @@ const PlanCard = memo(function PlanCard({
     >
       {/* Image */}
       <div className="relative h-[220px] w-full">
-        <img
-          src={plan.images[0]}
-          alt={plan.name}
-          loading="lazy"
-          decoding="async"
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-          className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-          onError={(e) => {
-            e.currentTarget.src =
-              "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80";
-            e.currentTarget.onerror = null;
-          }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-80" />
+        <CardImageCarousel images={plan.images} alt={plan.name} />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-80 pointer-events-none" />
 
-        <div className="absolute bottom-3 left-3 flex items-center gap-1.5">
+        <div className="absolute bottom-3 left-3 flex items-center gap-1.5 pointer-events-none">
           <Clock className="w-3.5 h-3.5 text-white/90" />
           <span className="text-white/90 text-xs font-medium drop-shadow-sm">{formatShortDuration(plan.duration)}</span>
         </div>
       </div>
 
       <CardContent className="p-5 flex flex-col flex-grow">
-        <h3 className="font-bold text-[17px] text-foreground line-clamp-2 group-hover:text-ocean transition-colors duration-200 leading-snug">
-          {plan.name}
-        </h3>
+        <div className="flex items-start justify-between gap-2">
+          <h3 className="font-bold text-[17px] text-foreground line-clamp-2 group-hover:text-ocean transition-colors duration-200 leading-snug">
+            {plan.name}
+          </h3>
+          {plan.rating > 0 && (
+            <div className="flex items-center gap-1 text-xs font-bold text-foreground shrink-0 mt-0.5">
+              <Star className="w-3.5 h-3.5 fill-foreground text-foreground" />
+              <span>{plan.rating.toFixed(1)}</span>
+            </div>
+          )}
+        </div>
 
         <div className="flex items-center gap-1 text-xs text-muted-foreground mt-2">
           <MapPin className="w-3.5 h-3.5 shrink-0 text-muted-foreground" />

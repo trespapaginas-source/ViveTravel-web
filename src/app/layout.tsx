@@ -71,7 +71,7 @@ export default async function RootLayout({
           initialTripImages={initialTripImages}
         >
           {children}
-          <Toaster position="top-center" richColors />
+          <Toaster position="top-center" />
         </Providers>
       </body>
     </html>
