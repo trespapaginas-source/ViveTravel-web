@@ -234,8 +234,8 @@ export function PlanDetail() {
       `📅 *Fecha de viaje:* ${
         plan.fecha_salida ||
         (plan.fixedDeparture
-          ? selectedIsValidDeparture
-            ? format(selectedDate!, "d MMM yyyy", { locale: es })
+          ? selectedDeparture
+            ? `${formatDepartureFull(selectedDeparture.start, selectedDeparture.end)} de ${new Date(selectedDeparture.start + "T12:00:00").getFullYear()}`
             : "Por confirmar — salida programada"
           : selectedDate
           ? format(selectedDate, "d MMM yyyy", { locale: es })
@@ -298,11 +298,32 @@ export function PlanDetail() {
     );
   }
 
-  const hasDepartureDates = !!plan.fixedDeparture && (plan.departureDates?.length ?? 0) > 0;
-  const selectedIsValidDeparture =
-    hasDepartureDates &&
-    !!selectedDate &&
-    plan.departureDates!.includes(format(selectedDate, "yyyy-MM-dd"));
+  const formatDepartureChip = (start: string, end: string) => {
+    const s = new Date(start + "T12:00:00");
+    const e = new Date(end + "T12:00:00");
+    const sameMonth = s.getMonth() === e.getMonth();
+    return sameMonth
+      ? `${format(s, "d")}–${format(e, "d MMM", { locale: es })}`
+      : `${format(s, "d MMM", { locale: es })} – ${format(e, "d MMM", { locale: es })}`;
+  };
+
+  const formatDepartureFull = (start: string, end: string) => {
+    const s = new Date(start + "T12:00:00");
+    const e = new Date(end + "T12:00:00");
+    const sameMonth = s.getMonth() === e.getMonth();
+    return sameMonth
+      ? `${format(s, "d")} al ${format(e, "d 'de' MMMM", { locale: es })}`
+      : `${format(s, "d 'de' MMMM", { locale: es })} al ${format(e, "d 'de' MMMM", { locale: es })}`;
+  };
+
+  const upcomingDepartures = (plan.departureDates ?? []).filter(
+    (d) => new Date(d.end + "T23:59:59") >= today
+  );
+  const hasDepartureDates = !!plan.fixedDeparture && upcomingDepartures.length > 0;
+  const selectedDeparture = selectedDate
+    ? upcomingDepartures.find((d) => d.start === format(selectedDate, "yyyy-MM-dd"))
+    : undefined;
+  const selectedIsValidDeparture = hasDepartureDates && !!selectedDeparture;
 
   const closeDatePicker = (d: Date) => {
     setSelectedDate(d);
@@ -317,14 +338,13 @@ export function PlanDetail() {
           <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">
             Fechas disponibles
           </p>
-          <div className="flex flex-wrap gap-2">
-            {plan.departureDates!.map((iso) => {
-              const d = new Date(iso + "T12:00:00");
-              const isSelected =
-                selectedDate && format(selectedDate, "yyyy-MM-dd") === iso;
+          <div className="flex flex-wrap gap-2 max-h-64 overflow-y-auto pr-1">
+            {upcomingDepartures.map(({ start, end }) => {
+              const d = new Date(start + "T12:00:00");
+              const isSelected = selectedDate && format(selectedDate, "yyyy-MM-dd") === start;
               return (
                 <button
-                  key={iso}
+                  key={start}
                   onClick={() => closeDatePicker(d)}
                   className={cn(
                     "px-3 py-2 rounded-lg border text-sm font-semibold transition-colors",
@@ -333,7 +353,7 @@ export function PlanDetail() {
                       : "border-border text-foreground hover:border-foreground/40"
                   )}
                 >
-                  {format(d, "d MMM", { locale: es })}
+                  {formatDepartureChip(start, end)}
                 </button>
               );
             })}
@@ -379,8 +399,8 @@ export function PlanDetail() {
                       <p className="text-sm font-semibold text-foreground mt-0.5">
                         {plan.fixedDeparture
                           ? hasDepartureDates
-                            ? selectedIsValidDeparture
-                              ? format(selectedDate!, "EEEE, d 'de' MMMM", { locale: es })
+                            ? selectedDeparture
+                              ? formatDepartureFull(selectedDeparture.start, selectedDeparture.end)
                               : "Elige una fecha disponible"
                             : "Consultar fechas disponibles"
                           : selectedDate
@@ -937,7 +957,13 @@ export function PlanDetail() {
                <div>
                  <h4 className="font-semibold text-foreground text-sm">Fecha</h4>
                  <p className="text-sm text-muted-foreground">
-                   {selectedDate ? format(selectedDate, "EEEE, d 'de' MMMM", { locale: es }) : "Selecciona una fecha"}
+                   {plan.fixedDeparture
+                     ? selectedDeparture
+                       ? formatDepartureFull(selectedDeparture.start, selectedDeparture.end)
+                       : "Elige una fecha disponible"
+                     : selectedDate
+                     ? format(selectedDate, "EEEE, d 'de' MMMM", { locale: es })
+                     : "Selecciona una fecha"}
                  </p>
                </div>
                <div className="flex gap-2">
