@@ -231,7 +231,16 @@ export function PlanDetail() {
       originCity ? `🛫 *Origen:* ${originCity}` : "",
       `👥 *Viajeros:* ${guests} persona${guests > 1 ? "s" : ""}`,
       `🛏️ *Habitación:* ${roomTypeLabels[roomType]}`,
-      `📅 *Fecha de viaje:* ${plan.fecha_salida || (selectedDate ? format(selectedDate, "d MMM yyyy", { locale: es }) : "Por definir")}`,
+      `📅 *Fecha de viaje:* ${
+        plan.fecha_salida ||
+        (plan.fixedDeparture
+          ? selectedIsValidDeparture
+            ? format(selectedDate!, "d MMM yyyy", { locale: es })
+            : "Por confirmar — salida programada"
+          : selectedDate
+          ? format(selectedDate, "d MMM yyyy", { locale: es })
+          : "Por definir")
+      }`,
       `💵 *Total estimado:* ${total}`,
       ``,
       `Hola, acabo de cotizar esta experiencia en su sitio web. ¿Podrían confirmarme disponibilidad de cupos y opciones de pago?`
@@ -289,6 +298,72 @@ export function PlanDetail() {
     );
   }
 
+  const hasDepartureDates = !!plan.fixedDeparture && (plan.departureDates?.length ?? 0) > 0;
+  const selectedIsValidDeparture =
+    hasDepartureDates &&
+    !!selectedDate &&
+    plan.departureDates!.includes(format(selectedDate, "yyyy-MM-dd"));
+
+  const closeDatePicker = (d: Date) => {
+    setSelectedDate(d);
+    setDatePopoverOpen(false);
+    setMobileCalendarOpen(false);
+  };
+
+  const departureDatePicker = (
+    <div className="p-4 w-72 sm:w-80">
+      {hasDepartureDates ? (
+        <>
+          <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">
+            Fechas disponibles
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {plan.departureDates!.map((iso) => {
+              const d = new Date(iso + "T12:00:00");
+              const isSelected =
+                selectedDate && format(selectedDate, "yyyy-MM-dd") === iso;
+              return (
+                <button
+                  key={iso}
+                  onClick={() => closeDatePicker(d)}
+                  className={cn(
+                    "px-3 py-2 rounded-lg border text-sm font-semibold transition-colors",
+                    isSelected
+                      ? "border-foreground bg-foreground text-white"
+                      : "border-border text-foreground hover:border-foreground/40"
+                  )}
+                >
+                  {format(d, "d MMM", { locale: es })}
+                </button>
+              );
+            })}
+          </div>
+        </>
+      ) : (
+        <div className="text-center">
+          <Calendar className="w-6 h-6 text-muted-foreground mx-auto" />
+          <p className="text-sm font-semibold text-foreground mt-2">
+            Salidas programadas todo el año
+          </p>
+          <p className="text-xs text-muted-foreground mt-1">
+            Aún no tenemos las fechas exactas cargadas. Escríbenos y te confirmamos la próxima salida disponible.
+          </p>
+          <Button
+            size="sm"
+            className="mt-3 w-full bg-[#1DA851] hover:bg-[#199346] text-white"
+            onClick={() => {
+              setDatePopoverOpen(false);
+              setMobileCalendarOpen(false);
+              handleWhatsAppRedirect();
+            }}
+          >
+            Consultar fechas por WhatsApp
+          </Button>
+        </div>
+      )}
+    </div>
+  );
+
   const cotizadorCard = (
     <aside className="w-full lg:w-[380px] shrink-0">
       <div className="lg:sticky lg:top-24">
@@ -302,18 +377,30 @@ export function PlanDetail() {
                     <button className="w-full rounded-xl border border-border p-3 text-left hover:border-ocean/50 focus:outline-none focus:ring-2 focus:ring-ocean/30 bg-white">
                       <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Fecha del plan</label>
                       <p className="text-sm font-semibold text-foreground mt-0.5">
-                        {selectedDate ? format(selectedDate, "EEEE, d 'de' MMMM", { locale: es }) : "Seleccionar fecha"}
+                        {plan.fixedDeparture
+                          ? hasDepartureDates
+                            ? selectedIsValidDeparture
+                              ? format(selectedDate!, "EEEE, d 'de' MMMM", { locale: es })
+                              : "Elige una fecha disponible"
+                            : "Consultar fechas disponibles"
+                          : selectedDate
+                          ? format(selectedDate, "EEEE, d 'de' MMMM", { locale: es })
+                          : "Seleccionar fecha"}
                       </p>
                     </button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0" align="start">
-                    <CalendarUI
-                      mode="single"
-                      selected={selectedDate}
-                      onSelect={(d) => { if(d) { setSelectedDate(d); setDatePopoverOpen(false); } }}
-                      disabled={{ before: today }}
-                      locale={es}
-                      defaultMonth={selectedDate || today} />
+                    {plan.fixedDeparture ? (
+                      departureDatePicker
+                    ) : (
+                      <CalendarUI
+                        mode="single"
+                        selected={selectedDate}
+                        onSelect={(d) => { if(d) { setSelectedDate(d); setDatePopoverOpen(false); } }}
+                        disabled={{ before: today }}
+                        locale={es}
+                        defaultMonth={selectedDate || today} />
+                    )}
                   </PopoverContent>
                 </Popover>
               )}
@@ -399,10 +486,6 @@ export function PlanDetail() {
                     {guests > 1 ? `Total (${guests} personas)` : "Desde"}
                   </span>
                   <div className="flex flex-col items-end">
-                    {/* Strikethrough higher price */}
-                    <span className="text-xs text-muted-foreground/60 line-through font-semibold leading-none">
-                      {formatPrice(Math.round(totalPlanPrice * 1.35))}
-                    </span>
                     <span className="text-2xl sm:text-3xl font-bold text-foreground leading-none mt-1">
                       {formatPrice(totalPlanPrice)}
                     </span>
@@ -905,23 +988,29 @@ export function PlanDetail() {
             <Button variant="ghost" size="icon" onClick={() => setMobileCalendarOpen(false)}><X className="w-5 h-5"/></Button>
           </DialogHeader>
           <div className="overflow-y-auto p-4 flex-1 pb-32 flex flex-col items-center">
-             <CalendarUI
-                mode="single"
-                selected={selectedDate}
-                onSelect={(d) => { if(d) setSelectedDate(d); }}
-                disabled={{ before: today }}
-                locale={es}
-                defaultMonth={selectedDate || today}
-                className="mx-auto" />
+             {plan.fixedDeparture ? (
+               <div className="w-full">{departureDatePicker}</div>
+             ) : (
+               <CalendarUI
+                  mode="single"
+                  selected={selectedDate}
+                  onSelect={(d) => { if(d) setSelectedDate(d); }}
+                  disabled={{ before: today }}
+                  locale={es}
+                  defaultMonth={selectedDate || today}
+                  className="mx-auto" />
+             )}
           </div>
-          <div className="fixed bottom-0 left-0 right-0 p-4 px-6 border-t border-border/50 bg-background z-20 flex justify-end items-center">
-             <Button className="h-11 px-8 font-semibold rounded-xl bg-ocean text-white hover:bg-ocean-dark" onClick={() => {
-               setMobileCalendarOpen(false);
-               setTimeout(() => setSummaryModalOpen(true), 150);
-             }}>
-               Continuar
-             </Button>
-          </div>
+          {(!plan.fixedDeparture || hasDepartureDates) && (
+            <div className="fixed bottom-0 left-0 right-0 p-4 px-6 border-t border-border/50 bg-background z-20 flex justify-end items-center">
+               <Button className="h-11 px-8 font-semibold rounded-xl bg-ocean text-white hover:bg-ocean-dark" onClick={() => {
+                 setMobileCalendarOpen(false);
+                 setTimeout(() => setSummaryModalOpen(true), 150);
+               }}>
+                 Continuar
+               </Button>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </div>

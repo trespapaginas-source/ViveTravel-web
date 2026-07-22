@@ -12,6 +12,7 @@ import { VideoShowcase } from "@/components/home/video-showcase";
 
 import { FeaturedPlans } from "@/components/home/featured-plans";
 import { DestinationsGallery } from "@/components/home/destinations-gallery";
+import { ScheduledDepartures } from "@/components/home/scheduled-departures";
 import { InternationalDestinations } from "@/components/home/international-destinations";
 import { TravelCarousel } from "@/components/home/travel-carousel";
 import { GroupTrips } from "@/components/home/group-trips";
@@ -59,6 +60,7 @@ function HomeView() {
     promotions: <PromotionsBanner key="promotions-banner" />,
     plans: <FeaturedPlans key="plans" />,
     gallery: <DestinationsGallery key="gallery" />,
+    salidas: <ScheduledDepartures key="salidas" />,
     international: <InternationalDestinations key="international" />,
     stats: <TravelCarousel key="stats" />,
     groups: <GroupTrips key="groups" />,

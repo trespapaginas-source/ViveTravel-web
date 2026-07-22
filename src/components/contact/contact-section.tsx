@@ -97,6 +97,7 @@ export function ContactSection() {
 
   const form = useForm<ContactFormValues>({
     resolver: zodResolver(contactSchema),
+    mode: "onBlur",
     defaultValues: {
       name: "",
       email: "",
@@ -151,7 +152,7 @@ export function ContactSection() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="text-sm font-semibold text-[#111827]">
-                            Nombre completo
+                            Nombre completo <span className="text-destructive">*</span>
                           </FormLabel>
                           <FormControl>
                             <Input
@@ -169,7 +170,7 @@ export function ContactSection() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="text-sm font-semibold text-[#111827]">
-                            Correo electrónico
+                            Correo electrónico <span className="text-destructive">*</span>
                           </FormLabel>
                           <FormControl>
                             <Input
@@ -190,7 +191,7 @@ export function ContactSection() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="text-sm font-semibold text-[#111827]">
-                            Teléfono
+                            Teléfono <span className="text-destructive">*</span>
                           </FormLabel>
                           <FormControl>
                             <Input
@@ -209,7 +210,7 @@ export function ContactSection() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="text-sm font-semibold text-[#111827]">
-                            Asunto
+                            Asunto <span className="text-destructive">*</span>
                           </FormLabel>
                           <Select
                             onValueChange={field.onChange}
@@ -239,7 +240,7 @@ export function ContactSection() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-sm font-semibold text-[#111827]">
-                          Mensaje
+                          Mensaje <span className="text-destructive">*</span>
                         </FormLabel>
                         <FormControl>
                           <Textarea

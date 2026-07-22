@@ -22,6 +22,13 @@ export interface TourPlan {
   published?: boolean;
   order?: number;
   fecha_salida?: string;
+  /** National plans sold with a fixed departure calendar (e.g. Santander,
+   * Huila, Eje Cafetero). Drives the "Salidas Programadas" home section. */
+  fixedDeparture?: boolean;
+  /** Confirmed departure dates (ISO "YYYY-MM-DD") for fixedDeparture plans.
+   * Empty/omitted until real dates are provided — the UI falls back to a
+   * WhatsApp prompt rather than showing invented dates. */
+  departureDates?: string[];
   itinerary?: Array<{ title: string; description: string }>;
 }
 
