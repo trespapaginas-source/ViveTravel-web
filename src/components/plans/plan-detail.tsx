@@ -91,6 +91,29 @@ import { TourPlan } from "@/lib/data";
 
 type DepartureWindow = { start: string; end: string };
 
+// A single day formatted "d" if the window stays within one month, else
+// "d MMM" for each end so a cross-month window (e.g. 30 Oct – 2 Nov) still
+// reads correctly even though it's grouped under its start month.
+function formatChipLabel(start: string, end: string): string {
+  const s = new Date(start + "T12:00:00");
+  const e = new Date(end + "T12:00:00");
+  const sameMonth = s.getMonth() === e.getMonth();
+  return sameMonth
+    ? `${format(s, "d")}–${format(e, "d")}`
+    : `${format(s, "d MMM", { locale: es })}–${format(e, "d MMM", { locale: es })}`;
+}
+
+function groupDeparturesByMonth(deps: DepartureWindow[]): Array<[string, DepartureWindow[]]> {
+  const groups = new Map<string, DepartureWindow[]>();
+  for (const dep of deps) {
+    const raw = format(new Date(dep.start + "T12:00:00"), "MMMM yyyy", { locale: es });
+    const label = raw.charAt(0).toUpperCase() + raw.slice(1);
+    if (!groups.has(label)) groups.set(label, []);
+    groups.get(label)!.push(dep);
+  }
+  return Array.from(groups.entries());
+}
+
 /**
  * Presentational only — no internal state. The caller decides what "select"
  * and "consult" mean (close a popover, close a dialog, etc.) so this can be
@@ -103,61 +126,71 @@ function DepartureDateOptions({
   selectedDate,
   onSelectDate,
   onConsultWhatsApp,
-  formatDepartureChip,
 }: {
   hasDepartureDates: boolean;
   upcomingDepartures: DepartureWindow[];
   selectedDate: Date | undefined;
   onSelectDate: (d: Date) => void;
   onConsultWhatsApp: () => void;
-  formatDepartureChip: (start: string, end: string) => string;
 }) {
+  if (!hasDepartureDates) {
+    return (
+      <div className="p-5 text-center">
+        <Calendar className="w-6 h-6 text-muted-foreground mx-auto" />
+        <p className="text-sm font-semibold text-foreground mt-2">
+          Salidas programadas todo el año
+        </p>
+        <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+          Aún no tenemos las fechas exactas cargadas. Escríbenos y te confirmamos la próxima salida disponible.
+        </p>
+        <Button
+          size="sm"
+          className="mt-3.5 w-full rounded-xl bg-[#1DA851] hover:bg-[#199346] text-white"
+          onClick={onConsultWhatsApp}
+        >
+          Consultar fechas por WhatsApp
+        </Button>
+      </div>
+    );
+  }
+
+  const selectedIso = selectedDate ? format(selectedDate, "yyyy-MM-dd") : null;
+  const groups = groupDeparturesByMonth(upcomingDepartures);
+
   return (
-    <div className="p-4 w-72 sm:w-80">
-      {hasDepartureDates ? (
-        <>
-          <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">
-            Fechas disponibles
-          </p>
-          <div className="flex flex-wrap gap-2 max-h-64 overflow-y-auto pr-1">
-            {upcomingDepartures.map(({ start, end }) => {
-              const d = new Date(start + "T12:00:00");
-              const isSelected = selectedDate && format(selectedDate, "yyyy-MM-dd") === start;
-              return (
-                <button
-                  key={start}
-                  onClick={() => onSelectDate(d)}
-                  className={cn(
-                    "px-3 py-2 rounded-lg border text-sm font-semibold transition-colors",
-                    isSelected
-                      ? "border-foreground bg-foreground text-white"
-                      : "border-border text-foreground hover:border-foreground/40"
-                  )}
-                >
-                  {formatDepartureChip(start, end)}
-                </button>
-              );
-            })}
+    <div className="p-4">
+      <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-3 px-0.5">
+        Selecciona una fecha disponible
+      </p>
+      <div className="max-h-[420px] overflow-y-auto pr-1.5 -mr-1.5 [scrollbar-width:thin] [scrollbar-color:var(--border)_transparent] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-zinc-200 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:hover:bg-zinc-300">
+        {groups.map(([monthLabel, deps], idx) => (
+          <div key={monthLabel} className={cn("px-0.5", idx > 0 && "mt-5")}>
+            <h4 className="text-[11px] font-bold text-foreground/60 uppercase tracking-wide mb-2.5">
+              {monthLabel}
+            </h4>
+            <div className="grid grid-cols-3 gap-2">
+              {deps.map(({ start, end }) => {
+                const isSelected = selectedIso === start;
+                return (
+                  <button
+                    key={start}
+                    onClick={() => onSelectDate(new Date(start + "T12:00:00"))}
+                    className={cn(
+                      "h-11 rounded-xl border text-[13px] font-semibold flex items-center justify-center gap-1 transition-all duration-200",
+                      isSelected
+                        ? "bg-ocean border-ocean text-white shadow-md shadow-ocean/25"
+                        : "bg-white border-border text-foreground hover:-translate-y-[3px] hover:shadow-md hover:border-ocean/40"
+                    )}
+                  >
+                    {isSelected && <Check className="w-3 h-3 shrink-0" />}
+                    <span className="truncate">{formatChipLabel(start, end)}</span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
-        </>
-      ) : (
-        <div className="text-center">
-          <Calendar className="w-6 h-6 text-muted-foreground mx-auto" />
-          <p className="text-sm font-semibold text-foreground mt-2">
-            Salidas programadas todo el año
-          </p>
-          <p className="text-xs text-muted-foreground mt-1">
-            Aún no tenemos las fechas exactas cargadas. Escríbenos y te confirmamos la próxima salida disponible.
-          </p>
-          <Button
-            size="sm"
-            className="mt-3 w-full bg-[#1DA851] hover:bg-[#199346] text-white"
-            onClick={onConsultWhatsApp}
-          >
-            Consultar fechas por WhatsApp
-          </Button>
-        </div>
-      )}
+        ))}
+      </div>
     </div>
   );
 }
@@ -182,7 +215,6 @@ function CotizadorCard({
   hasDepartureDates,
   selectedDeparture,
   upcomingDepartures,
-  formatDepartureChip,
   formatDepartureFull,
   totalPlanPrice,
   onReserveClick,
@@ -200,7 +232,6 @@ function CotizadorCard({
   hasDepartureDates: boolean;
   selectedDeparture: DepartureWindow | undefined;
   upcomingDepartures: DepartureWindow[];
-  formatDepartureChip: (start: string, end: string) => string;
   formatDepartureFull: (start: string, end: string) => string;
   totalPlanPrice: number;
   onReserveClick: () => void;
@@ -219,9 +250,15 @@ function CotizadorCard({
               {!isGrupal && (
                 <Popover open={datePopoverOpen} onOpenChange={setDatePopoverOpen}>
                   <PopoverTrigger asChild>
-                    <button className="w-full rounded-xl border border-border p-3 text-left hover:border-ocean/50 focus:outline-none focus:ring-2 focus:ring-ocean/30 bg-white">
-                      <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Fecha del plan</label>
-                      <p className="text-sm font-semibold text-foreground mt-0.5">
+                    <button
+                      className={cn(
+                        "w-full rounded-xl border p-3.5 flex items-center gap-2.5 text-left bg-white transition-all duration-200",
+                        "hover:border-ocean/40 focus:outline-none focus:ring-2 focus:ring-ocean/15",
+                        datePopoverOpen ? "border-ocean/50 ring-2 ring-ocean/10" : "border-border"
+                      )}
+                    >
+                      <Calendar className="w-4 h-4 text-ocean shrink-0" />
+                      <span className="flex-1 text-sm font-semibold text-foreground truncate">
                         {plan.fixedDeparture
                           ? hasDepartureDates
                             ? selectedDeparture
@@ -231,18 +268,26 @@ function CotizadorCard({
                           : selectedDate
                           ? format(selectedDate, "EEEE, d 'de' MMMM", { locale: es })
                           : "Seleccionar fecha"}
-                      </p>
+                      </span>
+                      <ChevronDown
+                        className={cn(
+                          "w-4 h-4 text-muted-foreground shrink-0 transition-transform duration-200",
+                          datePopoverOpen && "rotate-180"
+                        )} />
                     </button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
+                  <PopoverContent
+                    className="w-[min(92vw,380px)] p-0 rounded-xl border-border/60 shadow-[0_16px_40px_-8px_rgba(0,0,0,0.16)] overflow-hidden data-[state=open]:duration-200 data-[state=closed]:duration-150"
+                    align="start"
+                    sideOffset={8}
+                  >
                     {plan.fixedDeparture ? (
                       <DepartureDateOptions
                         hasDepartureDates={hasDepartureDates}
                         upcomingDepartures={upcomingDepartures}
                         selectedDate={selectedDate}
                         onSelectDate={(d) => { onSelectDate(d); setDatePopoverOpen(false); }}
-                        onConsultWhatsApp={() => { setDatePopoverOpen(false); onWhatsApp(); }}
-                        formatDepartureChip={formatDepartureChip} />
+                        onConsultWhatsApp={() => { setDatePopoverOpen(false); onWhatsApp(); }} />
                     ) : (
                       <CalendarUI
                         mode="single"
@@ -558,15 +603,6 @@ export function PlanDetail() {
     );
   }
 
-  const formatDepartureChip = (start: string, end: string) => {
-    const s = new Date(start + "T12:00:00");
-    const e = new Date(end + "T12:00:00");
-    const sameMonth = s.getMonth() === e.getMonth();
-    return sameMonth
-      ? `${format(s, "d")}–${format(e, "d MMM", { locale: es })}`
-      : `${format(s, "d MMM", { locale: es })} – ${format(e, "d MMM", { locale: es })}`;
-  };
-
   const formatDepartureFull = (start: string, end: string) => {
     const s = new Date(start + "T12:00:00");
     const e = new Date(end + "T12:00:00");
@@ -598,7 +634,6 @@ export function PlanDetail() {
     hasDepartureDates,
     selectedDeparture,
     upcomingDepartures,
-    formatDepartureChip,
     formatDepartureFull,
     totalPlanPrice,
     onReserveClick: () => setSummaryModalOpen(true),
@@ -1107,8 +1142,7 @@ export function PlanDetail() {
                    upcomingDepartures={upcomingDepartures}
                    selectedDate={selectedDate}
                    onSelectDate={(d) => { setSelectedDate(d); setMobileCalendarOpen(false); }}
-                   onConsultWhatsApp={() => { setMobileCalendarOpen(false); handleWhatsAppRedirect(); }}
-                   formatDepartureChip={formatDepartureChip} />
+                   onConsultWhatsApp={() => { setMobileCalendarOpen(false); handleWhatsAppRedirect(); }} />
                </div>
              ) : (
                <CalendarUI
