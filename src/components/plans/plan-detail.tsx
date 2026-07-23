@@ -89,6 +89,268 @@ function getShortDuration(duration: string): string {
 
 import { TourPlan } from "@/lib/data";
 
+type DepartureWindow = { start: string; end: string };
+
+/**
+ * Presentational only — no internal state. The caller decides what "select"
+ * and "consult" mean (close a popover, close a dialog, etc.) so this can be
+ * reused from both the sidebar popover and the standalone mobile dialog
+ * without either one depending on the other's open/closed state.
+ */
+function DepartureDateOptions({
+  hasDepartureDates,
+  upcomingDepartures,
+  selectedDate,
+  onSelectDate,
+  onConsultWhatsApp,
+  formatDepartureChip,
+}: {
+  hasDepartureDates: boolean;
+  upcomingDepartures: DepartureWindow[];
+  selectedDate: Date | undefined;
+  onSelectDate: (d: Date) => void;
+  onConsultWhatsApp: () => void;
+  formatDepartureChip: (start: string, end: string) => string;
+}) {
+  return (
+    <div className="p-4 w-72 sm:w-80">
+      {hasDepartureDates ? (
+        <>
+          <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">
+            Fechas disponibles
+          </p>
+          <div className="flex flex-wrap gap-2 max-h-64 overflow-y-auto pr-1">
+            {upcomingDepartures.map(({ start, end }) => {
+              const d = new Date(start + "T12:00:00");
+              const isSelected = selectedDate && format(selectedDate, "yyyy-MM-dd") === start;
+              return (
+                <button
+                  key={start}
+                  onClick={() => onSelectDate(d)}
+                  className={cn(
+                    "px-3 py-2 rounded-lg border text-sm font-semibold transition-colors",
+                    isSelected
+                      ? "border-foreground bg-foreground text-white"
+                      : "border-border text-foreground hover:border-foreground/40"
+                  )}
+                >
+                  {formatDepartureChip(start, end)}
+                </button>
+              );
+            })}
+          </div>
+        </>
+      ) : (
+        <div className="text-center">
+          <Calendar className="w-6 h-6 text-muted-foreground mx-auto" />
+          <p className="text-sm font-semibold text-foreground mt-2">
+            Salidas programadas todo el año
+          </p>
+          <p className="text-xs text-muted-foreground mt-1">
+            Aún no tenemos las fechas exactas cargadas. Escríbenos y te confirmamos la próxima salida disponible.
+          </p>
+          <Button
+            size="sm"
+            className="mt-3 w-full bg-[#1DA851] hover:bg-[#199346] text-white"
+            onClick={onConsultWhatsApp}
+          >
+            Consultar fechas por WhatsApp
+          </Button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/**
+ * Rendered more than once in the page (desktop sidebar + mobile inline
+ * flow). Each usage must be a genuinely separate component instance with
+ * its own local popover-open state — sharing that state across instances
+ * previously caused both Radix Popovers to fight over the same open/close
+ * flag and neither would render.
+ */
+function CotizadorCard({
+  plan,
+  isGrupal,
+  selectedDate,
+  onSelectDate,
+  guests,
+  setGuests,
+  originCity,
+  setOriginCity,
+  today,
+  hasDepartureDates,
+  selectedDeparture,
+  upcomingDepartures,
+  formatDepartureChip,
+  formatDepartureFull,
+  totalPlanPrice,
+  onReserveClick,
+  onWhatsApp,
+}: {
+  plan: TourPlan;
+  isGrupal: boolean;
+  selectedDate: Date | undefined;
+  onSelectDate: (d: Date) => void;
+  guests: number;
+  setGuests: React.Dispatch<React.SetStateAction<number>>;
+  originCity: string;
+  setOriginCity: (c: string) => void;
+  today: Date;
+  hasDepartureDates: boolean;
+  selectedDeparture: DepartureWindow | undefined;
+  upcomingDepartures: DepartureWindow[];
+  formatDepartureChip: (start: string, end: string) => string;
+  formatDepartureFull: (start: string, end: string) => string;
+  totalPlanPrice: number;
+  onReserveClick: () => void;
+  onWhatsApp: () => void;
+}) {
+  const [datePopoverOpen, setDatePopoverOpen] = useState(false);
+  const [guestPopoverOpen, setGuestPopoverOpen] = useState(false);
+
+  return (
+    <aside className="w-full lg:w-[380px] shrink-0">
+      <div className="lg:sticky lg:top-24">
+        <Card className="border-border/50 shadow-xl py-0 gap-0 bg-white">
+          <CardContent className="p-6 space-y-5">
+            {/* Fechas, Personas y Ciudad de salida */}
+            <div className="space-y-4">
+              {!isGrupal && (
+                <Popover open={datePopoverOpen} onOpenChange={setDatePopoverOpen}>
+                  <PopoverTrigger asChild>
+                    <button className="w-full rounded-xl border border-border p-3 text-left hover:border-ocean/50 focus:outline-none focus:ring-2 focus:ring-ocean/30 bg-white">
+                      <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Fecha del plan</label>
+                      <p className="text-sm font-semibold text-foreground mt-0.5">
+                        {plan.fixedDeparture
+                          ? hasDepartureDates
+                            ? selectedDeparture
+                              ? formatDepartureFull(selectedDeparture.start, selectedDeparture.end)
+                              : "Elige una fecha disponible"
+                            : "Consultar fechas disponibles"
+                          : selectedDate
+                          ? format(selectedDate, "EEEE, d 'de' MMMM", { locale: es })
+                          : "Seleccionar fecha"}
+                      </p>
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    {plan.fixedDeparture ? (
+                      <DepartureDateOptions
+                        hasDepartureDates={hasDepartureDates}
+                        upcomingDepartures={upcomingDepartures}
+                        selectedDate={selectedDate}
+                        onSelectDate={(d) => { onSelectDate(d); setDatePopoverOpen(false); }}
+                        onConsultWhatsApp={() => { setDatePopoverOpen(false); onWhatsApp(); }}
+                        formatDepartureChip={formatDepartureChip} />
+                    ) : (
+                      <CalendarUI
+                        mode="single"
+                        selected={selectedDate}
+                        onSelect={(d) => { if (d) { onSelectDate(d); setDatePopoverOpen(false); } }}
+                        disabled={{ before: today }}
+                        locale={es}
+                        defaultMonth={selectedDate || today} />
+                    )}
+                  </PopoverContent>
+                </Popover>
+              )}
+
+              <Popover open={guestPopoverOpen} onOpenChange={setGuestPopoverOpen}>
+                <PopoverTrigger asChild>
+                  <button className="w-full rounded-xl border border-border p-3 text-left hover:border-ocean/50 focus:outline-none focus:ring-2 focus:ring-ocean/30 bg-white">
+                    <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Personas</label>
+                    <p className="text-sm font-semibold text-foreground mt-0.5">
+                      {guests} persona{guests > 1 ? "s" : ""}{isGrupal ? ` (máx. ${plan.maxGuests})` : ""}
+                    </p>
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent className="w-64 p-4" align="start">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-foreground">Personas</p>
+                      {isGrupal && <p className="text-xs text-muted-foreground">Máximo {plan.maxGuests}</p>}
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Button variant="outline" size="icon" className="h-8 w-8 rounded-full" onClick={() => setGuests(g => Math.max(1, g - 1))} disabled={guests <= 1}><Minus className="w-4 h-4" /></Button>
+                      <span className="w-6 text-center text-sm font-semibold">{guests}</span>
+                      <Button variant="outline" size="icon" className="h-8 w-8 rounded-full" onClick={() => setGuests(g => isGrupal ? Math.min(plan.maxGuests, g + 1) : g + 1)} disabled={isGrupal ? guests >= plan.maxGuests : false}><Plus className="w-4 h-4" /></Button>
+                    </div>
+                  </div>
+                </PopoverContent>
+              </Popover>
+
+              <Separator />
+
+              {/* Ciudad de salida */}
+              <div className="flex flex-col gap-2">
+                <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Ciudad de salida</label>
+                <select
+                  value={originCity}
+                  onChange={(e) => setOriginCity(e.target.value)}
+                  className="w-full rounded-xl border border-border p-3 text-sm font-semibold text-foreground bg-white hover:border-border/80 focus:outline-none focus:ring-2 focus:ring-foreground/10 cursor-pointer appearance-none"
+                  style={{
+                    backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2371717a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e")`,
+                    backgroundRepeat: 'no-repeat',
+                    backgroundPosition: 'right 12px center',
+                    backgroundSize: '16px'
+                  }}
+                >
+                  {!["Barranquilla", "Bogotá", "Medellín", "Cali"].includes(originCity) && (
+                    <option value={originCity}>{originCity}</option>
+                  )}
+                  <option value="Barranquilla">Barranquilla</option>
+                  <option value="Bogotá">Bogotá</option>
+                  <option value="Medellín">Medellín</option>
+                  <option value="Cali">Cali</option>
+                </select>
+              </div>
+
+              <Separator />
+
+              {/* Botón Reservar */}
+              <div className="pt-2">
+                {isGrupal ? (
+                  <Button
+                    className="relative flex items-center justify-center gap-2 h-14 px-4 rounded-xl bg-[#1DA851] hover:bg-[#199346] text-white shadow-sm transition-all duration-300 hover:shadow-md w-full font-bold text-[15px]"
+                    onClick={onWhatsApp}
+                  >
+                    <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+                    <span>Reservar por WhatsApp</span>
+                  </Button>
+                ) : (
+                  <Button
+                    className="w-full bg-[#1DA851] hover:bg-[#199346] text-white rounded-xl h-14 text-base font-bold shadow-sm transition-all"
+                    onClick={onReserveClick}
+                  >
+                    Reservar
+                  </Button>
+                )}
+              </div>
+
+              <Separator />
+
+              {/* Precio final (El cierre) */}
+              <div className="space-y-1">
+                <div className="flex items-baseline justify-between">
+                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                    {guests > 1 ? `Total (${guests} personas)` : "Desde"}
+                  </span>
+                  <div className="flex flex-col items-end">
+                    <span className="text-2xl sm:text-3xl font-bold text-foreground leading-none mt-1">
+                      {formatPrice(totalPlanPrice)}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </aside>
+  );
+}
+
 export function PlanDetail() {
   const {
     selectedItemId,
@@ -151,8 +413,6 @@ export function PlanDetail() {
     const children = parseInt(searchChildren || "0", 10);
     return Math.max(1, adults + children);
   });
-  const [datePopoverOpen, setDatePopoverOpen] = useState(false);
-  const [guestPopoverOpen, setGuestPopoverOpen] = useState(false);
   const [mobileCalendarOpen, setMobileCalendarOpen] = useState(false);
   const [summaryModalOpen, setSummaryModalOpen] = useState(false);
   const [showWhatsApp, setShowWhatsApp] = useState(false);
@@ -325,199 +585,25 @@ export function PlanDetail() {
     : undefined;
   const selectedIsValidDeparture = hasDepartureDates && !!selectedDeparture;
 
-  const closeDatePicker = (d: Date) => {
-    setSelectedDate(d);
-    setDatePopoverOpen(false);
-    setMobileCalendarOpen(false);
+  const cotizadorProps = {
+    plan,
+    isGrupal,
+    selectedDate,
+    onSelectDate: setSelectedDate,
+    guests,
+    setGuests,
+    originCity,
+    setOriginCity,
+    today,
+    hasDepartureDates,
+    selectedDeparture,
+    upcomingDepartures,
+    formatDepartureChip,
+    formatDepartureFull,
+    totalPlanPrice,
+    onReserveClick: () => setSummaryModalOpen(true),
+    onWhatsApp: handleWhatsAppRedirect,
   };
-
-  const departureDatePicker = (
-    <div className="p-4 w-72 sm:w-80">
-      {hasDepartureDates ? (
-        <>
-          <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">
-            Fechas disponibles
-          </p>
-          <div className="flex flex-wrap gap-2 max-h-64 overflow-y-auto pr-1">
-            {upcomingDepartures.map(({ start, end }) => {
-              const d = new Date(start + "T12:00:00");
-              const isSelected = selectedDate && format(selectedDate, "yyyy-MM-dd") === start;
-              return (
-                <button
-                  key={start}
-                  onClick={() => closeDatePicker(d)}
-                  className={cn(
-                    "px-3 py-2 rounded-lg border text-sm font-semibold transition-colors",
-                    isSelected
-                      ? "border-foreground bg-foreground text-white"
-                      : "border-border text-foreground hover:border-foreground/40"
-                  )}
-                >
-                  {formatDepartureChip(start, end)}
-                </button>
-              );
-            })}
-          </div>
-        </>
-      ) : (
-        <div className="text-center">
-          <Calendar className="w-6 h-6 text-muted-foreground mx-auto" />
-          <p className="text-sm font-semibold text-foreground mt-2">
-            Salidas programadas todo el año
-          </p>
-          <p className="text-xs text-muted-foreground mt-1">
-            Aún no tenemos las fechas exactas cargadas. Escríbenos y te confirmamos la próxima salida disponible.
-          </p>
-          <Button
-            size="sm"
-            className="mt-3 w-full bg-[#1DA851] hover:bg-[#199346] text-white"
-            onClick={() => {
-              setDatePopoverOpen(false);
-              setMobileCalendarOpen(false);
-              handleWhatsAppRedirect();
-            }}
-          >
-            Consultar fechas por WhatsApp
-          </Button>
-        </div>
-      )}
-    </div>
-  );
-
-  const cotizadorCard = (
-    <aside className="w-full lg:w-[380px] shrink-0">
-      <div className="lg:sticky lg:top-24">
-        <Card className="border-border/50 shadow-xl py-0 gap-0 bg-white">
-          <CardContent className="p-6 space-y-5">
-            {/* Fechas, Personas y Ciudad de salida */}
-            <div className="space-y-4">
-              {!isGrupal && (
-                <Popover open={datePopoverOpen} onOpenChange={setDatePopoverOpen}>
-                  <PopoverTrigger asChild>
-                    <button className="w-full rounded-xl border border-border p-3 text-left hover:border-ocean/50 focus:outline-none focus:ring-2 focus:ring-ocean/30 bg-white">
-                      <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Fecha del plan</label>
-                      <p className="text-sm font-semibold text-foreground mt-0.5">
-                        {plan.fixedDeparture
-                          ? hasDepartureDates
-                            ? selectedDeparture
-                              ? formatDepartureFull(selectedDeparture.start, selectedDeparture.end)
-                              : "Elige una fecha disponible"
-                            : "Consultar fechas disponibles"
-                          : selectedDate
-                          ? format(selectedDate, "EEEE, d 'de' MMMM", { locale: es })
-                          : "Seleccionar fecha"}
-                      </p>
-                    </button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    {plan.fixedDeparture ? (
-                      departureDatePicker
-                    ) : (
-                      <CalendarUI
-                        mode="single"
-                        selected={selectedDate}
-                        onSelect={(d) => { if(d) { setSelectedDate(d); setDatePopoverOpen(false); } }}
-                        disabled={{ before: today }}
-                        locale={es}
-                        defaultMonth={selectedDate || today} />
-                    )}
-                  </PopoverContent>
-                </Popover>
-              )}
-
-              <Popover open={guestPopoverOpen} onOpenChange={setGuestPopoverOpen}>
-                <PopoverTrigger asChild>
-                  <button className="w-full rounded-xl border border-border p-3 text-left hover:border-ocean/50 focus:outline-none focus:ring-2 focus:ring-ocean/30 bg-white">
-                    <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Personas</label>
-                    <p className="text-sm font-semibold text-foreground mt-0.5">
-                      {guests} persona{guests > 1 ? "s" : ""}{isGrupal ? ` (máx. ${plan.maxGuests})` : ""}
-                    </p>
-                  </button>
-                </PopoverTrigger>
-                <PopoverContent className="w-64 p-4" align="start">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-foreground">Personas</p>
-                      {isGrupal && <p className="text-xs text-muted-foreground">Máximo {plan.maxGuests}</p>}
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <Button variant="outline" size="icon" className="h-8 w-8 rounded-full" onClick={() => setGuests(g => Math.max(1, g - 1))} disabled={guests <= 1}><Minus className="w-4 h-4" /></Button>
-                      <span className="w-6 text-center text-sm font-semibold">{guests}</span>
-                      <Button variant="outline" size="icon" className="h-8 w-8 rounded-full" onClick={() => setGuests(g => isGrupal ? Math.min(plan.maxGuests, g + 1) : g + 1)} disabled={isGrupal ? guests >= plan.maxGuests : false}><Plus className="w-4 h-4" /></Button>
-                    </div>
-                  </div>
-                </PopoverContent>
-              </Popover>
-
-              <Separator />
-
-              {/* Ciudad de salida */}
-              <div className="flex flex-col gap-2">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Ciudad de salida</label>
-                <select
-                  value={originCity}
-                  onChange={(e) => setOriginCity(e.target.value)}
-                  className="w-full rounded-xl border border-border p-3 text-sm font-semibold text-foreground bg-white hover:border-border/80 focus:outline-none focus:ring-2 focus:ring-foreground/10 cursor-pointer appearance-none"
-                  style={{
-                    backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2371717a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e")`,
-                    backgroundRepeat: 'no-repeat',
-                    backgroundPosition: 'right 12px center',
-                    backgroundSize: '16px'
-                  }}
-                >
-                  {!["Barranquilla", "Bogotá", "Medellín", "Cali"].includes(originCity) && (
-                    <option value={originCity}>{originCity}</option>
-                  )}
-                  <option value="Barranquilla">Barranquilla</option>
-                  <option value="Bogotá">Bogotá</option>
-                  <option value="Medellín">Medellín</option>
-                  <option value="Cali">Cali</option>
-                </select>
-              </div>
-
-              <Separator />
-
-              {/* Botón Reservar */}
-              <div className="pt-2">
-                {isGrupal ? (
-                  <Button
-                    className="relative flex items-center justify-center gap-2 h-14 px-4 rounded-xl bg-[#1DA851] hover:bg-[#199346] text-white shadow-sm transition-all duration-300 hover:shadow-md w-full font-bold text-[15px]"
-                    onClick={handleWhatsAppRedirect}
-                  >
-                    <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
-                    <span>Reservar por WhatsApp</span>
-                  </Button>
-                ) : (
-                  <Button
-                    className="w-full bg-[#1DA851] hover:bg-[#199346] text-white rounded-xl h-14 text-base font-bold shadow-sm transition-all"
-                    onClick={() => setSummaryModalOpen(true)}
-                  >
-                    Reservar
-                  </Button>
-                )}
-              </div>
-
-              <Separator />
-
-              {/* Precio final (El cierre) */}
-              <div className="space-y-1">
-                <div className="flex items-baseline justify-between">
-                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
-                    {guests > 1 ? `Total (${guests} personas)` : "Desde"}
-                  </span>
-                  <div className="flex flex-col items-end">
-                    <span className="text-2xl sm:text-3xl font-bold text-foreground leading-none mt-1">
-                      {formatPrice(totalPlanPrice)}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    </aside>
-  );
 
   return (
     <div className="py-6 sm:py-10 px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24 pb-28 lg:pb-10">
@@ -580,7 +666,7 @@ export function PlanDetail() {
                   className="mb-0" />
               </div>
               <div className="hidden lg:block">
-                {cotizadorCard}
+                <CotizadorCard {...cotizadorProps} />
               </div>
             </div>
           ) : (
@@ -891,10 +977,10 @@ export function PlanDetail() {
           {/* Right Sticky Reservation Flow */}
           {isBookingGallery ? (
             <div className="lg:hidden w-full">
-              {cotizadorCard}
+              <CotizadorCard {...cotizadorProps} />
             </div>
           ) : (
-            cotizadorCard
+            <CotizadorCard {...cotizadorProps} />
           )}
         </div>
       </div>
@@ -1015,7 +1101,15 @@ export function PlanDetail() {
           </DialogHeader>
           <div className="overflow-y-auto p-4 flex-1 pb-32 flex flex-col items-center">
              {plan.fixedDeparture ? (
-               <div className="w-full">{departureDatePicker}</div>
+               <div className="w-full">
+                 <DepartureDateOptions
+                   hasDepartureDates={hasDepartureDates}
+                   upcomingDepartures={upcomingDepartures}
+                   selectedDate={selectedDate}
+                   onSelectDate={(d) => { setSelectedDate(d); setMobileCalendarOpen(false); }}
+                   onConsultWhatsApp={() => { setMobileCalendarOpen(false); handleWhatsAppRedirect(); }}
+                   formatDepartureChip={formatDepartureChip} />
+               </div>
              ) : (
                <CalendarUI
                   mode="single"
