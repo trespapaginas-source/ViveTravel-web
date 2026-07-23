@@ -7,6 +7,7 @@ import {
   useCabinAvailability,
   expandBookedRanges,
 } from "@/hooks/use-cabin-availability";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { useState, useMemo } from "react";
 import { es } from "date-fns/locale";
 import { CalendarDays, CircleDot, CircleSlash, Info } from "lucide-react";
@@ -31,6 +32,7 @@ export function AvailabilityCalendar({
   readOnly = false,
 }: AvailabilityCalendarProps) {
   const { data, isLoading } = useCabinAvailability(cabinId);
+  const isMobile = useIsMobile();
   const [internalRange, setInternalRange] = useState<DateRange | undefined>(
     undefined
   );
@@ -101,12 +103,11 @@ export function AvailabilityCalendar({
 
       <div className="rounded-2xl border border-border/60 bg-card p-4 sm:p-6">
         {isLoading ? (
-          <div className="flex flex-col md:flex-row gap-6 items-center justify-center">
+          <div className="flex justify-center">
             <Skeleton className="w-full max-w-[320px] h-[340px]" />
-            <Skeleton className="hidden md:block w-[320px] h-[340px]" />
           </div>
         ) : (
-          <div className="availability-calendar flex justify-center">
+          <div className="availability-calendar flex justify-center overflow-x-auto">
             <Calendar
               mode="range"
               selected={range}
@@ -115,7 +116,7 @@ export function AvailabilityCalendar({
                 { before: today },
                 ...(bookedDates.length > 0 ? bookedDates : []),
               ]}
-              numberOfMonths={2}
+              numberOfMonths={isMobile ? 1 : 2}
               locale={es}
               defaultMonth={today}
               className="mobile-airbnb-calendar"
