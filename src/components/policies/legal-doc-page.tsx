@@ -43,36 +43,48 @@ export function LegalDocPage({ doc, prev, next }: LegalDocPageProps) {
 
   return (
     <article className="bg-white">
-      {/* Document header */}
-      <header className="border-b border-border/60 bg-muted/30">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+      {/* Document header — editorial, with presence */}
+      <header className="border-b border-border/60">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
           <Link
             href="/politicas"
-            className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors mb-6"
+            className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors mb-10"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             Todos los documentos
           </Link>
 
-          <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider text-ocean mb-3">
-            <FileText className="w-3.5 h-3.5" />
-            {doc.category}
-          </div>
-
-          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground leading-tight">
-            {doc.title}
-          </h1>
-
-          <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 mt-5 text-xs text-muted-foreground">
-            <span className="inline-flex items-center gap-1.5">
-              <span className="font-mono font-semibold text-foreground/70">{doc.number}</span>
-              Documento {doc.number}
+          <div className="flex items-start gap-5 sm:gap-7">
+            {/* Document number — large, editorial mark */}
+            <span className="hidden sm:block select-none text-5xl lg:text-6xl font-bold text-ocean/15 leading-none tabular-nums pt-1">
+              {doc.number}
             </span>
-            <span className="inline-flex items-center gap-1.5">
-              <Calendar className="w-3.5 h-3.5" />
-              Versión {doc.version} · {doc.issuedAt}
-            </span>
-            <span>{doc.clauses.length} cláusulas</span>
+
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-ocean mb-3">
+                <FileText className="w-3.5 h-3.5" />
+                {doc.category}
+              </div>
+
+              <h1 className="text-2xl sm:text-3xl lg:text-[34px] font-bold tracking-tight text-foreground leading-[1.15]">
+                {doc.title}
+              </h1>
+
+              <p className="mt-4 text-[15px] text-muted-foreground leading-relaxed max-w-2xl">
+                {doc.description}
+              </p>
+
+              <div className="flex flex-wrap items-center gap-x-6 gap-y-2 mt-6 text-xs text-muted-foreground">
+                <span className="inline-flex items-center gap-1.5">
+                  <Calendar className="w-3.5 h-3.5" />
+                  Versión {doc.version} · {doc.issuedAt}
+                </span>
+                <span className="inline-flex items-center gap-1.5">
+                  <FileText className="w-3.5 h-3.5" />
+                  {doc.clauses.length} cláusulas
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       </header>
