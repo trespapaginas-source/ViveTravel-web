@@ -91,18 +91,6 @@ import { TourPlan } from "@/lib/data";
 
 type DepartureWindow = { start: string; end: string };
 
-// A single day formatted "d" if the window stays within one month, else
-// "d MMM" for each end so a cross-month window (e.g. 30 Oct – 2 Nov) still
-// reads correctly even though it's grouped under its start month.
-function formatChipLabel(start: string, end: string): string {
-  const s = new Date(start + "T12:00:00");
-  const e = new Date(end + "T12:00:00");
-  const sameMonth = s.getMonth() === e.getMonth();
-  return sameMonth
-    ? `${format(s, "d")}–${format(e, "d")}`
-    : `${format(s, "d MMM", { locale: es })}–${format(e, "d MMM", { locale: es })}`;
-}
-
 function groupDeparturesByMonth(deps: DepartureWindow[]): Array<[string, DepartureWindow[]]> {
   const groups = new Map<string, DepartureWindow[]>();
   for (const dep of deps) {
@@ -135,20 +123,22 @@ function DepartureDateOptions({
 }) {
   if (!hasDepartureDates) {
     return (
-      <div className="p-5 text-center">
-        <Calendar className="w-6 h-6 text-muted-foreground mx-auto" />
-        <p className="text-sm font-semibold text-foreground mt-2">
+      <div className="px-5 py-7 text-center">
+        <div className="w-10 h-10 mx-auto mb-3 rounded-full bg-ocean/8 flex items-center justify-center">
+          <Calendar className="w-5 h-5 text-ocean" />
+        </div>
+        <p className="text-sm font-semibold text-foreground">
           Salidas programadas todo el año
         </p>
-        <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
-          Aún no tenemos las fechas exactas cargadas. Escríbenos y te confirmamos la próxima salida disponible.
+        <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed max-w-[260px] mx-auto">
+          Confirmanos la próxima salida disponible por WhatsApp y te reservamos tu cupo.
         </p>
         <Button
           size="sm"
-          className="mt-3.5 w-full rounded-xl bg-[#1DA851] hover:bg-[#199346] text-white"
+          className="mt-4 w-full rounded-lg h-9 bg-ocean hover:bg-ocean-dark text-white text-xs font-semibold"
           onClick={onConsultWhatsApp}
         >
-          Consultar fechas por WhatsApp
+          Consultar por WhatsApp
         </Button>
       </div>
     );
@@ -158,32 +148,67 @@ function DepartureDateOptions({
   const groups = groupDeparturesByMonth(upcomingDepartures);
 
   return (
-    <div className="p-4">
-      <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-3 px-0.5">
-        Selecciona una fecha disponible
-      </p>
-      <div className="max-h-[420px] overflow-y-auto pr-1.5 -mr-1.5 [scrollbar-width:thin] [scrollbar-color:var(--border)_transparent] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-zinc-200 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:hover:bg-zinc-300">
+    <div className="py-2">
+      <div className="max-h-[60vh] overflow-y-auto px-1 [scrollbar-width:thin]">
         {groups.map(([monthLabel, deps], idx) => (
-          <div key={monthLabel} className={cn("px-0.5", idx > 0 && "mt-5")}>
-            <h4 className="text-[11px] font-bold text-foreground/60 uppercase tracking-wide mb-2.5">
+          <div key={monthLabel} className={cn(idx > 0 && "mt-4")}>
+            <p className="text-[11px] font-semibold text-muted-foreground px-3 mb-1.5">
               {monthLabel}
-            </h4>
-            <div className="grid grid-cols-3 gap-2">
+            </p>
+            <div className="space-y-0.5">
               {deps.map(({ start, end }) => {
                 const isSelected = selectedIso === start;
+                const s = new Date(start + "T12:00:00");
+                const e = new Date(end + "T12:00:00");
+                const nights = Math.round((e.getTime() - s.getTime()) / 86400000);
+                const dayStart = format(s, "d", { locale: es });
+                const dayEnd = format(e, "d", { locale: es });
+                const weekday = format(s, "EEEE", { locale: es });
                 return (
                   <button
                     key={start}
                     onClick={() => onSelectDate(new Date(start + "T12:00:00"))}
                     className={cn(
-                      "h-11 rounded-xl border text-[13px] font-semibold flex items-center justify-center gap-1 transition-all duration-200",
+                      "w-full flex items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-colors duration-150",
                       isSelected
-                        ? "bg-ocean border-ocean text-white shadow-md shadow-ocean/25"
-                        : "bg-white border-border text-foreground hover:-translate-y-[3px] hover:shadow-md hover:border-ocean/40"
+                        ? "bg-ocean/[0.07]"
+                        : "hover:bg-muted/60"
                     )}
                   >
-                    {isSelected && <Check className="w-3 h-3 shrink-0" />}
-                    <span className="truncate">{formatChipLabel(start, end)}</span>
+                    {/* Date block */}
+                    <div
+                      className={cn(
+                        "flex flex-col items-center justify-center w-11 h-11 rounded-lg shrink-0 transition-colors",
+                        isSelected
+                          ? "bg-ocean text-white"
+                          : "bg-muted text-foreground"
+                      )}
+                    >
+                      <span className="text-[15px] font-bold leading-none">{dayStart}</span>
+                      {!isSelected && dayStart !== dayEnd && (
+                        <span className="text-[9px] font-medium text-muted-foreground leading-none mt-0.5">
+                          al {dayEnd}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Label */}
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[13px] font-semibold text-foreground leading-tight capitalize truncate">
+                        {weekday}
+                      </p>
+                      <p className="text-[11px] text-muted-foreground leading-tight mt-0.5">
+                        {nights > 0 ? `${nights} ${nights === 1 ? "noche" : "noches"}` : "Mismo día"}
+                      </p>
+                    </div>
+
+                    {/* Check */}
+                    <Check
+                      className={cn(
+                        "w-4 h-4 shrink-0 transition-opacity",
+                        isSelected ? "text-ocean opacity-100" : "opacity-0"
+                      )}
+                    />
                   </button>
                 );
               })}
@@ -1090,7 +1115,6 @@ export function PlanDetail() {
                <div className="flex gap-2">
                  <Button variant="secondary" size="sm" className="hidden lg:flex rounded-full px-4 h-8 bg-muted text-foreground" onClick={() => {
                    setSummaryModalOpen(false);
-                   setTimeout(() => setDatePopoverOpen(true), 150);
                  }}>Cambiar</Button>
                  <Button variant="secondary" size="sm" className="lg:hidden rounded-full px-4 h-8 bg-muted text-foreground" onClick={() => {
                    setSummaryModalOpen(false);
