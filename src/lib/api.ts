@@ -16,6 +16,13 @@ export async function fetchTransports(): Promise<TransportVehicle[]> {
   return transportsData as TransportVehicle[];
 }
 
+export async function fetchTransport(id: string): Promise<TransportVehicle | null> {
+  const vehicle = (transportsData as RawRecord[]).find(
+    (item) => item.id === id
+  );
+  return vehicle ? (vehicle as unknown as TransportVehicle) : null;
+}
+
 export async function fetchPlan(id: string): Promise<TourPlan | null> {
   const plan = (plansData as RawRecord[]).find((item) => item.id === id || item.slug === id);
   return plan ? normalizePlan(plan) : null;
