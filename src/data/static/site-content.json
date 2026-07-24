@@ -349,7 +349,7 @@
       "stats": true,
       "custom": true,
       "groups": true,
-      "gallery": true,
+      "gallery": false,
       "salidas": true,
       "influencer": false,
       "promotions": true,
