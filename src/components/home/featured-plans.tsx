@@ -156,11 +156,7 @@ export function FeaturedPlans() {
           })}
         </div>
 
-        {/* Indicador de deslizamiento horizontal en móvil */}
-        <div className="flex sm:hidden items-center justify-center gap-1.5 text-xs text-muted-foreground mt-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-ocean animate-ping" />
-          <span>Desliza para ver más planes</span>
-        </div>
+
 
 
 

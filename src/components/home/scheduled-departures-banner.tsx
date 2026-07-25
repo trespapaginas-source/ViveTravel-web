@@ -1,26 +1,58 @@
 "use client";
 
+import { useState, useRef, useEffect } from "react";
+import { cn } from "@/lib/utils";
+
 export function ScheduledDeparturesBanner() {
+  const [videoLoaded, setVideoLoaded] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    if (videoRef.current && videoRef.current.readyState >= 3) {
+      setVideoLoaded(true);
+    }
+  }, []);
+
   return (
-    <section className="relative w-full overflow-hidden py-6 sm:py-8 md:py-10 my-3 border-y border-zinc-200/80 shadow-xs">
-      {/* Background Image - Clean Sky & Airplane */}
+    <section className="relative w-full overflow-hidden py-6 sm:py-8 md:py-10 my-3 border-y border-zinc-200/80 shadow-xs bg-zinc-900">
+      {/* Background Image - Instant load poster image */}
       <div className="absolute inset-0 z-0">
         <img
           src="/images/sky-banner-bg.jpg"
           alt="Cielo y Avión - Salidas Programadas Vive Travel"
-          className="w-full h-full object-cover object-center"
+          className={cn(
+            "w-full h-full object-cover object-center transition-opacity duration-700 ease-in-out",
+            videoLoaded ? "opacity-0 pointer-events-none" : "opacity-100"
+          )}
           onError={(e) => {
             e.currentTarget.src = "/images/sky-banner-bg.png";
             e.currentTarget.onerror = null;
           }}
         />
+
+        {/* Background Video - Plays seamlessly once loaded */}
+        <video
+          ref={videoRef}
+          autoPlay
+          loop
+          muted
+          playsInline
+          onLoadedData={() => setVideoLoaded(true)}
+          onCanPlay={() => setVideoLoaded(true)}
+          className={cn(
+            "absolute inset-0 w-full h-full object-cover object-center transition-opacity duration-700 ease-in-out",
+            videoLoaded ? "opacity-100" : "opacity-0"
+          )}
+        >
+          <source src="/videos/sky-banner-video.mp4" type="video/mp4" />
+        </video>
       </div>
 
-      {/* Light subtle shadow gradient overlay for text readability without obscuring the sky */}
-      <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/30 to-black/50 z-10" />
+      {/* Light subtle shadow gradient overlay for text readability */}
+      <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/30 to-black/50 z-10 pointer-events-none" />
 
       {/* Content Container - Compact & Sleek */}
-      <div className="relative z-20 max-w-4xl mx-auto px-4 sm:px-6 text-center flex flex-col items-center justify-center">
+      <div className="relative z-20 max-w-4xl mx-auto px-4 sm:px-6 text-center flex flex-col items-center justify-center pointer-events-none">
         {/* Headline */}
         <h2 
           className="text-xl sm:text-2xl md:text-3xl font-extrabold text-white tracking-tight leading-tight sm:leading-snug drop-shadow-md"
