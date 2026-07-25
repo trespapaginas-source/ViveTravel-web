@@ -313,14 +313,22 @@ export function HeroSection() {
     <section className="relative w-full flex flex-col justify-center min-h-[660px] md:h-[80vh] lg:h-[92vh] overflow-visible">
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
-        <img
-          src={backgroundImageUrl}
-          alt="Descubre el Mundo con Luisito el Viajero"
-          loading="eager"
-          decoding="async"
-          className="w-full h-full object-cover"
-          onError={(e) => { e.currentTarget.src = "https://gvpioebttpmtblsjilbt.supabase.co/storage/v1/object/public/images/1779761594179-oiiu8u8.jpg"; e.currentTarget.onerror = null; }}
-        />
+        <picture className="absolute inset-0 w-full h-full">
+          {heroImages[0]?.mobileUrl && (
+            <source media="(max-width: 768px)" srcSet={heroImages[0].mobileUrl} />
+          )}
+          <img
+            src={backgroundImageUrl}
+            alt="Descubre el Mundo con Luisito el Viajero"
+            loading="eager"
+            decoding="async"
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              e.currentTarget.src = "https://gvpioebttpmtblsjilbt.supabase.co/storage/v1/object/public/images/1779761594179-oiiu8u8.jpg";
+              e.currentTarget.onerror = null;
+            }}
+          />
+        </picture>
       </div>
 
       {/* Overlay gradient */}

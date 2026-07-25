@@ -37,8 +37,8 @@ export async function fetchCabin(id: string): Promise<Cabin | null> {
   return cabin ? normalizeCabin(cabin) : null;
 }
 
-export async function fetchHeroImages(): Promise<Array<{ id: string; url: string; caption: string }>> {
-  return heroImagesData as Array<{ id: string; url: string; caption: string }>;
+export async function fetchHeroImages(): Promise<Array<{ id: string; url: string; caption: string; mobileUrl?: string }>> {
+  return heroImagesData as Array<{ id: string; url: string; caption: string; mobileUrl?: string }>;
 }
 
 export async function fetchTripImages(): Promise<Array<{ id: string; url: string; caption: string }>> {

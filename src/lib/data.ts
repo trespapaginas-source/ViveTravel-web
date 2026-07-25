@@ -1111,7 +1111,7 @@ export const testimonials: Testimonial[] = [
 
 // ─── Hero Carousel Images ─────────────────────────────────────────────────────
 
-export const heroImages = [
+export const heroImages: Array<{ id: string; url: string; caption: string; mobileUrl?: string }> = [
   {
     id: "h-1",
     url: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1600&h=900&fit=crop",
