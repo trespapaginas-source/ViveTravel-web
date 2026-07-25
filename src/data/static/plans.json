@@ -509,10 +509,10 @@
   },
   {
     "id": "plan-boyaca-inolvidable",
-    "name": "Boyacá Inolvidable",
+    "name": "Boyacá Colonial",
     "slug": "boyaca-inolvidable",
-    "shortDescription": "Recorre los pueblos coloniales y paisajes andinos de Boyacá en un viaje con salida programada, saliendo desde Barranquilla.",
-    "fullDescription": "Descubre la historia, la arquitectura colonial y los paisajes montañosos de Boyacá en un viaje con salida programada durante todo el año desde Barranquilla. Itinerario, hospedaje y recorridos detallados próximamente.",
+    "shortDescription": "Recorre los pueblos coloniales, artesanías e impresionantes paisajes andinos de Boyacá en un viaje con salida programada.",
+    "fullDescription": "Descubre la historia, la arquitectura colonial y los paisajes montañosos de Boyacá en un viaje con salida programada durante todo el año desde cualquier lugar de Colombia. Itinerario, hospedaje y recorridos detallados próximamente.",
     "images": [
       "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=800&h=600&fit=crop",
@@ -566,10 +566,10 @@
   },
   {
     "id": "plan-eje-cafetero-programado",
-    "name": "Eje Cafetero Inolvidable",
+    "name": "Eje Cafetero Mágico",
     "slug": "eje-cafetero-inolvidable",
-    "shortDescription": "Vive la cultura cafetera y los paisajes verdes del Eje Cafetero en un viaje con salida programada, saliendo desde Barranquilla.",
-    "fullDescription": "Recorre fincas cafeteras, pueblos con encanto y paisajes verdes del Eje Cafetero en un viaje con salida programada durante todo el año desde Barranquilla. Itinerario, hospedaje y recorridos detallados próximamente.",
+    "shortDescription": "Vive la cultura cafetera, haciendas tradicionales y paisajes verdes del Eje Cafetero en un viaje con salidas programadas.",
+    "fullDescription": "Recorre fincas cafeteras, pueblos con encanto y paisajes verdes del Eje Cafetero en un viaje con salida programada durante todo el año desde cualquier ciudad de Colombia. Itinerario, hospedaje y recorridos detallados próximamente.",
     "images": [
       "https://images.unsplash.com/photo-1622308644420-b30fbdf94f1c?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1518182170546-076616fdcbdd?w=800&h=600&fit=crop"
@@ -653,8 +653,8 @@
     "id": "plan-huila-inolvidable",
     "name": "Huila al Límite",
     "slug": "huila-al-limite",
-    "shortDescription": "Naturaleza, historia y paisajes únicos del Huila en un viaje con salida programada, saliendo desde Barranquilla.",
-    "fullDescription": "Descubre los paisajes y la riqueza cultural del Huila en un viaje con salida programada durante todo el año desde Barranquilla. Itinerario, hospedaje y recorridos detallados próximamente.",
+    "shortDescription": "Naturaleza, historia y paisajes únicos del Huila en un viaje fascinante con salidas programadas.",
+    "fullDescription": "Descubre los paisajes y la riqueza cultural del Huila en un viaje con salida programada durante todo el año desde cualquier ciudad de Colombia. Itinerario, hospedaje y recorridos detallados próximamente.",
     "images": [
       "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=800&h=600&fit=crop"
@@ -707,10 +707,10 @@
   },
   {
     "id": "plan-guajira-inolvidable",
-    "name": "La Guajira Inolvidable",
+    "name": "La Guajira Mística y Desértica",
     "slug": "la-guajira-inolvidable",
-    "shortDescription": "Desierto, mar y cultura wayuu en un viaje con salida programada por La Guajira, saliendo desde Barranquilla.",
-    "fullDescription": "Vive el contraste único del desierto frente al mar y la cultura wayuu de La Guajira en un viaje con salida programada durante todo el año desde Barranquilla. Itinerario, hospedaje y recorridos detallados próximamente.",
+    "shortDescription": "Desierto, mar Caribe y cultura wayuu en un viaje fascinante con salidas programadas por La Guajira.",
+    "fullDescription": "Vive el contraste único del desierto frente al mar y la cultura wayuu de La Guajira en un viaje con salida programada durante todo el año. Itinerario, hospedaje y recorridos detallados próximamente.",
     "images": [
       "https://images.unsplash.com/photo-1596422846543-75c6fc197f07?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1620002093390-8d5926ec3fb4?w=800&h=600&fit=crop"
@@ -736,10 +736,10 @@
   },
   {
     "id": "plan-santa-marta-programado",
-    "name": "Santa Marta Inolvidable",
+    "name": "Santa Marta y Tayrona Natural",
     "slug": "santa-marta-inolvidable",
-    "shortDescription": "Sierra, mar y naturaleza de Santa Marta en un viaje con salida programada, saliendo desde Barranquilla.",
-    "fullDescription": "Descubre la Sierra Nevada, las playas y la naturaleza de Santa Marta en un viaje con salida programada durante todo el año desde Barranquilla. Itinerario, hospedaje y recorridos detallados próximamente.",
+    "shortDescription": "Sierra Nevada, playas del Parque Tayrona y naturaleza tropical en un viaje con salidas programadas todo el año.",
+    "fullDescription": "Descubre la Sierra Nevada, las playas del Tayrona y la naturaleza de Santa Marta en un viaje con salida programada durante todo el año desde cualquier lugar de Colombia. Itinerario, hospedaje y recorridos detallados próximamente.",
     "images": [
       "https://images.unsplash.com/photo-1620002093390-8d5926ec3fb4?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1596422846543-75c6fc197f07?w=800&h=600&fit=crop"
@@ -765,10 +765,10 @@
   },
   {
     "id": "plan-tatacoa-inolvidable",
-    "name": "Desierto de la Tatacoa Inolvidable",
+    "name": "Desierto de la Tatacoa Estelar",
     "slug": "tatacoa-inolvidable",
-    "shortDescription": "Cielos estrellados y paisajes de desierto rojo en la Tatacoa, en un viaje con salida programada desde Barranquilla.",
-    "fullDescription": "Vive la experiencia del desierto de la Tatacoa, sus formaciones rocosas y sus cielos ideales para la observación astronómica, en un viaje con salida programada durante todo el año desde Barranquilla. Itinerario, hospedaje y recorridos detallados próximamente.",
+    "shortDescription": "Cielos nocturnos de observación astronómica y laberintos de tierra roja en un viaje con salidas programadas.",
+    "fullDescription": "Vive la experiencia del desierto de la Tatacoa, sus formaciones rocosas y sus cielos ideales para la observación astronómica, en un viaje con salida programada durante todo el año desde cualquier punto del país. Itinerario, hospedaje y recorridos detallados próximamente.",
     "images": [
       "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&h=600&fit=crop"

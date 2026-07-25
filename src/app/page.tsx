@@ -14,11 +14,13 @@ import { FeaturedPlans } from "@/components/home/featured-plans";
 import { DestinationsGallery } from "@/components/home/destinations-gallery";
 import { ScheduledDepartures } from "@/components/home/scheduled-departures";
 import { InternationalDestinations } from "@/components/home/international-destinations";
-import { TravelCarousel } from "@/components/home/travel-carousel";
+
 import { GroupTrips } from "@/components/home/group-trips";
-import { CustomTrips } from "@/components/home/custom-trips";
+import { CustomTrips, ReadyCTA } from "@/components/home/custom-trips";
 import { Testimonials } from "@/components/home/testimonials";
 import { PromotionsBanner } from "@/components/home/promotions-banner";
+import { TickerRibbon } from "@/components/home/ticker-ribbon";
+import { ScheduledDeparturesBanner } from "@/components/home/scheduled-departures-banner";
 import { TeamSection } from "@/components/team/team-section";
 import { useSiteContent } from "@/lib/use-site-content";
 
@@ -37,6 +39,9 @@ const CabinDetail = lazy(() =>
 );
 const TransportsView = lazy(() =>
   import("@/components/transports/transports-view").then((m) => ({ default: m.TransportsView }))
+);
+const VisasSection = lazy(() =>
+  import("@/components/visas/visas-section").then((m) => ({ default: m.VisasSection }))
 );
 const ContactSection = lazy(() =>
   import("@/components/contact/contact-section").then((m) => ({ default: m.ContactSection }))
@@ -58,13 +63,16 @@ function HomeView() {
   const componentsRegistry: Record<string, React.ReactNode> = {
     hero: <HeroSection key="hero" />,
     promotions: <PromotionsBanner key="promotions-banner" />,
+    ticker: <TickerRibbon key="ticker" />,
     plans: <FeaturedPlans key="plans" />,
+    bannerSalidas: <ScheduledDeparturesBanner key="banner-salidas" />,
     gallery: <DestinationsGallery key="gallery" />,
     salidas: <ScheduledDepartures key="salidas" />,
     international: <InternationalDestinations key="international" />,
-    stats: <TravelCarousel key="stats" />,
+
     groups: <GroupTrips key="groups" />,
     custom: <CustomTrips key="custom" />,
+    readyCta: <ReadyCTA key="ready-cta" />,
     testimonials: <Testimonials key="testimonials" />,
     team: <TeamSection key="team" />,
   };
@@ -123,6 +131,12 @@ function ViewRouter() {
       return (
         <Suspense fallback={<ViewSkeleton />}>
           <TransportsView />
+        </Suspense>
+      );
+    case "visas":
+      return (
+        <Suspense fallback={<ViewSkeleton />}>
+          <VisasSection />
         </Suspense>
       );
     case "contact":

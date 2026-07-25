@@ -196,7 +196,7 @@ const CabinCardHorizontal = memo(function CabinCardHorizontal({
           <div className="flex items-center gap-2 w-full sm:w-auto">
             <Button
               size="sm"
-              className="rounded-xl text-xs font-bold flex-1 sm:flex-initial h-9 bg-ocean hover:bg-ocean-dark text-white border-none shadow-sm"
+              className="rounded-xl text-xs font-semibold flex-1 sm:flex-initial h-9 bg-zinc-900 hover:bg-black text-white border-none shadow-xs"
               onClick={(e) => {
                 e.stopPropagation();
                 onSelect();
@@ -337,7 +337,7 @@ const CabinCardVertical = memo(function CabinCardVertical({
           <div className="grid grid-cols-2 gap-2">
             <Button
               size="sm"
-              className="rounded-xl text-[11px] font-bold h-8.5 bg-ocean hover:bg-ocean-dark text-white border-none shadow-sm py-1"
+              className="rounded-xl text-[11px] font-semibold h-8.5 bg-zinc-900 hover:bg-black text-white border-none shadow-xs py-1"
               onClick={(e) => {
                 e.stopPropagation();
                 onSelect();
@@ -616,7 +616,7 @@ export function CabinsList() {
           </p>
           <Button
             onClick={() => navigate("contact")}
-            className="bg-ocean hover:bg-ocean-dark text-white rounded-full px-8"
+            className="bg-zinc-900 hover:bg-black text-white rounded-xl px-8 font-semibold shadow-xs"
           >
             Contáctanos
           </Button>

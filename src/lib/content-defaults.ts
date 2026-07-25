@@ -103,13 +103,14 @@ export const defaultSiteContent: SiteContentData = {
     subtitle:
       "Estamos aquí para ayudarte a planear el viaje perfecto. Escríbenos y te responderemos pronto.",
     formTitle: "Envíanos un mensaje",
-    whatsapp: "+57 320 934 4964",
-    email: "info@vivetravel.co",
+    whatsapp: "+57 312 6380048",
+    email: "comercial@vivetravelcol.co",
     location: "Barranquilla, Atlántico, Colombia",
     hours: "Lun - Sáb: 8:00 AM - 6:00 PM\nDom: 9:00 AM - 1:00 PM",
-    instagramUrl: "#",
-    facebookUrl: "#",
-    whatsappUrl: "https://wa.me/573209344964",
+    instagramUrl: "https://www.instagram.com/vivetravelcol/",
+    facebookUrl: "https://www.facebook.com/vivetravelagenciadeturismo/",
+    tiktokUrl: "https://www.tiktok.com/@vivetravelcol",
+    whatsappUrl: "https://wa.me/573126380048",
     socialLabel: "Síguenos",
     chatTitle: "¿Prefieres chatear?",
     chatDescription: "Escríbenos por WhatsApp y recibe atención inmediata.",
@@ -235,7 +236,7 @@ Si anticipas que no podrás asistir, te recomendamos cancelar o modificar tu res
         title: "Proceso de Reembolsos",
         content: `Los reembolsos siguen el siguiente proceso:
 
-1. Solicitar el reembolso por escrito a info@vivetravel.co o por WhatsApp indicando el número de reserva.
+1. Solicitar el reembolso por escrito a comercial@vivetravelcol.co o por WhatsApp indicando el número de reserva.
 2. Nuestro equipo verificará la solicitud y calculará el monto reembolsable según la política correspondiente.
 3. Recibirás una confirmación por correo con el detalle del reembolso.
 4. El reembolso se procesará en un plazo de 5 a 10 días hábiles.
@@ -265,13 +266,14 @@ Se consideran fuerza mayor: desastres naturales, epidemias, declaraciones de eme
     brandSub: "Colombia",
     description:
       "Planes turísticos para toda Colombia, con la costa Caribe como casa. Tu próxima aventura empieza aquí.",
-    instagramUrl: "#",
-    facebookUrl: "#",
-    whatsappUrl: "https://wa.me/573209344964",
+    instagramUrl: "https://www.instagram.com/vivetravelcol/",
+    facebookUrl: "https://www.facebook.com/vivetravelagenciadeturismo/",
+    tiktokUrl: "https://www.tiktok.com/@vivetravelcol",
+    whatsappUrl: "https://wa.me/573126380048",
     exploreTitle: "Explorar",
     contactTitle: "Contacto",
-    phone: "+57 320 934 4964",
-    email: "info@vivetravel.co",
+    phone: "+57 312 6380048",
+    email: "comercial@vivetravelcol.co",
     location: "Barranquilla, Atlántico, Colombia",
     helpTitle: "¿Necesitas ayuda?",
     helpDescription:
@@ -289,6 +291,7 @@ Se consideran fuerza mayor: desastres naturales, epidemias, declaraciones de eme
       { key: "plans", label: "Experiencias y viajes" },
       { key: "cabins", label: "Cabañas" },
       { key: "transports", label: "Transporte" },
+      { key: "visas", label: "Visas" },
       { key: "team", label: "Equipo" },
       { key: "contact", label: "Contacto" },
       { key: "policies", label: "Políticas" },
@@ -431,7 +434,10 @@ Se consideran fuerza mayor: desastres naturales, epidemias, declaraciones de eme
     order: [
       "hero",
       "promotions",
+      "ticker",
       "plans",
+      "bannerSalidas",
+      "salidas",
       "gallery",
       "international",
       "stats",
@@ -443,7 +449,10 @@ Se consideran fuerza mayor: desastres naturales, epidemias, declaraciones de eme
     active: {
       hero: true,
       promotions: true,
+      ticker: true,
       plans: true,
+      bannerSalidas: true,
+      salidas: true,
       gallery: true,
       international: true,
       stats: true,

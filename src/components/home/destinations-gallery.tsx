@@ -97,7 +97,7 @@ export function DestinationsGallery() {
               key={dest.id}
               destination={dest}
               index={i}
-              onNavigate={() => navigate("plans", "nacionales")} />
+              onNavigate={() => navigate("plans", "nacionales", { viewMode: "1" })} />
           ))}
         </div>
       </div>

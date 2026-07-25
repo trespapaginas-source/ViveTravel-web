@@ -66,6 +66,7 @@ export interface ContactContent {
   hours: string;
   instagramUrl: string;
   facebookUrl: string;
+  tiktokUrl?: string;
   whatsappUrl: string;
   socialLabel: string;
   chatTitle: string;
@@ -100,6 +101,7 @@ export interface FooterContent {
   description: string;
   instagramUrl: string;
   facebookUrl: string;
+  tiktokUrl?: string;
   whatsappUrl: string;
   exploreTitle: string;
   contactTitle: string;

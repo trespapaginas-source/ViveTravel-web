@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { type ViewMode } from "@/components/shared/list-toolbar";
 
 export type ViewType =
   | "home"
@@ -7,6 +8,7 @@ export type ViewType =
   | "cabins"
   | "cabin-detail"
   | "transports"
+  | "visas"
   | "contact"
   | "policies"
   | "favorites"
@@ -15,6 +17,8 @@ export type ViewType =
 interface NavigationState {
   currentView: ViewType;
   selectedItemId: string | null;
+  plansViewMode: ViewMode | null;
+  setPlansViewMode: (mode: ViewMode | null) => void;
   searchDestination: string | null;
   searchOrigin: string | null;
   searchDate: string | null;
@@ -29,7 +33,11 @@ interface NavigationState {
   searchIsSticky: boolean;
   searchSelectedVariant: string | null;
   searchPriceFrom: number | null;
-  navigate: (view: ViewType, itemId?: string | null) => void;
+  navigate: (
+    view: ViewType,
+    itemId?: string | null,
+    options?: { viewMode?: ViewMode }
+  ) => void;
   navigateWithSearch: (
     view: ViewType,
     itemId: string | null,
@@ -45,7 +53,8 @@ interface NavigationState {
       tipoViajero?: string;
       categoria?: string;
       actividad?: string;
-    }
+    },
+    options?: { viewMode?: ViewMode }
   ) => void;
   goHome: () => void;
   clearSearch: () => void;
@@ -62,6 +71,8 @@ interface NavigationState {
 export const useNavigation = create<NavigationState>((set) => ({
   currentView: "home",
   selectedItemId: null,
+  plansViewMode: null,
+  setPlansViewMode: (mode) => set({ plansViewMode: mode }),
   previousView: null,
   previousItemId: null,
   searchDestination: null,
@@ -78,12 +89,15 @@ export const useNavigation = create<NavigationState>((set) => ({
   searchIsSticky: false,
   searchSelectedVariant: null,
   searchPriceFrom: null,
-  navigate: (view, itemId = null) => {
+  navigate: (view, itemId = null, options) => {
     set((state) => {
       const updates: Partial<NavigationState> = {
         currentView: view,
         selectedItemId: itemId,
       };
+      if (options?.viewMode !== undefined) {
+        updates.plansViewMode = options.viewMode;
+      }
       if (view === "favorites" && state.currentView !== "favorites") {
         updates.previousView = state.currentView;
         updates.previousItemId = state.selectedItemId;
@@ -94,10 +108,11 @@ export const useNavigation = create<NavigationState>((set) => ({
       return updates;
     });
   },
-  navigateWithSearch: (view, itemId, searchParams) => {
+  navigateWithSearch: (view, itemId, searchParams, options) => {
     set({
       currentView: view,
       selectedItemId: itemId,
+      plansViewMode: options?.viewMode ?? "3",
       searchDestination: searchParams.destino || null,
       searchOrigin: searchParams.origen || null,
       searchDate: searchParams.fecha || null,

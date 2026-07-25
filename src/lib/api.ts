@@ -45,8 +45,8 @@ export async function fetchTripImages(): Promise<Array<{ id: string; url: string
   return pastTripImages;
 }
 
-export async function fetchTestimonials(): Promise<Array<{ id: string; name: string; avatar: string; location: string; text: string; rating: number; tripName: string }>> {
-  return testimonialsData as Array<{ id: string; name: string; avatar: string; location: string; text: string; rating: number; tripName: string }>;
+export async function fetchTestimonials(): Promise<Array<{ id: string; name: string; avatar: string; location: string; text: string; rating: number; tripName: string; avatarBg?: string; ownerResponse?: string; avatarUrl?: string }>> {
+  return testimonialsData as Array<{ id: string; name: string; avatar: string; location: string; text: string; rating: number; tripName: string; avatarBg?: string; ownerResponse?: string; avatarUrl?: string }>;
 }
 
 function normalizePlan(plan: RawRecord): TourPlan {

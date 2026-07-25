@@ -447,7 +447,7 @@ const PlanCardHorizontal = memo(function PlanCardHorizontal({
             return (
               <div className="flex items-center gap-2 mb-1.5 flex-wrap">
                 {showCategory && (
-                  <span className="text-[10px] font-extrabold uppercase tracking-wider text-ocean bg-ocean/10 px-2 py-0.5 rounded-md">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-700 bg-zinc-100 px-2 py-0.5 rounded-md">
                     {plan.category}
                   </span>
                 )}
@@ -558,7 +558,7 @@ const PlanCardHorizontal = memo(function PlanCardHorizontal({
             </Button>
             <Button
               size="sm"
-              className="rounded-xl text-xs font-bold flex-1 sm:flex-initial h-9 bg-ocean hover:bg-ocean-dark text-white border-none shadow-sm"
+              className="rounded-xl text-xs font-semibold flex-1 sm:flex-initial h-9 bg-zinc-900 hover:bg-black text-white border-none shadow-xs"
               onClick={handleWhatsAppClick}
             >
               Cotizar
@@ -702,7 +702,7 @@ const PlanCardVertical = memo(function PlanCardVertical({
             return (
               <div className="flex items-center gap-1.5 flex-wrap">
                 {showCategory && (
-                  <span className="text-[9px] font-extrabold uppercase tracking-wider text-ocean bg-ocean/10 px-2 py-0.5 rounded-md">
+                  <span className="text-[9px] font-bold uppercase tracking-wider text-zinc-700 bg-zinc-100 px-2 py-0.5 rounded-md">
                     {plan.category}
                   </span>
                 )}
@@ -817,7 +817,7 @@ const PlanCardVertical = memo(function PlanCardVertical({
             </Button>
             <Button
               size="sm"
-              className="rounded-xl text-[11px] font-bold h-8.5 bg-ocean hover:bg-ocean-dark text-white border-none shadow-sm py-1"
+              className="rounded-xl text-[11px] font-semibold h-8.5 bg-zinc-900 hover:bg-black text-white border-none shadow-xs py-1"
               onClick={handleWhatsAppClick}
             >
               Cotizar
@@ -834,6 +834,8 @@ export function PlansList() {
   const {
     selectedItemId,
     navigate,
+    plansViewMode,
+    setPlansViewMode,
     searchDestination,
     searchOrigin,
     searchDate,
@@ -854,17 +856,17 @@ export function PlansList() {
     queryFn: fetchPlans,
   });
 
-  // View mode state
-  const [viewMode, setViewMode] = useState<ViewMode>("1"); // Mobile default
+  // View mode state — defaults to plansViewMode from store (which is "1" from Home, or "3" from Navbar)
+  const [viewMode, setViewMode] = useState<ViewMode>(() => plansViewMode || "3");
   const [sortOption, setSortOption] = useState<SortOption>("popular");
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Set default viewmode based on screen size
+  // Sync viewMode when plansViewMode changes via navigation
   useEffect(() => {
-    if (typeof window !== 'undefined' && window.innerWidth >= 768) {
-      setTimeout(() => setViewMode("3"), 0);
+    if (plansViewMode) {
+      setViewMode(plansViewMode);
     }
-  }, []);
+  }, [plansViewMode]);
 
   const publishedPlans = useMemo(
     () => tourPlans.filter((p) => p.published !== false),
@@ -952,7 +954,8 @@ export function PlansList() {
 
   const handleViewModeChange = useCallback((mode: ViewMode) => {
     setViewMode(mode);
-  }, []);
+    setPlansViewMode(mode);
+  }, [setPlansViewMode]);
 
   const handleClearFilters = useCallback(() => {
     clearAll();

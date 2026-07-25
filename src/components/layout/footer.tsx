@@ -10,8 +10,17 @@ import {
   Facebook,
   MessageCircle,
   ArrowUpRight,
+  ShieldCheck,
 } from "lucide-react";
 import { useSiteContent } from "@/lib/use-site-content";
+
+function TikTokIcon({ className = "w-4 h-4" }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 1 1-5.2-1.74 2.89 2.89 0 0 1 2.31-2.83V7.62a6.34 6.34 0 0 0-5.83 6.32 6.34 6.34 0 0 0 10.74 4.54A6.29 6.29 0 0 0 15.82 14V8.37a8.28 8.28 0 0 0 3.77.92v-2.6z" />
+    </svg>
+  );
+}
 
 export function Footer() {
   const { navigate, currentView } = useNavigation();
@@ -23,97 +32,76 @@ export function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="bg-[#0B1120] text-white mt-auto border-t border-white/5">
-      {/* Top band — brand + CTA */}
-      <div className="border-b border-white/5">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
-          <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-10 lg:gap-16 items-start">
-            {/* Brand block */}
-            <div>
+    <footer className="bg-[#090E1A] text-slate-300 mt-auto border-t border-slate-800/80">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-10">
+        {/* Main Grid Layout: Brand Column + 4 Navigation Columns */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-10 pb-8 border-b border-slate-800/80 items-start">
+          {/* Brand & Social Column (4 cols) */}
+          <div className="lg:col-span-4 space-y-4">
+            <Link href="/" onClick={() => navigate("home")} className="inline-block">
               <img
                 src="/logos/vive-travel-white.png"
                 alt={f.brandName}
-                className="h-11 w-auto mb-5"
+                className="h-16 sm:h-20 lg:h-22 w-auto object-contain select-none"
                 onError={(e) => {
                   e.currentTarget.src = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80";
                   e.currentTarget.onerror = null;
                 }}
               />
-              <p className="text-[15px] text-zinc-400 leading-relaxed max-w-md">
-                {f.description}
-              </p>
+            </Link>
 
-              {/* Social */}
-              <div className="flex items-center gap-3 mt-6">
-                {[
-                  { icon: Instagram, href: f.instagramUrl, label: "Instagram" },
-                  { icon: Facebook, href: f.facebookUrl, label: "Facebook" },
-                  { icon: MessageCircle, href: f.whatsappUrl, label: "WhatsApp" },
-                ].map((social) => (
-                  <a
-                    key={social.label}
-                    href={social.href}
-                    className="w-9 h-9 rounded-full border border-white/10 flex items-center justify-center text-zinc-400 hover:text-white hover:border-white/30 hover:bg-white/5 transition-all duration-200"
-                    aria-label={social.label}
-                    target={
-                      social.href.startsWith("http") || social.href.startsWith("https")
-                        ? "_blank"
-                        : undefined
-                    }
-                    rel={
-                      social.href.startsWith("http") || social.href.startsWith("https")
-                        ? "noopener noreferrer"
-                        : undefined
-                    }
-                  >
-                    <social.icon className="w-4 h-4" />
-                  </a>
-                ))}
-              </div>
-            </div>
+            <p className="text-xs sm:text-sm text-slate-400 font-normal leading-relaxed max-w-sm">
+              {f.description}
+            </p>
 
-            {/* WhatsApp CTA card */}
-            <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-ocean-light mb-2">
-                {f.helpTitle}
-              </p>
-              <p className="text-[15px] text-zinc-300 leading-relaxed mb-5">
-                {f.helpDescription}
-              </p>
-              <a
-                href={f.whatsappUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 w-full h-11 rounded-full bg-white text-[#0B1120] text-sm font-semibold hover:bg-zinc-100 transition-colors"
-              >
-                <MessageCircle className="w-4 h-4" />
-                {f.chatButton}
-              </a>
+            {/* Social Channels */}
+            <div className="flex items-center gap-2 pt-1">
+              {[
+                { icon: Instagram, href: f.instagramUrl, label: "Instagram" },
+                { icon: Facebook, href: f.facebookUrl, label: "Facebook" },
+                { icon: TikTokIcon, href: f.tiktokUrl || "https://www.tiktok.com/@vivetravelcol", label: "TikTok" },
+                { icon: MessageCircle, href: f.whatsappUrl, label: "WhatsApp" },
+              ].map((social) => (
+                <a
+                  key={social.label}
+                  href={social.href}
+                  className="w-8 h-8 rounded-lg border border-slate-800 bg-slate-900/60 flex items-center justify-center text-slate-400 hover:text-white hover:border-slate-700 hover:bg-slate-800 transition-colors cursor-pointer"
+                  aria-label={social.label}
+                  target={
+                    social.href.startsWith("http") || social.href.startsWith("https")
+                      ? "_blank"
+                      : undefined
+                  }
+                  rel={
+                    social.href.startsWith("http") || social.href.startsWith("https")
+                      ? "noopener noreferrer"
+                      : undefined
+                  }
+                >
+                  <social.icon className="w-4 h-4" />
+                </a>
+              ))}
             </div>
           </div>
-        </div>
-      </div>
 
-      {/* Main link columns */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-14">
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 lg:gap-10">
-          {/* Explorar */}
-          <div>
-            <h3 className="text-[11px] font-semibold uppercase tracking-[0.16em] text-zinc-500 mb-4">
+          {/* Explorar (2 cols) */}
+          <div className="lg:col-span-2 space-y-3">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-200">
               Explorar
             </h3>
-            <ul className="space-y-2.5">
+            <ul className="space-y-2 text-xs">
               {[
                 { label: "Experiencias y viajes", href: "/planes" },
                 { label: "Cabañas", href: "/cabanas" },
                 { label: "Transporte", href: "/transporte" },
+                { label: "Visas y requisitos", href: "/visas" },
                 { label: "Nuestro equipo", view: "team" as const },
               ].map((item) =>
                 item.href ? (
                   <li key={item.label}>
                     <Link
                       href={item.href}
-                      className="text-[14px] text-zinc-400 hover:text-white transition-colors"
+                      className="text-slate-400 hover:text-white transition-colors"
                     >
                       {item.label}
                     </Link>
@@ -122,7 +110,7 @@ export function Footer() {
                   <li key={item.label}>
                     <button
                       onClick={() => navigate(item.view!)}
-                      className="text-[14px] text-zinc-400 hover:text-white transition-colors"
+                      className="text-slate-400 hover:text-white transition-colors cursor-pointer"
                     >
                       {item.label}
                     </button>
@@ -132,12 +120,12 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Soporte */}
-          <div>
-            <h3 className="text-[11px] font-semibold uppercase tracking-[0.16em] text-zinc-500 mb-4">
+          {/* Soporte (2 cols) */}
+          <div className="lg:col-span-2 space-y-3">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-200">
               Soporte
             </h3>
-            <ul className="space-y-2.5">
+            <ul className="space-y-2 text-xs">
               {[
                 { label: "Contacto", view: "contact" as const },
                 { label: "PQR y sugerencias", href: "/politicas/pqr" },
@@ -147,7 +135,7 @@ export function Footer() {
                   <li key={item.label}>
                     <Link
                       href={item.href}
-                      className="text-[14px] text-zinc-400 hover:text-white transition-colors"
+                      className="text-slate-400 hover:text-white transition-colors"
                     >
                       {item.label}
                     </Link>
@@ -156,7 +144,7 @@ export function Footer() {
                   <li key={item.label}>
                     <button
                       onClick={() => navigate(item.view!)}
-                      className="text-[14px] text-zinc-400 hover:text-white transition-colors"
+                      className="text-slate-400 hover:text-white transition-colors cursor-pointer"
                     >
                       {item.label}
                     </button>
@@ -166,12 +154,12 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Legal */}
-          <div>
-            <h3 className="text-[11px] font-semibold uppercase tracking-[0.16em] text-zinc-500 mb-4">
+          {/* Legal (2 cols) */}
+          <div className="lg:col-span-2 space-y-3">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-200">
               Legal
             </h3>
-            <ul className="space-y-2.5">
+            <ul className="space-y-2 text-xs">
               {[
                 { label: "Términos y condiciones", href: "/politicas/terminos" },
                 { label: "Política de privacidad", href: "/politicas/privacidad" },
@@ -182,7 +170,7 @@ export function Footer() {
                 <li key={item.label}>
                   <Link
                     href={item.href}
-                    className="text-[14px] text-zinc-400 hover:text-white transition-colors"
+                    className="text-slate-400 hover:text-white transition-colors"
                   >
                     {item.label}
                   </Link>
@@ -191,76 +179,63 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Contacto */}
-          <div className="col-span-2 lg:col-span-1">
-            <h3 className="text-[11px] font-semibold uppercase tracking-[0.16em] text-zinc-500 mb-4">
+          {/* Contacto (2 cols) */}
+          <div className="lg:col-span-2 space-y-3">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-200">
               Contacto
             </h3>
-            <ul className="space-y-3">
+            <ul className="space-y-2.5 text-xs">
               <li>
                 <a
                   href={`tel:${f.phone.replace(/\s/g, "")}`}
-                  className="flex items-center gap-2.5 text-[14px] text-zinc-400 hover:text-white transition-colors group"
+                  className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors group"
                 >
-                  <Phone className="w-4 h-4 text-zinc-500 group-hover:text-ocean-light shrink-0 transition-colors" />
+                  <Phone className="w-3.5 h-3.5 text-slate-500 group-hover:text-emerald-400 shrink-0 transition-colors" />
                   <span>{f.phone}</span>
                 </a>
               </li>
               <li>
                 <a
                   href={`mailto:${f.email}`}
-                  className="flex items-center gap-2.5 text-[14px] text-zinc-400 hover:text-white transition-colors group"
+                  className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors group"
                 >
-                  <Mail className="w-4 h-4 text-zinc-500 group-hover:text-ocean-light shrink-0 transition-colors" />
+                  <Mail className="w-3.5 h-3.5 text-slate-500 group-hover:text-emerald-400 shrink-0 transition-colors" />
                   <span className="break-all">{f.email}</span>
                 </a>
               </li>
-              <li className="flex items-start gap-2.5 text-[14px] text-zinc-400">
-                <MapPin className="w-4 h-4 text-zinc-500 mt-0.5 shrink-0" />
+              <li className="flex items-start gap-2 text-slate-400">
+                <MapPin className="w-3.5 h-3.5 text-slate-500 mt-0.5 shrink-0" />
                 <span>{f.location}</span>
               </li>
             </ul>
           </div>
         </div>
-      </div>
 
-      {/* Subfooter — corporate identity + trust */}
-      <div className="border-t border-white/5">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
-            {/* Corporate data */}
-            <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-[12px] text-zinc-500">
-              <span className="font-medium text-zinc-400">{f.copyright.replace("{year}", String(year))}</span>
-              <span className="hidden sm:inline text-zinc-700">·</span>
-              <span>Vive Group S.A.S.</span>
-              <span className="hidden sm:inline text-zinc-700">·</span>
-              <span>NIT 901993710</span>
-              <span className="hidden sm:inline text-zinc-700">·</span>
-              <span>RNT 278488</span>
-            </div>
-
-            {/* Trust signals */}
-            <div className="flex flex-wrap items-center gap-4">
-              {/* RNT badge */}
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/10 bg-white/[0.03] text-[11px] font-medium text-zinc-400">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                RNT 278488
-              </span>
-              {/* Legal hub link */}
-              <Link
-                href="/politicas"
-                className="inline-flex items-center gap-1 text-[12px] text-zinc-400 hover:text-white transition-colors"
-              >
-                Documentos legales
-                <ArrowUpRight className="w-3 h-3" />
-              </Link>
-            </div>
+        {/* Bottom Bar: Corporate Identity Prominence */}
+        <div className="pt-6 flex flex-col md:flex-row items-center justify-between gap-4 text-xs">
+          {/* Main Corporate Registry Statement */}
+          <div className="flex flex-wrap items-center justify-center md:justify-start gap-x-2 gap-y-1 text-slate-400">
+            <span className="font-semibold text-slate-200">© {year} Vive Travel.</span>
+            <span>Todos los derechos reservados.</span>
+            <span className="hidden sm:inline text-slate-600">•</span>
+            <span className="font-medium text-slate-300">Vive Group S.A.S.</span>
+            <span className="hidden sm:inline text-slate-600">•</span>
+            <span className="font-semibold text-emerald-400">NIT 901993710</span>
+            <span className="hidden sm:inline text-slate-600">•</span>
+            <span className="font-semibold text-emerald-400">RNT 278488</span>
           </div>
 
-          {/* Made with */}
-          <p className="text-[12px] text-zinc-600 mt-4 text-center lg:text-left">
-            {f.madeWith}
-          </p>
+          {/* Legal Hub Link */}
+          <div className="flex items-center gap-4 shrink-0">
+            <Link
+              href="/politicas"
+              className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-400 hover:text-white transition-colors"
+            >
+              <ShieldCheck className="w-3.5 h-3.5 text-slate-400" />
+              <span>Documentos legales</span>
+              <ArrowUpRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
         </div>
       </div>
     </footer>

@@ -372,7 +372,7 @@ export function HeroSection() {
                   className={cn(
                     "px-4 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all duration-200 cursor-pointer border-none whitespace-nowrap",
                     activeTab === tab.id
-                      ? "bg-ocean text-white shadow-sm font-bold"
+                      ? "bg-zinc-900 text-white shadow-sm font-bold"
                       : "text-zinc-600 hover:text-zinc-900 hover:bg-zinc-200/50"
                   )}
                 >
@@ -1020,7 +1020,7 @@ export function HeroSection() {
               )}>
                 <Button
                   onClick={handleSearch}
-                  className="w-full py-3 h-[46px] bg-ocean hover:bg-ocean-dark text-white font-extrabold rounded-xl shadow-md transition-all duration-200 active:scale-95 border-none cursor-pointer text-sm"
+                  className="w-full py-3 h-[46px] bg-zinc-900 hover:bg-black text-white font-bold rounded-xl shadow-sm transition-all duration-200 active:scale-95 border-none cursor-pointer text-sm"
                 >
                   <Search className="w-4 h-4 mr-1.5 shrink-0" />
                   {activeTab === "grupales" ? "Ver Viaje" : "Buscar"}

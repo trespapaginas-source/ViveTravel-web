@@ -65,14 +65,16 @@ export function Navbar() {
   // so the view has time to render before the Sheet starts closing
   const handleNav = useCallback(
     (view: Parameters<typeof navigate>[0]) => {
-      navigate(view);
+      if (view === "plans") {
+        navigate("plans", null, { viewMode: "3" });
+      } else {
+        navigate(view);
+      }
       
       if (pathname !== "/") {
         router.push("/");
       }
       
-      // Use requestAnimationFrame to ensure navigation renders before Sheet closes
-      // This prevents the visual glitch where the old view is visible behind the closing Sheet
       requestAnimationFrame(() => {
         setMobileOpen(false);
       });
@@ -82,7 +84,7 @@ export function Navbar() {
 
   const handleExperienceNav = useCallback(
     (section: ExperienceSectionId) => {
-      navigate("plans", section);
+      navigate("plans", section, { viewMode: "3" });
 
       if (pathname !== "/") {
         router.push("/");
@@ -171,10 +173,10 @@ export function Navbar() {
                           "px-3.5 py-2 rounded-full text-sm font-medium transition-all duration-200 flex items-center gap-1.5",
                           isItemActive("plans", currentView)
                             ? showOpaque
-                              ? "bg-ocean text-white shadow-sm shadow-ocean/10"
+                              ? "bg-zinc-900 text-white shadow-xs"
                               : "bg-white/20 backdrop-blur-sm text-white"
                             : showOpaque
-                            ? "text-zinc-600 hover:bg-zinc-100 hover:text-ocean-dark"
+                            ? "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
                             : "text-white/90 hover:bg-white/10 hover:text-white"
                         )}
                       >
@@ -204,10 +206,10 @@ export function Navbar() {
                     "px-3.5 py-2 rounded-full text-sm font-medium transition-all duration-200",
                     isItemActive(item.key, currentView)
                       ? showOpaque
-                        ? "bg-ocean text-white shadow-sm shadow-ocean/10"
+                        ? "bg-zinc-900 text-white shadow-xs"
                         : "bg-white/20 backdrop-blur-sm text-white"
                       : showOpaque
-                      ? "text-zinc-600 hover:bg-zinc-100 hover:text-ocean-dark"
+                      ? "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
                       : "text-white/90 hover:bg-white/10 hover:text-white"
                   )}
                 >
@@ -252,8 +254,8 @@ export function Navbar() {
               className={cn(
                 "hidden sm:flex items-center gap-2 rounded-full transition-colors duration-200 font-medium px-5",
                 showOpaque
-                  ? "bg-ocean hover:bg-ocean-dark text-white shadow-sm"
-                  : "bg-white hover:bg-white/90 text-ocean hover:text-ocean-dark shadow-sm"
+                  ? "bg-zinc-900 hover:bg-black text-white shadow-xs"
+                  : "bg-white hover:bg-zinc-100 text-zinc-900 shadow-xs"
               )}
             >
               <Phone className="w-4 h-4" />
@@ -370,7 +372,7 @@ export function Navbar() {
                   <div className="mt-auto p-4 border-t">
                     <Button
                       onClick={() => handleNav("contact")}
-                      className="w-full bg-ocean hover:bg-ocean-dark text-white rounded-full h-11"
+                      className="w-full bg-zinc-900 hover:bg-black text-white rounded-xl h-11 font-semibold"
                     >
                       <Phone className="w-4 h-4 mr-2" />
                       {content.navbar.ctaButtonMobile}

@@ -38,13 +38,13 @@ const DepartureCard = memo(function DepartureCard({
         <CardImageCarousel images={plan.images} alt={plan.name} />
         {/* Fixed-dates chip over the photo */}
         <div className="absolute top-3 left-3 z-10 bg-white/95 backdrop-blur-md px-2.5 py-1 rounded-full flex items-center gap-1.5 text-[11px] font-semibold text-zinc-700 shadow-sm border border-black/5 pointer-events-none">
-          <CalendarDays className="w-3.5 h-3.5 text-ocean" />
+          <CalendarDays className="w-3.5 h-3.5 text-zinc-900" />
           <span>Fechas fijas</span>
         </div>
       </div>
 
       <CardContent className="p-5 flex flex-col flex-grow">
-        <h3 className="font-bold text-[17px] text-foreground line-clamp-1 group-hover:text-ocean transition-colors duration-200 leading-snug">
+        <h3 className="font-bold text-[17px] text-foreground line-clamp-1 group-hover:text-zinc-900 transition-colors duration-200 leading-snug">
           {plan.name}
         </h3>
 
@@ -81,7 +81,7 @@ const DepartureCard = memo(function DepartureCard({
           </div>
           <Button
             size="sm"
-            className="rounded-xl text-xs font-bold h-9 bg-ocean hover:bg-ocean-dark text-white border-none shadow-sm shrink-0"
+            className="rounded-xl text-xs font-semibold h-9 bg-zinc-900 hover:bg-black text-white border-none shadow-xs shrink-0"
             onClick={(e) => {
               e.stopPropagation();
               onNavigate(plan.id);
@@ -120,11 +120,11 @@ export function ScheduledDepartures() {
   if (departures.length === 0) return null;
 
   return (
-    <section className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 bg-zinc-50/60 border-y border-zinc-100 content-visibility-auto contain-intrinsic-size-auto">
+    <section id="salidas-programadas" className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 bg-zinc-50/60 border-y border-zinc-100 content-visibility-auto contain-intrinsic-size-auto">
       <div className="max-w-7xl mx-auto">
         <SectionHeader
           title="Salidas Programadas"
-          subtitle="Destinos nacionales con calendario de salidas definido. Elige tu fecha y viaja acompañado desde Barranquilla."
+          subtitle="Destinos nacionales con calendario de salidas definido. Elige tu fecha y viaja acompañado desde cualquier lugar de Colombia."
         />
 
         <div className="mt-8 flex flex-wrap justify-center gap-5 sm:gap-6">

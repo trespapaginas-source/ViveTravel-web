@@ -40,7 +40,7 @@ export function GroupTrips() {
               <Button
                 size="lg"
                 onClick={() => navigate("contact")}
-                className="w-full max-w-[260px] sm:w-auto bg-ocean text-white hover:bg-ocean-dark px-6 sm:px-8 py-5 sm:py-6 text-base rounded-xl shadow-lg transition-all duration-200 hover:scale-105"
+                className="w-full max-w-[260px] sm:w-auto bg-zinc-900 text-white hover:bg-black px-6 sm:px-8 py-5 sm:py-6 text-base font-semibold rounded-xl shadow-xs transition-all duration-200"
               >
                 {groupTrips.ctaQuote}
                 <ArrowRight className="w-5 h-5 ml-2" />
@@ -48,7 +48,7 @@ export function GroupTrips() {
               <Button
                 size="lg"
                 variant="outline"
-                onClick={() => navigate("plans", "grupales")}
+                onClick={() => navigate("plans", "grupales", { viewMode: "1" })}
                 className="w-full max-w-[260px] sm:w-auto border-gray-200 text-foreground hover:bg-gray-100 backdrop-blur-sm px-6 py-5 sm:py-6 text-base rounded-xl transition-colors duration-200 bg-transparent"
               >
                 {groupTrips.ctaPlans}

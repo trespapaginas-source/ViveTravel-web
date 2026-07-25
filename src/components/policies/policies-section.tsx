@@ -38,46 +38,44 @@ export function PoliciesSection() {
   const groups = getLegalDocsByCategory();
 
   return (
-    <section className="bg-white">
-      {/* Editorial header */}
-      <header className="border-b border-border/60">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20">
+    <div className="bg-slate-50/70 min-h-screen py-8 sm:py-12 text-slate-800">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+        {/* Navigation Breadcrumb */}
+        <div>
           <button
             onClick={() => navigate("home")}
-            className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors mb-8"
+            className="group inline-flex items-center gap-2 text-xs font-semibold text-slate-500 hover:text-slate-900 transition-colors cursor-pointer"
           >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            Volver al inicio
+            <ArrowLeft className="w-4 h-4 text-slate-400 group-hover:-translate-x-1 transition-transform" />
+            <span>Volver al inicio</span>
           </button>
-
-          <div className="max-w-2xl">
-            <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-ocean mb-4">
-              <ShieldCheck className="w-3.5 h-3.5" />
-              Marco legal
-            </span>
-            <h1 className="text-3xl sm:text-4xl lg:text-[44px] font-bold tracking-tight text-foreground leading-[1.1]">
-              Documentos legales y políticas
-            </h1>
-            <p className="mt-5 text-base sm:text-lg text-muted-foreground leading-relaxed">
-              La transparencia es parte del viaje. Aquí encontrarás cada documento
-              que regula tu relación con Vive Travel, disponible para consulta en
-              cualquier momento.
-            </p>
-          </div>
         </div>
-      </header>
 
-      {/* Document index grouped by category */}
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
-        <div className="space-y-14">
+        {/* Editorial Header */}
+        <header className="space-y-3 border-b border-slate-200/80 pb-8">
+          <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+            <ShieldCheck className="w-4 h-4 text-slate-600" />
+            <span>Marco Legal & Términos</span>
+          </div>
+
+          <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900 leading-snug">
+            Documentos Legales y Políticas
+          </h1>
+
+          <p className="text-sm sm:text-base text-slate-600 font-normal leading-relaxed max-w-2xl">
+            La transparencia en cada reserva es nuestra prioridad. Aquí puedes consultar todas las políticas que rigen tu relación y servicios contratados con Vive Travel.
+          </p>
+        </header>
+
+        {/* Document index grouped by category */}
+        <div className="space-y-12">
           {groups.map(({ category, docs }) => (
-            <section key={category}>
-              <div className="flex items-baseline gap-3 mb-6">
-                <h2 className="text-lg font-semibold text-foreground">
+            <section key={category} className="space-y-4">
+              <div className="flex items-center justify-between border-b border-slate-200/80 pb-3">
+                <h2 className="text-lg font-semibold text-slate-900 tracking-tight">
                   {category}
                 </h2>
-                <div className="flex-1 h-px bg-border/60" />
-                <span className="text-xs font-medium text-muted-foreground tabular-nums">
+                <span className="text-xs font-medium text-slate-500 tabular-nums">
                   {docs.length} {docs.length === 1 ? "documento" : "documentos"}
                 </span>
               </div>
@@ -89,27 +87,31 @@ export function PoliciesSection() {
                     <Link
                       key={doc.slug}
                       href={`/politicas/${doc.slug}`}
-                      className="group relative flex gap-4 p-5 rounded-2xl border border-border/50 hover:border-ocean/40 bg-white hover:shadow-[0_8px_30px_-12px_rgba(0,139,139,0.12)] transition-all duration-200"
+                      className="group flex items-start gap-4 p-5 rounded-xl border border-slate-200/80 hover:border-slate-300 bg-white shadow-2xs transition-colors cursor-pointer"
                     >
-                      {/* Document number — large, watermark-style */}
-                      <span className="select-none text-2xl sm:text-3xl font-bold text-border/80 group-hover:text-ocean/25 transition-colors leading-none tabular-nums pt-0.5">
-                        {doc.number}
-                      </span>
+                      {/* Document icon */}
+                      <div className="p-2.5 rounded-lg bg-slate-100 text-slate-600 group-hover:text-slate-900 shrink-0 transition-colors">
+                        <Icon className="w-4 h-4" />
+                      </div>
 
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1.5">
-                          <Icon className="w-4 h-4 text-ocean shrink-0" />
-                          <h3 className="text-[15px] font-semibold text-foreground group-hover:text-ocean transition-colors leading-snug">
+                      <div className="flex-1 min-w-0 space-y-1">
+                        <div className="flex items-center justify-between gap-2">
+                          <h3 className="text-sm font-semibold text-slate-900 group-hover:text-slate-900 transition-colors truncate">
                             {doc.shortTitle}
                           </h3>
+                          <span className="text-[11px] font-mono font-medium text-slate-400">
+                            #{doc.number}
+                          </span>
                         </div>
-                        <p className="text-[13px] text-muted-foreground line-clamp-2 leading-relaxed">
+
+                        <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed font-normal">
                           {doc.description}
                         </p>
-                        <span className="inline-flex items-center gap-1 mt-3 text-[11px] font-medium text-muted-foreground group-hover:text-ocean transition-colors">
-                          Leer documento
-                          <ChevronRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
-                        </span>
+
+                        <div className="pt-1 flex items-center gap-1 text-xs font-semibold text-slate-700 group-hover:text-slate-900 transition-colors">
+                          <span>Ver documento completo</span>
+                          <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                        </div>
                       </div>
                     </Link>
                   );
@@ -120,22 +122,20 @@ export function PoliciesSection() {
         </div>
 
         {/* Corporate footer */}
-        <div className="mt-16 pt-10 border-t border-border/60">
-          <div className="flex items-start gap-3">
-            <Building2 className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
+        <div className="pt-8 border-t border-slate-200/80">
+          <div className="flex items-start gap-3 text-xs text-slate-500 font-normal leading-relaxed">
+            <Building2 className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
             <div>
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                Emitido por <span className="font-medium text-foreground/80">Vive Group S.A.S.</span>{" "}
-                · NIT 901993710 · RNT 278488 · Barranquilla, Atlántico, Colombia.
+              <p>
+                Emitido por <span className="font-semibold text-slate-700">Vive Group S.A.S.</span> · NIT 901993710 · RNT 278488 · Barranquilla, Atlántico, Colombia.
               </p>
-              <p className="text-xs text-muted-foreground mt-1.5">
-                Versión 1.0 — 16 de julio de 2026. Los documentos pueden ser actualizados;
-                la versión vigente es la publicada en este sitio.
+              <p className="mt-1 text-slate-400">
+                Versión vigente 1.0 — 2026. Todos los derechos reservados.
               </p>
             </div>
           </div>
         </div>
       </div>
-    </section>
+    </div>
   );
 }

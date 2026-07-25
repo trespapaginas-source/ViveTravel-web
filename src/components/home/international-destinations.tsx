@@ -39,7 +39,7 @@ export function InternationalDestinations() {
                   delay: index * 0.1,
                 }}
                 className="group relative w-[80vw] max-w-[290px] sm:w-auto sm:max-w-none h-[400px] sm:h-auto sm:aspect-[4/5] overflow-hidden overflow-x-hidden rounded-3xl cursor-pointer bg-muted border border-zinc-100 flex-none snap-start snap-always"
-                onClick={() => navigate("plans", "internacionales")}
+                onClick={() => navigate("plans", "internacionales", { viewMode: "1" })}
               >
                 <img
                   src={destination.image}

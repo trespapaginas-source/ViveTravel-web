@@ -104,11 +104,8 @@ export function ListToolbar({
           variant="outline"
           size="sm"
         >
-          <ToggleGroupItem value="1" aria-label="Vista de lista">
+          <ToggleGroupItem value="1" aria-label="Vista de 1 columna">
             <LayoutList className="w-4 h-4" />
-          </ToggleGroupItem>
-          <ToggleGroupItem value="2" aria-label="Vista de 2 columnas">
-            <LayoutGrid className="w-4 h-4" />
           </ToggleGroupItem>
           <ToggleGroupItem value="3" aria-label="Vista de 3 columnas" className="hidden sm:inline-flex">
             <Grid3X3 className="w-4 h-4" />

@@ -40,9 +40,9 @@ const PlanCard = memo(function PlanCard({
         <CardImageCarousel images={plan.images} alt={plan.name} />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-80 pointer-events-none" />
 
-        <div className="absolute bottom-3 left-3 flex items-center gap-1.5 pointer-events-none">
-          <Clock className="w-3.5 h-3.5 text-white/90" />
-          <span className="text-white/90 text-xs font-medium drop-shadow-sm">{formatShortDuration(plan.duration)}</span>
+        <div className="absolute top-3 left-3 z-10 flex items-center gap-1 bg-black/50 backdrop-blur-md px-2 py-0.5 rounded-full text-white text-[11px] font-semibold border border-white/10 shadow-sm pointer-events-none">
+          <Clock className="w-3 h-3 text-white/90" />
+          <span className="text-white/90">{formatShortDuration(plan.duration)}</span>
         </div>
       </div>
 
@@ -69,7 +69,7 @@ const PlanCard = memo(function PlanCard({
         </p>
 
         <div className="mt-auto pt-4 border-t border-zinc-100 flex items-center justify-between gap-2">
-          <span className="text-ocean text-[13px] font-semibold flex items-center gap-1 transition-colors duration-200 group-hover:text-ocean-dark">
+          <span className="text-zinc-900 text-[13px] font-semibold flex items-center gap-1 transition-colors duration-200 group-hover:text-black">
             Ver detalles
             <ArrowRight className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-0.5" />
           </span>
@@ -108,7 +108,7 @@ export function FeaturedPlans() {
           />
           <div className="mt-8 flex sm:grid overflow-x-auto sm:overflow-visible sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 scroll-smooth pb-4 sm:pb-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="flex-none w-[80vw] max-w-[290px] sm:w-auto sm:max-w-none">
+              <div key={i} className="flex-none w-[80vw] max-w-[290px] sm:w-full sm:max-w-none">
                 <Card className="w-full h-full flex flex-col overflow-hidden rounded-2xl shadow-none border border-zinc-100">
                   <Skeleton className="h-[220px] w-full" />
                   <CardContent className="p-4 space-y-3">
@@ -148,7 +148,7 @@ export function FeaturedPlans() {
                   ease: [0.16, 1, 0.3, 1],
                   delay: index * 0.1,
                 }}
-                className="flex-none w-[80vw] max-w-[290px] sm:w-auto sm:max-w-none snap-start snap-always flex sm:block"
+                className="flex-none w-[80vw] max-w-[290px] sm:w-full sm:max-w-none snap-start snap-always flex sm:block"
               >
                 <PlanCard plan={plan} onNavigate={handleNavigate} />
               </motion.div>
@@ -169,8 +169,8 @@ export function FeaturedPlans() {
           <Button
             variant="outline"
             size="lg"
-            onClick={() => navigate("plans")}
-            className="border-ocean text-ocean hover:bg-ocean hover:text-white transition-colors duration-300 px-8 rounded-xl font-semibold shadow-sm"
+            onClick={() => navigate("plans", null, { viewMode: "1" })}
+            className="border-zinc-200 text-zinc-900 hover:bg-zinc-900 hover:text-white hover:border-zinc-900 transition-all duration-200 px-8 rounded-xl font-semibold shadow-xs"
           >
             {featured.viewAll}
             <ArrowRight className="w-5 h-5 ml-2" />
