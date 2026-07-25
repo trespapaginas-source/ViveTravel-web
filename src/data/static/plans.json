@@ -657,7 +657,7 @@
     "shortDescription": "Naturaleza, historia y paisajes únicos del Huila en un viaje fascinante con salidas programadas.",
     "fullDescription": "Descubre los paisajes y la riqueza cultural del Huila en un viaje con salida programada durante todo el año desde cualquier ciudad de Colombia. Itinerario, hospedaje y recorridos detallados próximamente.",
     "images": [
-      "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&h=600&fit=crop",
+      "/images/destinos/huila-al-limite/portada.jpg",
       "https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=800&h=600&fit=crop"
     ],
     "price": 2600000,
@@ -713,8 +713,10 @@
     "shortDescription": "Desierto, mar Caribe y cultura wayuu en un viaje fascinante con salidas programadas por La Guajira.",
     "fullDescription": "Vive el contraste único del desierto frente al mar y la cultura wayuu de La Guajira en un viaje con salida programada durante todo el año. Itinerario, hospedaje y recorridos detallados próximamente.",
     "images": [
-      "https://images.unsplash.com/photo-1596422846543-75c6fc197f07?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1620002093390-8d5926ec3fb4?w=800&h=600&fit=crop"
+      "/images/destinos/la-guajira/portada.jpg",
+      "/images/destinos/la-guajira/galeria-02.jpg",
+      "/images/destinos/la-guajira/galeria-03.jpg",
+      "/images/destinos/la-guajira/galeria-04.jpg"
     ],
     "price": 2600000,
     "priceRange": "$2.600.000 COP",
