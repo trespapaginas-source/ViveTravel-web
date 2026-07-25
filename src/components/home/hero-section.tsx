@@ -77,6 +77,15 @@ export function HeroSection() {
   const [activeTab, setActiveTab] = useState<SearchTab>("internacionales");
   const tabsDragScroll = useDragScroll<HTMLDivElement>();
 
+  const [animateCascade, setAnimateCascade] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setAnimateCascade(false);
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, []);
+
   // Initial parameters state
   const [tabParams, setTabParams] = useState<Record<SearchTab, TabParams>>({
     internacionales: { origen: "", destino: "", fecha: "", fechaFin: "", rooms: [{ adults: 2, children: 0 }], adultos: 2, ninos: 0 },
@@ -346,7 +355,14 @@ export function HeroSection() {
           </p>
 
           {/* Buscador Modular de Pestañas */}
-          <div className="w-full bg-white/95 backdrop-blur-md p-4 sm:p-6 sm:pb-8 rounded-2xl sm:rounded-3xl border border-white/20 shadow-2xl text-left animate-in fade-in slide-in-from-bottom-2 duration-500" style={{ animationDelay: "400ms", animationFillMode: "both" }}>
+          <div
+            className={cn(
+              "w-full p-4 sm:p-6 sm:pb-8 rounded-2xl sm:rounded-3xl border border-white/20 shadow-2xl text-left transition-all duration-300",
+              "bg-white/65 backdrop-blur-xl sm:bg-white/95 sm:backdrop-blur-md",
+              animateCascade && "animate-in fade-in slide-in-from-bottom-2 duration-700"
+            )}
+            style={animateCascade ? { animationDelay: "400ms", animationFillMode: "both" } : undefined}
+          >
             {/* Tabs List */}
             <div
               ref={tabsDragScroll.ref}
@@ -355,7 +371,11 @@ export function HeroSection() {
               onMouseUp={tabsDragScroll.onMouseUp}
               onMouseLeave={tabsDragScroll.onMouseLeave}
               onClickCapture={tabsDragScroll.onClickCapture}
-              className="flex bg-zinc-150/80 p-1.5 rounded-xl w-full md:w-fit mb-5 gap-1 overflow-x-auto max-w-full cursor-grab active:cursor-grabbing select-none [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+              className={cn(
+                "flex bg-zinc-150/80 p-1.5 rounded-xl w-full md:w-fit mb-5 gap-1 overflow-x-auto max-w-full cursor-grab active:cursor-grabbing select-none [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] transition-all",
+                animateCascade && "animate-in fade-in slide-in-from-bottom-2 duration-500"
+              )}
+              style={animateCascade ? { animationDelay: "600ms", animationFillMode: "both" } : undefined}
             >
               {(
                 [
@@ -401,7 +421,17 @@ export function HeroSection() {
               
               {/* ORIGEN (Only for Nacionales, Internacionales & Circuitos) */}
               {(activeTab === "internacionales" || activeTab === "nacionales" || activeTab === "circuitos") && (
-                <div className="md:col-span-2 md:row-start-1 relative text-left" ref={autocompleteOrigenRef} style={{ zIndex: showAutocompleteOrigen ? 50 : 5 }}>
+                <div
+                  className={cn(
+                    "md:col-span-2 md:row-start-1 relative text-left transition-all",
+                    animateCascade && "animate-in fade-in slide-in-from-bottom-2 duration-500"
+                  )}
+                  ref={autocompleteOrigenRef}
+                  style={{
+                    zIndex: showAutocompleteOrigen ? 50 : 5,
+                    ...(animateCascade ? { animationDelay: "750ms", animationFillMode: "both" } : {})
+                  }}
+                >
                   <label className="block text-[11px] font-bold text-zinc-500 uppercase tracking-wider mb-1.5 pl-1">Origen</label>
                   <div className="relative">
                     <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 pointer-events-none" />
@@ -457,14 +487,22 @@ export function HeroSection() {
               )}
 
               {/* DESTINO / CIUDAD */}
-              <div className={cn(
-                "relative text-left md:row-start-1",
-                (activeTab === "internacionales" || activeTab === "nacionales" || activeTab === "circuitos") && "md:col-span-2",
-                activeTab === "pasadias" && "md:col-span-4",
-                activeTab === "tours" && "md:col-span-3",
-                activeTab === "alojamientos" && "md:col-span-3",
-                activeTab === "grupales" && "md:col-span-3"
-              )} ref={activeTab === "grupales" ? groupDestinationsRef : autocompleteDestinoRef} style={{ zIndex: (showAutocompleteDestino || showGroupDestinations) ? 40 : 4 }}>
+              <div
+                className={cn(
+                  "relative text-left md:row-start-1 transition-all",
+                  (activeTab === "internacionales" || activeTab === "nacionales" || activeTab === "circuitos") && "md:col-span-2",
+                  activeTab === "pasadias" && "md:col-span-4",
+                  activeTab === "tours" && "md:col-span-3",
+                  activeTab === "alojamientos" && "md:col-span-3",
+                  activeTab === "grupales" && "md:col-span-3",
+                  animateCascade && "animate-in fade-in slide-in-from-bottom-2 duration-500"
+                )}
+                ref={activeTab === "grupales" ? groupDestinationsRef : autocompleteDestinoRef}
+                style={{
+                  zIndex: (showAutocompleteDestino || showGroupDestinations) ? 40 : 4,
+                  ...(animateCascade ? { animationDelay: "900ms", animationFillMode: "both" } : {})
+                }}
+              >
                 <label className="block text-[11px] font-bold text-zinc-500 uppercase tracking-wider mb-1.5 pl-1">
                   {activeTab === "grupales" ? "Viaje Grupal" : "Destino"}
                 </label>
@@ -569,7 +607,16 @@ export function HeroSection() {
 
               {/* Actividad / Experiencia (Only for Actividades tab) */}
               {activeTab === "tours" && (
-                <div className="md:col-span-3 md:row-start-1 text-left" style={{ zIndex: 3 }}>
+                <div
+                  className={cn(
+                    "md:col-span-3 md:row-start-1 text-left transition-all",
+                    animateCascade && "animate-in fade-in slide-in-from-bottom-2 duration-500"
+                  )}
+                  style={{
+                    zIndex: 3,
+                    ...(animateCascade ? { animationDelay: "1050ms", animationFillMode: "both" } : {})
+                  }}
+                >
                   <label className="block text-[11px] font-bold text-zinc-500 uppercase tracking-wider mb-1.5 pl-1">Actividad o Experiencia</label>
                   <div className="relative">
                     <Sparkles className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 pointer-events-none" />
@@ -588,10 +635,14 @@ export function HeroSection() {
               {hasRooms ? (
                 <div
                   className={cn(
-                    "relative text-left md:row-start-1",
-                    (activeTab === "internacionales" || activeTab === "nacionales" || activeTab === "circuitos") ? "md:col-span-3" : "md:col-span-4"
+                    "relative text-left md:row-start-1 transition-all",
+                    (activeTab === "internacionales" || activeTab === "nacionales" || activeTab === "circuitos") ? "md:col-span-3" : "md:col-span-4",
+                    animateCascade && "animate-in fade-in slide-in-from-bottom-2 duration-500"
                   )}
-                  style={{ zIndex: (dateOpen || dateEndOpen) ? 30 : 3 }}
+                  style={{
+                    zIndex: (dateOpen || dateEndOpen) ? 30 : 3,
+                    ...(animateCascade ? { animationDelay: "1050ms", animationFillMode: "both" } : {})
+                  }}
                 >
                   <div className="grid grid-cols-2 gap-3 w-full">
                     {/* Entrada */}
@@ -722,13 +773,17 @@ export function HeroSection() {
                 /* SINGLE DATE SELECTOR (For other tabs: pasadias, tours, grupales) */
                 <div
                   className={cn(
-                    "relative text-left md:row-start-1",
+                    "relative text-left md:row-start-1 transition-all",
                     activeTab === "pasadias" && "md:col-span-3",
                     activeTab === "tours" && "md:col-span-2",
-                    activeTab === "grupales" && "md:col-span-2"
+                    activeTab === "grupales" && "md:col-span-2",
+                    animateCascade && "animate-in fade-in slide-in-from-bottom-2 duration-500"
                   )}
                   ref={activeTab === "grupales" ? groupDatesRef : undefined}
-                  style={{ zIndex: (dateOpen || showGroupDates) ? 30 : 3 }}
+                  style={{
+                    zIndex: (dateOpen || showGroupDates) ? 30 : 3,
+                    ...(animateCascade ? { animationDelay: "1050ms", animationFillMode: "both" } : {})
+                  }}
                 >
                   <label className="block text-[11px] font-bold text-zinc-500 uppercase tracking-wider mb-1.5 pl-1">
                     {activeTab === "grupales" ? "Fecha" : "Fecha"}
@@ -828,14 +883,19 @@ export function HeroSection() {
               )}
 
               {/* PASAJEROS (Multihabitación o contador simple) */}
-              <div className={cn(
-                "relative text-left md:row-start-1",
-                (activeTab === "internacionales" || activeTab === "nacionales" || activeTab === "circuitos") && "md:col-span-3",
-                activeTab === "pasadias" && "md:col-span-3",
-                activeTab === "tours" && "md:col-span-2",
-                activeTab === "alojamientos" && "md:col-span-3",
-                activeTab === "grupales" && "md:col-span-2"
-              )} ref={travelersRef}>
+              <div
+                className={cn(
+                  "relative text-left md:row-start-1 transition-all",
+                  (activeTab === "internacionales" || activeTab === "nacionales" || activeTab === "circuitos") && "md:col-span-3",
+                  activeTab === "pasadias" && "md:col-span-3",
+                  activeTab === "tours" && "md:col-span-2",
+                  activeTab === "alojamientos" && "md:col-span-3",
+                  activeTab === "grupales" && "md:col-span-2",
+                  animateCascade && "animate-in fade-in slide-in-from-bottom-2 duration-500"
+                )}
+                ref={travelersRef}
+                style={animateCascade ? { animationDelay: "1200ms", animationFillMode: "both" } : undefined}
+              >
                 <label className="block text-[11px] font-bold text-zinc-500 uppercase tracking-wider mb-1.5 pl-1">
                   {activeTab === "grupales" ? "Personas" : hasRooms ? "Pasajeros y Habitaciones" : "Viajeros"}
                 </label>
@@ -981,7 +1041,17 @@ export function HeroSection() {
 
               {/* Tipo de viajero (Only for grupales) */}
               {activeTab === "grupales" && (
-                <div className="md:col-span-3 md:row-start-1 text-left relative" ref={groupTypeRef} style={{ zIndex: showGroupTypeDropdown ? 5 : 1 }}>
+                <div
+                  className={cn(
+                    "md:col-span-3 md:row-start-1 text-left relative transition-all",
+                    animateCascade && "animate-in fade-in slide-in-from-bottom-2 duration-500"
+                  )}
+                  ref={groupTypeRef}
+                  style={{
+                    zIndex: showGroupTypeDropdown ? 5 : 1,
+                    ...(animateCascade ? { animationDelay: "1350ms", animationFillMode: "both" } : {})
+                  }}
+                >
                   <label className="block text-[11px] font-bold text-zinc-500 uppercase tracking-wider mb-1.5 pl-1">Tipo de Viajero (opcional)</label>
                   <button
                     type="button"
@@ -1019,13 +1089,17 @@ export function HeroSection() {
                 </div>
               )}
 
-              <div className={cn(
-                "w-full text-center md:row-start-1 md:col-span-2",
-                activeTab === "pasadias" && "md:col-span-2",
-                activeTab === "tours" && "md:col-span-2",
-                activeTab === "alojamientos" && "md:col-span-2",
-                activeTab === "grupales" && "md:col-span-2"
-              )}>
+              <div
+                className={cn(
+                  "w-full text-center md:row-start-1 md:col-span-2 transition-all",
+                  activeTab === "pasadias" && "md:col-span-2",
+                  activeTab === "tours" && "md:col-span-2",
+                  activeTab === "alojamientos" && "md:col-span-2",
+                  activeTab === "grupales" && "md:col-span-2",
+                  animateCascade && "animate-in fade-in slide-in-from-bottom-2 duration-500"
+                )}
+                style={animateCascade ? { animationDelay: "1350ms", animationFillMode: "both" } : undefined}
+              >
                 <Button
                   onClick={handleSearch}
                   className="w-full py-3 h-[46px] bg-zinc-900 hover:bg-black text-white font-bold rounded-xl shadow-sm transition-all duration-200 active:scale-95 border-none cursor-pointer text-sm"
