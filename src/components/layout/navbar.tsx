@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import Link from "next/link";
 import { useNavigation, type ViewType, getUrlForView } from "@/lib/store";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
@@ -16,57 +17,41 @@ import { ChevronDown, Menu, Phone, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSiteContent } from "@/lib/use-site-content";
 
-const navItems = [
-  { key: "home" as const, label: "Inicio" },
-  { key: "cabins" as const, label: "Cabañas" },
-  { key: "transports" as const, label: "Transporte" },
-  { key: "team" as const, label: "Equipo" },
-  { key: "contact" as const, label: "Contacto" },
-  { key: "policies" as const, label: "Políticas" },
-];
-
-/** Check if a nav item is active, including nested detail views */
-function isItemActive(itemKey: string, currentView: ViewType): boolean {
-  if (currentView === itemKey) return true;
-  if (itemKey === "plans" && currentView === "plan-detail") return true;
-  if (itemKey === "cabins" && currentView === "cabin-detail") return true;
+function isItemActive(key: string, currentView: ViewType): boolean {
+  if (key === "home") return currentView === "home";
+  if (key === "plans") return currentView === "plans" || currentView === "plan-detail";
+  if (key === "cabins") return currentView === "cabins" || currentView === "cabin-detail";
+  if (key === "transports") return currentView === "transports";
+  if (key === "team") return currentView === "team";
+  if (key === "contact") return currentView === "contact";
+  if (key === "policies") return currentView === "policies";
   return false;
 }
 
 export function Navbar() {
   const { currentView, navigate, favoritesPulseActive, setFavoritesPulseActive } = useNavigation();
-  const { content } = useSiteContent();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [experiencesOpen, setExperiencesOpen] = useState(() => isItemActive("plans", currentView));
-  const tickingRef = useRef(false);
+  const [experiencesOpen, setExperiencesOpen] = useState(false);
+
   const pathname = usePathname();
-  const router = useRouter();
+  const { content } = useSiteContent();
 
-  const isHome = currentView === "home" && pathname === "/";
-  const showOpaque = !isHome || scrolled;
+  const isHome = currentView === "home" || pathname === "/";
+  const showOpaque = scrolled || !isHome;
 
-  // Throttled scroll handler using rAF — avoids excessive re-renders
   useEffect(() => {
     const handleScroll = () => {
-      if (!tickingRef.current) {
-        requestAnimationFrame(() => {
-          setScrolled(window.scrollY > 20);
-          tickingRef.current = false;
-        });
-        tickingRef.current = true;
-      }
+      setScrolled(window.scrollY > 20);
     };
+
+    handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Navigate first, then close mobile menu after the next frame
-  // so the view has time to render before the Sheet starts closing
   const handleNav = useCallback(
     (view: Parameters<typeof navigate>[0]) => {
-      const targetUrl = getUrlForView(view);
-      router.push(targetUrl);
       if (view === "plans") {
         navigate("plans", null, { viewMode: "3" });
       } else {
@@ -77,20 +62,18 @@ export function Navbar() {
         setMobileOpen(false);
       });
     },
-    [navigate, router]
+    [navigate]
   );
 
   const handleExperienceNav = useCallback(
     (section: ExperienceSectionId) => {
-      const targetUrl = `/planes?categoria=${encodeURIComponent(section)}`;
-      router.push(targetUrl);
       navigate("plans", section, { viewMode: "3" });
 
       requestAnimationFrame(() => {
         setMobileOpen(false);
       });
     },
-    [navigate, router]
+    [navigate]
   );
 
   return (
@@ -127,11 +110,11 @@ export function Navbar() {
           )}
         >
           {/* Logo */}
-          <button
+          <Link
+            href="/"
             onClick={() => handleNav("home")}
-            className="flex items-center group relative"
+            className="flex items-center group relative cursor-pointer"
           >
-            {/* Original Logo (static layout size reservation) */}
             <img
               src="/logos/vive-travel-original.png"
               alt="Vive Travel"
@@ -143,7 +126,6 @@ export function Navbar() {
               )}
               onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"; e.currentTarget.onerror = null; }}
             />
-            {/* White Logo (absolute overlay) */}
             <img
               src="/logos/vive-travel-white.png"
               alt="Vive Travel"
@@ -155,48 +137,73 @@ export function Navbar() {
               )}
               onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"; e.currentTarget.onerror = null; }}
             />
-          </button>
+          </Link>
 
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-1">
             {content.navbar.navItems.map((item) => {
               if (item.key === "plans") {
                 return (
-                  <DropdownMenu key="plans">
-                    <DropdownMenuTrigger asChild>
-                      <button
-                        className={cn(
-                          "px-3.5 py-2 rounded-full text-sm font-medium transition-all duration-200 flex items-center gap-1.5",
-                          isItemActive("plans", currentView)
-                            ? showOpaque
-                              ? "bg-zinc-900 text-white shadow-xs"
-                              : "bg-white/20 backdrop-blur-sm text-white"
-                            : showOpaque
-                            ? "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
-                            : "text-white/90 hover:bg-white/10 hover:text-white"
-                        )}
-                      >
-                        {item.label}
-                        <ChevronDown className="w-3.5 h-3.5" />
-                      </button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="center" className="min-w-52">
-                      {EXPERIENCE_SECTIONS.map((section) => (
-                        <DropdownMenuItem
-                          key={section.id}
-                          onClick={() => handleExperienceNav(section.id)}
-                          className="cursor-pointer"
+                  <div key="plans" className="relative flex items-center">
+                    <Link
+                      href="/planes"
+                      onClick={() => handleNav("plans")}
+                      className={cn(
+                        "px-3.5 py-2 rounded-l-full text-sm font-medium transition-all duration-200 flex items-center gap-1",
+                        isItemActive("plans", currentView)
+                          ? showOpaque
+                            ? "bg-zinc-900 text-white shadow-xs"
+                            : "bg-white/20 backdrop-blur-sm text-white"
+                          : showOpaque
+                          ? "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
+                          : "text-white/90 hover:bg-white/10 hover:text-white"
+                      )}
+                    >
+                      {item.label}
+                    </Link>
+
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <button
+                          className={cn(
+                            "py-2 pr-2.5 pl-0.5 rounded-r-full text-sm font-medium transition-all duration-200 cursor-pointer border-none bg-transparent flex items-center",
+                            isItemActive("plans", currentView)
+                              ? showOpaque
+                                ? "bg-zinc-900 text-white shadow-xs"
+                                : "bg-white/20 backdrop-blur-sm text-white"
+                              : showOpaque
+                              ? "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
+                              : "text-white/90 hover:bg-white/10 hover:text-white"
+                          )}
+                          aria-label="Opciones de experiencias"
                         >
-                          {section.label}
-                        </DropdownMenuItem>
-                      ))}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                          <ChevronDown className="w-3.5 h-3.5" />
+                        </button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="center" className="min-w-52">
+                        {EXPERIENCE_SECTIONS.map((section) => (
+                          <DropdownMenuItem
+                            key={section.id}
+                            asChild
+                          >
+                            <Link
+                              href={`/planes?categoria=${encodeURIComponent(section.id)}`}
+                              onClick={() => handleExperienceNav(section.id)}
+                              className="w-full cursor-pointer"
+                            >
+                              {section.label}
+                            </Link>
+                          </DropdownMenuItem>
+                        ))}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
                 );
               }
               return (
-                <button
+                <Link
                   key={item.key}
+                  href={getUrlForView(item.key as any)}
                   onClick={() => handleNav(item.key as any)}
                   className={cn(
                     "px-3.5 py-2 rounded-full text-sm font-medium transition-all duration-200",
@@ -210,7 +217,7 @@ export function Navbar() {
                   )}
                 >
                   {item.label}
-                </button>
+                </Link>
               );
             })}
           </nav>
@@ -218,15 +225,14 @@ export function Navbar() {
           {/* CTA + Favorites + Mobile */}
           <div className="flex items-center gap-2">
             {/* Favorites */}
-            <Button
-              variant="ghost"
-              size="icon"
+            <Link
+              href="/favoritos"
               onClick={() => {
                 setFavoritesPulseActive(false);
                 handleNav("favorites");
               }}
               className={cn(
-                "rounded-full h-10 w-10 sm:h-9 sm:w-9 transition-colors duration-200",
+                "rounded-full h-10 w-10 sm:h-9 sm:w-9 flex items-center justify-center transition-colors duration-200",
                 favoritesPulseActive && "animate-heartbeat text-ocean bg-ocean/10 hover:bg-ocean/10",
                 currentView === "favorites"
                   ? showOpaque
@@ -242,11 +248,11 @@ export function Navbar() {
                 "w-4 h-4",
                 favoritesPulseActive ? "fill-ocean text-ocean" : (currentView === "favorites" && "fill-current")
               )} />
-            </Button>
+            </Link>
 
             {/* Reservar CTA */}
             <Button
-              onClick={() => handleNav("contact")}
+              asChild
               className={cn(
                 "hidden sm:flex items-center gap-2 rounded-full transition-colors duration-200 font-medium px-5",
                 showOpaque
@@ -254,8 +260,10 @@ export function Navbar() {
                   : "bg-white hover:bg-zinc-100 text-zinc-900 shadow-xs"
               )}
             >
-              <Phone className="w-4 h-4" />
-              {content.navbar.ctaButton}
+              <Link href="/contacto" onClick={() => handleNav("contact")}>
+                <Phone className="w-4 h-4" />
+                {content.navbar.ctaButton}
+              </Link>
             </Button>
 
             {/* Mobile menu */}
@@ -289,25 +297,39 @@ export function Navbar() {
                     {content.navbar.navItems.map((item) => {
                       if (item.key === "plans") {
                         return (
-                          <div key="plans">
-                            <button
-                              onClick={() => setExperiencesOpen((o) => !o)}
-                              className={cn(
-                                "w-full px-4 py-3 rounded-xl flex items-center justify-between text-left text-sm font-medium transition-colors duration-150 min-h-[44px]",
-                                isItemActive("plans", currentView)
-                                  ? "bg-ocean/10 text-ocean font-semibold"
-                                  : "text-zinc-600 hover:bg-zinc-50 hover:text-ocean"
-                              )}
-                              aria-expanded={experiencesOpen}
-                            >
-                              {item.label}
-                              <ChevronDown
+                          <div key="plans" className="flex flex-col">
+                            <div className="flex items-center justify-between w-full">
+                              <Link
+                                href="/planes"
+                                onClick={() => handleNav("plans")}
                                 className={cn(
-                                  "w-4 h-4 shrink-0 transition-transform duration-200",
-                                  experiencesOpen && "rotate-180"
+                                  "flex-1 px-4 py-3 rounded-l-xl text-left text-sm font-medium transition-colors duration-150 min-h-[44px] flex items-center",
+                                  isItemActive("plans", currentView)
+                                    ? "bg-ocean/10 text-ocean font-semibold"
+                                    : "text-zinc-600 hover:bg-zinc-50 hover:text-ocean"
                                 )}
-                              />
-                            </button>
+                              >
+                                {item.label}
+                              </Link>
+                              <button
+                                onClick={() => setExperiencesOpen((o) => !o)}
+                                className={cn(
+                                  "px-3 py-3 rounded-r-xl text-sm font-medium transition-colors duration-150 min-h-[44px] flex items-center justify-center",
+                                  isItemActive("plans", currentView)
+                                    ? "bg-ocean/10 text-ocean"
+                                    : "text-zinc-600 hover:bg-zinc-50 hover:text-ocean"
+                                )}
+                                aria-expanded={experiencesOpen}
+                                aria-label="Desplegar experiencias"
+                              >
+                                <ChevronDown
+                                  className={cn(
+                                    "w-4 h-4 shrink-0 transition-transform duration-200",
+                                    experiencesOpen && "rotate-180"
+                                  )}
+                                />
+                              </button>
+                            </div>
                             <div
                               className={cn(
                                 "grid transition-all duration-200 ease-out",
@@ -316,13 +338,14 @@ export function Navbar() {
                             >
                               <div className="overflow-hidden flex flex-col gap-0.5 pl-3">
                                 {EXPERIENCE_SECTIONS.map((section) => (
-                                  <button
+                                  <Link
                                     key={section.id}
+                                    href={`/planes?categoria=${encodeURIComponent(section.id)}`}
                                     onClick={() => handleExperienceNav(section.id)}
                                     className="px-4 py-2.5 rounded-lg text-left text-sm transition-colors duration-150 min-h-[40px] flex items-center text-zinc-500 hover:bg-zinc-50 hover:text-ocean"
                                   >
                                     {section.label}
-                                  </button>
+                                  </Link>
                                 ))}
                               </div>
                             </div>
@@ -330,8 +353,9 @@ export function Navbar() {
                         );
                       }
                       return (
-                        <button
+                        <Link
                           key={item.key}
+                          href={getUrlForView(item.key as any)}
                           onClick={() => handleNav(item.key as any)}
                           className={cn(
                             "px-4 py-3 rounded-xl text-left text-sm font-medium transition-colors duration-150 min-h-[44px] flex items-center",
@@ -341,11 +365,12 @@ export function Navbar() {
                           )}
                         >
                           {item.label}
-                        </button>
+                        </Link>
                       );
                     })}
                     <div className="h-px bg-zinc-100 my-2" />
-                    <button
+                    <Link
+                      href="/favoritos"
                       onClick={() => {
                         setFavoritesPulseActive(false);
                         handleNav("favorites");
@@ -363,15 +388,17 @@ export function Navbar() {
                         favoritesPulseActive ? "fill-ocean text-ocean" : (currentView === "favorites" && "fill-current")
                       )} />
                       Mi Colección
-                    </button>
+                    </Link>
                   </nav>
                   <div className="mt-auto p-4 border-t">
                     <Button
-                      onClick={() => handleNav("contact")}
+                      asChild
                       className="w-full bg-zinc-900 hover:bg-black text-white rounded-xl h-11 font-semibold"
                     >
-                      <Phone className="w-4 h-4 mr-2" />
-                      {content.navbar.ctaButtonMobile}
+                      <Link href="/contacto" onClick={() => handleNav("contact")}>
+                        <Phone className="w-4 h-4 mr-2" />
+                        {content.navbar.ctaButtonMobile}
+                      </Link>
                     </Button>
                   </div>
                 </div>

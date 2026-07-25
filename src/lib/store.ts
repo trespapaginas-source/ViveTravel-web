@@ -129,12 +129,6 @@ export const useNavigation = create<NavigationState>((set) => ({
   searchSelectedVariant: null,
   searchPriceFrom: null,
   navigate: (view, itemId = null, options) => {
-    if (typeof window !== "undefined") {
-      const targetUrl = getUrlForView(view, itemId);
-      if (window.location.pathname + window.location.search !== targetUrl) {
-        window.history.pushState(null, "", targetUrl);
-      }
-    }
     set((state) => {
       const updates: Partial<NavigationState> = {
         currentView: view,
@@ -154,12 +148,6 @@ export const useNavigation = create<NavigationState>((set) => ({
     });
   },
   navigateWithSearch: (view, itemId, searchParams, options) => {
-    if (typeof window !== "undefined") {
-      const targetUrl = getUrlForView(view, itemId, { searchCategory: searchParams.categoria });
-      if (window.location.pathname + window.location.search !== targetUrl) {
-        window.history.pushState(null, "", targetUrl);
-      }
-    }
     set({
       currentView: view,
       selectedItemId: itemId,
@@ -181,9 +169,6 @@ export const useNavigation = create<NavigationState>((set) => ({
     });
   },
   goHome: () => {
-    if (typeof window !== "undefined" && window.location.pathname !== "/") {
-      window.history.pushState(null, "", "/");
-    }
     set({
       currentView: "home",
       selectedItemId: null,
