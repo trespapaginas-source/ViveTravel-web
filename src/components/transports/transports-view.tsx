@@ -190,8 +190,8 @@ export function TransportsView() {
         </section>
 
         {/* Pillars Section (Open Clean Centered Layout) */}
-        <section className="space-y-10 pt-10 border-t border-slate-200/80">
-          <div className="max-w-2xl mx-auto text-center space-y-2">
+        <section className="space-y-10 pt-10 border-t border-slate-200/80 text-center">
+          <div className="max-w-2xl mx-auto space-y-2">
             <h2 className="text-2xl sm:text-3xl font-semibold text-slate-900 tracking-tight">
               Nuestro Compromiso de Servicio
             </h2>
@@ -200,9 +200,9 @@ export function TransportsView() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-10 pt-2 justify-items-center max-w-5xl mx-auto">
+          <div className="flex flex-wrap justify-center gap-x-10 gap-y-10 pt-2 max-w-5xl mx-auto">
             {pillarsInfo.map((pillar, idx) => (
-              <div key={idx} className="space-y-3 text-center flex flex-col items-center max-w-xs">
+              <div key={idx} className="space-y-3 text-center flex flex-col items-center max-w-xs w-full sm:w-auto">
                 <div className="w-10 h-10 rounded-xl bg-slate-200/70 flex items-center justify-center text-slate-700">
                   <pillar.icon className="w-5 h-5" />
                 </div>
