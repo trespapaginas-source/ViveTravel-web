@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { useNavigation, type ViewType } from "@/lib/store";
+import { useNavigation, type ViewType, getUrlForView } from "@/lib/store";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import {
@@ -65,6 +65,8 @@ export function Navbar() {
   // so the view has time to render before the Sheet starts closing
   const handleNav = useCallback(
     (view: Parameters<typeof navigate>[0]) => {
+      const targetUrl = getUrlForView(view);
+      router.push(targetUrl);
       if (view === "plans") {
         navigate("plans", null, { viewMode: "3" });
       } else {
@@ -75,18 +77,20 @@ export function Navbar() {
         setMobileOpen(false);
       });
     },
-    [navigate]
+    [navigate, router]
   );
 
   const handleExperienceNav = useCallback(
     (section: ExperienceSectionId) => {
+      const targetUrl = `/planes?categoria=${encodeURIComponent(section)}`;
+      router.push(targetUrl);
       navigate("plans", section, { viewMode: "3" });
 
       requestAnimationFrame(() => {
         setMobileOpen(false);
       });
     },
-    [navigate]
+    [navigate, router]
   );
 
   return (

@@ -95,28 +95,17 @@ export function Footer() {
                 { label: "Cabañas", href: "/cabanas" },
                 { label: "Transporte", href: "/transporte" },
                 { label: "Visas y requisitos", href: "/visas" },
-                { label: "Nuestro equipo", view: "team" as const },
-              ].map((item) =>
-                item.href ? (
-                  <li key={item.label}>
-                    <Link
-                      href={item.href}
-                      className="text-slate-400 hover:text-white transition-colors"
-                    >
-                      {item.label}
-                    </Link>
-                  </li>
-                ) : (
-                  <li key={item.label}>
-                    <button
-                      onClick={() => navigate(item.view!)}
-                      className="text-slate-400 hover:text-white transition-colors cursor-pointer"
-                    >
-                      {item.label}
-                    </button>
-                  </li>
-                )
-              )}
+                { label: "Nuestro equipo", href: "/equipo" },
+              ].map((item) => (
+                <li key={item.label}>
+                  <Link
+                    href={item.href}
+                    className="text-slate-400 hover:text-white transition-colors"
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
@@ -127,30 +116,19 @@ export function Footer() {
             </h3>
             <ul className="space-y-2 text-xs">
               {[
-                { label: "Contacto", view: "contact" as const },
+                { label: "Contacto", href: "/contacto" },
                 { label: "PQR y sugerencias", href: "/politicas/pqr" },
                 { label: "Manual del viajero", href: "/politicas/manual-viajero" },
-              ].map((item) =>
-                item.href ? (
-                  <li key={item.label}>
-                    <Link
-                      href={item.href}
-                      className="text-slate-400 hover:text-white transition-colors"
-                    >
-                      {item.label}
-                    </Link>
-                  </li>
-                ) : (
-                  <li key={item.label}>
-                    <button
-                      onClick={() => navigate(item.view!)}
-                      className="text-slate-400 hover:text-white transition-colors cursor-pointer"
-                    >
-                      {item.label}
-                    </button>
-                  </li>
-                )
-              )}
+              ].map((item) => (
+                <li key={item.label}>
+                  <Link
+                    href={item.href}
+                    className="text-slate-400 hover:text-white transition-colors"
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
