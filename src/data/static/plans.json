@@ -761,7 +761,7 @@
     "difficulty": "Fácil",
     "schedule": "Salidas programadas todo el año",
     "meeting": "Por confirmar",
-    "published": true,
+    "published": false,
     "order": 12,
     "fixedDeparture": true,
     "departureDates": []

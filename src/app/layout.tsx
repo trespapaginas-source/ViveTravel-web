@@ -29,7 +29,11 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "Vive Travel" }],
   icons: {
-    icon: "/logo.svg",
+    icon: [
+      { url: "/logos/vive-travel-original.png", type: "image/png" },
+    ],
+    shortcut: "/logos/vive-travel-original.png",
+    apple: "/logos/vive-travel-original.png",
   },
   openGraph: {
     title: "Vive Travel Atlántico",
