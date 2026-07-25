@@ -225,10 +225,11 @@ function getLocationData(locationStr: string) {
   };
 }
 
-export function CabinDetail() {
-  const { selectedItemId, navigate, searchDate, searchDateEnd, searchRoomsDetail, setFavoritesPulseActive } = useNavigation();
+export function CabinDetail({ cabinId }: { cabinId?: string } = {}) {
+  const { selectedItemId: storeSelectedItemId, navigate, searchDate, searchDateEnd, searchRoomsDetail, setFavoritesPulseActive } = useNavigation();
+  const selectedItemId = cabinId || storeSelectedItemId;
 
-  const { data: cabin, isLoading } = useQuery({
+  const { data: cabin, isLoading, isFetching } = useQuery({
     queryKey: ["cabin", selectedItemId],
     queryFn: () => fetchCabin(selectedItemId!),
     enabled: !!selectedItemId,
@@ -337,7 +338,7 @@ export function CabinDetail() {
     window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, "_blank");
   }, [cabin, mobileDateRange, mobileNightCount, mobileTotal, searchRoomsDetail]);
 
-  if (isLoading) {
+  if (isLoading || isFetching || !selectedItemId) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin w-8 h-8 border-4 border-ocean border-t-transparent rounded-full" />

@@ -144,20 +144,23 @@ export function Navbar() {
             {content.navbar.navItems.map((item) => {
               if (item.key === "plans") {
                 return (
-                  <div key="plans" className="relative flex items-center">
+                  <div
+                    key="plans"
+                    className={cn(
+                      "relative flex items-center rounded-full transition-all duration-200",
+                      isItemActive("plans", currentView)
+                        ? showOpaque
+                          ? "bg-zinc-900 text-white shadow-xs"
+                          : "bg-white/20 backdrop-blur-sm text-white"
+                        : showOpaque
+                        ? "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
+                        : "text-white/90 hover:bg-white/10 hover:text-white"
+                    )}
+                  >
                     <Link
                       href="/planes"
                       onClick={() => handleNav("plans")}
-                      className={cn(
-                        "px-3.5 py-2 rounded-l-full text-sm font-medium transition-all duration-200 flex items-center gap-1",
-                        isItemActive("plans", currentView)
-                          ? showOpaque
-                            ? "bg-zinc-900 text-white shadow-xs"
-                            : "bg-white/20 backdrop-blur-sm text-white"
-                          : showOpaque
-                          ? "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
-                          : "text-white/90 hover:bg-white/10 hover:text-white"
-                      )}
+                      className="pl-3.5 pr-1 py-2 text-sm font-medium flex items-center gap-1 hover:opacity-90"
                     >
                       {item.label}
                     </Link>
@@ -165,16 +168,7 @@ export function Navbar() {
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <button
-                          className={cn(
-                            "py-2 pr-2.5 pl-0.5 rounded-r-full text-sm font-medium transition-all duration-200 cursor-pointer border-none bg-transparent flex items-center",
-                            isItemActive("plans", currentView)
-                              ? showOpaque
-                                ? "bg-zinc-900 text-white shadow-xs"
-                                : "bg-white/20 backdrop-blur-sm text-white"
-                              : showOpaque
-                              ? "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
-                              : "text-white/90 hover:bg-white/10 hover:text-white"
-                          )}
+                          className="pr-3 pl-0.5 py-2 text-sm font-medium cursor-pointer border-none bg-transparent flex items-center hover:opacity-90"
                           aria-label="Opciones de experiencias"
                         >
                           <ChevronDown className="w-3.5 h-3.5" />
@@ -298,27 +292,24 @@ export function Navbar() {
                       if (item.key === "plans") {
                         return (
                           <div key="plans" className="flex flex-col">
-                            <div className="flex items-center justify-between w-full">
+                            <div
+                              className={cn(
+                                "flex items-center justify-between w-full rounded-xl transition-colors duration-150 min-h-[44px]",
+                                isItemActive("plans", currentView)
+                                  ? "bg-ocean/10 text-ocean font-semibold"
+                                  : "text-zinc-600 hover:bg-zinc-50 hover:text-ocean"
+                              )}
+                            >
                               <Link
                                 href="/planes"
                                 onClick={() => handleNav("plans")}
-                                className={cn(
-                                  "flex-1 px-4 py-3 rounded-l-xl text-left text-sm font-medium transition-colors duration-150 min-h-[44px] flex items-center",
-                                  isItemActive("plans", currentView)
-                                    ? "bg-ocean/10 text-ocean font-semibold"
-                                    : "text-zinc-600 hover:bg-zinc-50 hover:text-ocean"
-                                )}
+                                className="flex-1 px-4 py-3 text-left text-sm font-medium flex items-center"
                               >
                                 {item.label}
                               </Link>
                               <button
                                 onClick={() => setExperiencesOpen((o) => !o)}
-                                className={cn(
-                                  "px-3 py-3 rounded-r-xl text-sm font-medium transition-colors duration-150 min-h-[44px] flex items-center justify-center",
-                                  isItemActive("plans", currentView)
-                                    ? "bg-ocean/10 text-ocean"
-                                    : "text-zinc-600 hover:bg-zinc-50 hover:text-ocean"
-                                )}
+                                className="px-3 py-3 text-sm font-medium flex items-center justify-center cursor-pointer"
                                 aria-expanded={experiencesOpen}
                                 aria-label="Desplegar experiencias"
                               >

@@ -421,9 +421,9 @@ function CotizadorCard({
   );
 }
 
-export function PlanDetail() {
+export function PlanDetail({ planId }: { planId?: string } = {}) {
   const {
-    selectedItemId,
+    selectedItemId: storeSelectedItemId,
     navigate,
     searchAdults,
     searchChildren,
@@ -433,7 +433,10 @@ export function PlanDetail() {
     setSearchPriceFrom,
     setFavoritesPulseActive,
   } = useNavigation();
-  const { data: plan, isLoading } = useQuery({
+
+  const selectedItemId = planId || storeSelectedItemId;
+
+  const { data: plan, isLoading, isFetching } = useQuery({
     queryKey: ["plan", selectedItemId],
     queryFn: () => fetchPlan(selectedItemId!),
     enabled: !!selectedItemId,
@@ -601,7 +604,7 @@ export function PlanDetail() {
     window.open(whatsappUrl, "_blank");
   }, [plan]);
 
-  if (isLoading) {
+  if (isLoading || isFetching || !selectedItemId) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
         <div className="animate-spin w-8 h-8 border-4 border-foreground border-t-transparent rounded-full" />
