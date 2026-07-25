@@ -101,13 +101,13 @@ export function AvailabilityCalendar({
         )}
       </div>
 
-      <div className="rounded-2xl border border-border/60 bg-card p-4 sm:p-6">
+      <div className="rounded-2xl border border-border/60 bg-card p-4 md:p-8">
         {isLoading ? (
           <div className="flex justify-center">
             <Skeleton className="w-full max-w-[320px] h-[340px]" />
           </div>
         ) : (
-          <div className="availability-calendar flex justify-center overflow-x-auto">
+          <div className="availability-calendar flex justify-center overflow-x-auto md:block md:overflow-x-visible">
             <Calendar
               mode="range"
               selected={range}
@@ -119,8 +119,12 @@ export function AvailabilityCalendar({
               numberOfMonths={isMobile ? 1 : 2}
               locale={es}
               defaultMonth={today}
-              className="mobile-airbnb-calendar"
+              className={isMobile ? "mobile-airbnb-calendar" : "mobile-airbnb-calendar desktop-full-calendar"}
+              style={!isMobile ? { "--cell-size": "48px" } as React.CSSProperties : undefined}
               classNames={{
+                root: cn(!isMobile ? "w-full" : "w-fit"),
+                months: cn(!isMobile ? "flex flex-row w-full gap-8" : "flex gap-4 flex-col md:flex-row relative"),
+                month: cn(!isMobile ? "flex flex-col flex-1 gap-4" : "flex flex-col w-full gap-4"),
                 day: cn("relative w-full h-full p-0 text-center"),
               }}
               modifiers={{

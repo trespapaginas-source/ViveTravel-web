@@ -26,19 +26,9 @@ const pillarsInfo = [
     description: "Conductores profesionales y vehículos en excelente estado mecánico y estético.",
   },
   {
-    icon: Sparkles,
-    title: "Confort y Comodidad",
-    description: "Viaja con comodidad en vehículos modernos, amplios y completamente climatizados.",
-  },
-  {
     icon: Clock,
     title: "Puntualidad Garantizada",
     description: "Nos comprometemos con tu tiempo y tu tranquilidad. Llegamos siempre a tiempo.",
-  },
-  {
-    icon: PhoneCall,
-    title: "Atención Personalizada",
-    description: "Servicios adaptados a tus necesidades, horarios y paradas específicas en la ruta.",
   },
   {
     icon: Navigation,
@@ -200,7 +190,7 @@ export function TransportsView() {
             </p>
           </div>
 
-          <div className="flex flex-wrap justify-center gap-x-10 gap-y-10 pt-2 max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-10 gap-y-10 pt-2 max-w-5xl mx-auto">
             {pillarsInfo.map((pillar, idx) => (
               <div key={idx} className="space-y-3 text-center flex flex-col items-center max-w-xs w-full sm:w-auto">
                 <div className="w-10 h-10 rounded-xl bg-slate-200/70 flex items-center justify-center text-slate-700">

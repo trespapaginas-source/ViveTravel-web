@@ -265,3 +265,19 @@ html {
 .animate-marquee:hover {
   animation-play-state: paused;
 }
+
+/* ── Availability Calendar: full-width desktop ── */
+@media (min-width: 768px) {
+  .desktop-full-calendar {
+    width: 100%;
+  }
+
+  .desktop-full-calendar [data-slot="calendar"] {
+    width: 100%;
+  }
+
+  .desktop-full-calendar .rdp-root,
+  .desktop-full-calendar > div {
+    width: 100%;
+  }
+}
