@@ -444,7 +444,7 @@
     "shortDescription": "Pueblos coloniales, naturaleza, aventura y cultura por Santander, viajando cómodamente en avión desde Barranquilla.",
     "fullDescription": "Vive una experiencia única recorriendo los paisajes más impresionantes de Santander. Disfruta de pueblos coloniales, naturaleza, aventura y cultura, viajando cómodamente en avión desde Barranquilla. Son 5 días y 4 noches con acomodación múltiple: 3 noches en San Gil y 1 noche en Bucaramanga, con recorridos por Panachi (Cañón del Chicamocha), Barichara, Girón, Floridablanca, las Cascadas de Juan Curí, la Mesa de los Santos, el Parque El Gallineral, el Socorro, el Mercado Campesino y la Virgen de la Salud.",
     "images": [
-      "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&h=600&fit=crop",
+      "/images/destinos/santander-inolvidable/portada.jpg",
       "https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&h=600&fit=crop"
     ],
@@ -514,7 +514,7 @@
     "shortDescription": "Recorre los pueblos coloniales, artesanías e impresionantes paisajes andinos de Boyacá en un viaje con salida programada.",
     "fullDescription": "Descubre la historia, la arquitectura colonial y los paisajes montañosos de Boyacá en un viaje con salida programada durante todo el año desde cualquier lugar de Colombia. Itinerario, hospedaje y recorridos detallados próximamente.",
     "images": [
-      "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&h=600&fit=crop",
+      "/images/destinos/boyaca-colonial/portada.jpg",
       "https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&h=600&fit=crop"
     ],
@@ -571,6 +571,7 @@
     "shortDescription": "Vive la cultura cafetera, haciendas tradicionales y paisajes verdes del Eje Cafetero en un viaje con salidas programadas.",
     "fullDescription": "Recorre fincas cafeteras, pueblos con encanto y paisajes verdes del Eje Cafetero en un viaje con salida programada durante todo el año desde cualquier ciudad de Colombia. Itinerario, hospedaje y recorridos detallados próximamente.",
     "images": [
+      "/images/destinos/eje-cafetero-magico/portada.jpg",
       "https://images.unsplash.com/photo-1622308644420-b30fbdf94f1c?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1518182170546-076616fdcbdd?w=800&h=600&fit=crop"
     ],
@@ -770,6 +771,7 @@
     "shortDescription": "Cielos nocturnos de observación astronómica y laberintos de tierra roja en un viaje con salidas programadas.",
     "fullDescription": "Vive la experiencia del desierto de la Tatacoa, sus formaciones rocosas y sus cielos ideales para la observación astronómica, en un viaje con salida programada durante todo el año desde cualquier punto del país. Itinerario, hospedaje y recorridos detallados próximamente.",
     "images": [
+      "/images/destinos/tatacoa-estelar/portada.jpg",
       "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&h=600&fit=crop"
     ],
@@ -828,6 +830,7 @@
     "shortDescription": "Explora los paisajes del sur de Colombia y cruza hasta Tulcán, Ecuador, en un viaje con salida programada desde Barranquilla.",
     "fullDescription": "Recorre los paisajes andinos y la riqueza cultural del sur de Colombia, con una salida hasta Tulcán, Ecuador, en un viaje con salida programada durante todo el año desde Barranquilla. Itinerario, hospedaje y recorridos detallados próximamente.",
     "images": [
+      "/images/destinos/sur-colombia/portada.jpg",
       "https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=800&h=600&fit=crop",
       "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&h=600&fit=crop"
     ],
