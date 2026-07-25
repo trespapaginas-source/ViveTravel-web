@@ -68,6 +68,45 @@ interface NavigationState {
   previousItemId: string | null;
 }
 
+export function getUrlForView(
+  view: ViewType,
+  itemId?: string | null,
+  options?: { searchCategory?: string | null }
+): string {
+  switch (view) {
+    case "home":
+      return "/";
+    case "plans":
+      if (itemId) {
+        return `/planes?categoria=${encodeURIComponent(itemId)}`;
+      }
+      if (options?.searchCategory) {
+        return `/planes?categoria=${encodeURIComponent(options.searchCategory)}`;
+      }
+      return "/planes";
+    case "plan-detail":
+      return itemId ? `/planes/${itemId}` : "/planes";
+    case "cabins":
+      return "/cabanas";
+    case "cabin-detail":
+      return itemId ? `/cabanas/${itemId}` : "/cabanas";
+    case "transports":
+      return itemId ? `/transporte/${itemId}` : "/transporte";
+    case "visas":
+      return itemId ? `/visas/${itemId}` : "/visas";
+    case "contact":
+      return "/contacto";
+    case "policies":
+      return itemId ? `/politicas/${itemId}` : "/politicas";
+    case "team":
+      return "/equipo";
+    case "favorites":
+      return "/favoritos";
+    default:
+      return "/";
+  }
+}
+
 export const useNavigation = create<NavigationState>((set) => ({
   currentView: "home",
   selectedItemId: null,
@@ -90,6 +129,12 @@ export const useNavigation = create<NavigationState>((set) => ({
   searchSelectedVariant: null,
   searchPriceFrom: null,
   navigate: (view, itemId = null, options) => {
+    if (typeof window !== "undefined") {
+      const targetUrl = getUrlForView(view, itemId);
+      if (window.location.pathname + window.location.search !== targetUrl) {
+        window.history.pushState(null, "", targetUrl);
+      }
+    }
     set((state) => {
       const updates: Partial<NavigationState> = {
         currentView: view,
@@ -109,6 +154,12 @@ export const useNavigation = create<NavigationState>((set) => ({
     });
   },
   navigateWithSearch: (view, itemId, searchParams, options) => {
+    if (typeof window !== "undefined") {
+      const targetUrl = getUrlForView(view, itemId, { searchCategory: searchParams.categoria });
+      if (window.location.pathname + window.location.search !== targetUrl) {
+        window.history.pushState(null, "", targetUrl);
+      }
+    }
     set({
       currentView: view,
       selectedItemId: itemId,
@@ -130,6 +181,9 @@ export const useNavigation = create<NavigationState>((set) => ({
     });
   },
   goHome: () => {
+    if (typeof window !== "undefined" && window.location.pathname !== "/") {
+      window.history.pushState(null, "", "/");
+    }
     set({
       currentView: "home",
       selectedItemId: null,

@@ -71,30 +71,22 @@ export function Navbar() {
         navigate(view);
       }
       
-      if (pathname !== "/") {
-        router.push("/");
-      }
-      
       requestAnimationFrame(() => {
         setMobileOpen(false);
       });
     },
-    [navigate, pathname, router]
+    [navigate]
   );
 
   const handleExperienceNav = useCallback(
     (section: ExperienceSectionId) => {
       navigate("plans", section, { viewMode: "3" });
 
-      if (pathname !== "/") {
-        router.push("/");
-      }
-
       requestAnimationFrame(() => {
         setMobileOpen(false);
       });
     },
-    [navigate, pathname, router]
+    [navigate]
   );
 
   return (
