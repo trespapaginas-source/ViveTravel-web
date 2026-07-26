@@ -1,13 +1,11 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { Star, ChevronLeft, ChevronRight } from "lucide-react";
+import { Star } from "lucide-react";
 import { SectionHeader } from "@/components/shared/section-header";
 import { testimonials as fallbackTestimonials } from "@/lib/data";
 import { useSiteContent } from "@/lib/use-site-content";
 import { useQuery } from "@tanstack/react-query";
 import { fetchTestimonials } from "@/lib/api";
-import { motion, AnimatePresence } from "framer-motion";
 
 function GoogleIcon() {
   return (
@@ -88,25 +86,6 @@ export function Testimonials() {
     queryFn: fetchTestimonials,
   });
 
-  // Mobile index state
-  const [mobileIdx, setMobileIdx] = useState(0);
-
-  const nextMobile = useCallback(() => {
-    setMobileIdx((i) => (i + 1) % testimonials.length);
-  }, [testimonials.length]);
-
-  const prevMobile = useCallback(() => {
-    setMobileIdx((i) => (i - 1 + testimonials.length) % testimonials.length);
-  }, [testimonials.length]);
-
-  // Auto-slide on mobile
-  useEffect(() => {
-    const timer = setInterval(() => {
-      nextMobile();
-    }, 5000);
-    return () => clearInterval(timer);
-  }, [nextMobile]);
-
   // Handle marquee items duplication for seamless infinite looping
   const marqueeItems = [...testimonials, ...testimonials];
 
@@ -119,60 +98,30 @@ export function Testimonials() {
         />
       </div>
 
-      {/* ── Desktop & Tablet View: Infinite Marquee ── */}
+      {/* ── Desktop & Tablet View: Infinite Marquee (Slower animation: 55s) ── */}
       <div className="hidden md:block relative w-full overflow-hidden py-4 select-none">
         {/* Left fade gradient overlay */}
         <div className="absolute top-0 left-0 bottom-0 w-32 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
         {/* Right fade gradient overlay */}
         <div className="absolute top-0 right-0 bottom-0 w-32 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
 
-        <div className="flex w-max animate-marquee hover:[animation-play-state:paused] gap-5 px-4">
+        <div 
+          className="flex w-max animate-marquee hover:[animation-play-state:paused] gap-5 px-4"
+          style={{ animationDuration: "60s" }}
+        >
           {marqueeItems.map((t, idx) => (
             <TestimonialCard key={`${t.id}-marquee-${idx}`} testimonial={t} />
           ))}
         </div>
       </div>
 
-      {/* ── Mobile View: 1-Card Looping Carousel Slider ── */}
-      <div className="md:hidden px-4 select-none">
-        <div className="max-w-md mx-auto flex flex-col items-center">
-          {/* Card Slider wrapper */}
-          <div className="relative w-full h-[210px] overflow-hidden flex justify-center items-center">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={mobileIdx}
-                initial={{ opacity: 0, x: 50 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -50 }}
-                transition={{ duration: 0.35, ease: "easeInOut" }}
-                className="absolute"
-              >
-                <TestimonialCard testimonial={testimonials[mobileIdx]} />
-              </motion.div>
-            </AnimatePresence>
+      {/* ── Mobile View: Native Horizontal Scroll with Snap ── */}
+      <div className="md:hidden w-full overflow-x-auto scroll-smooth snap-x snap-mandatory flex gap-4 px-6 pb-6 no-scrollbar select-none">
+        {testimonials.map((t) => (
+          <div key={t.id} className="snap-center shrink-0">
+            <TestimonialCard testimonial={t} />
           </div>
-
-          {/* Navigation Controls */}
-          <div className="flex items-center gap-6 mt-6">
-            <button
-              onClick={prevMobile}
-              className="w-10 h-10 rounded-full border border-slate-200 bg-white flex items-center justify-center text-slate-600 hover:bg-slate-50 active:bg-slate-100 transition-colors shadow-2xs cursor-pointer"
-              aria-label="Reseña anterior"
-            >
-              <ChevronLeft className="w-5 h-5" />
-            </button>
-            <span className="text-xs font-semibold text-slate-500 min-w-[40px] text-center">
-              {mobileIdx + 1} / {testimonials.length}
-            </span>
-            <button
-              onClick={nextMobile}
-              className="w-10 h-10 rounded-full border border-slate-200 bg-white flex items-center justify-center text-slate-600 hover:bg-slate-50 active:bg-slate-100 transition-colors shadow-2xs cursor-pointer"
-              aria-label="Siguiente reseña"
-            >
-              <ChevronRight className="w-5 h-5" />
-            </button>
-          </div>
-        </div>
+        ))}
       </div>
     </section>
   );
