@@ -893,11 +893,11 @@ export function PlanDetail({ planId }: { planId?: string } = {}) {
 
             <Separator className="my-5" />
 
-            {/* Puntos destacados */}
+            {/* Actividades incluidas */}
             <div>
               <h2 className="text-xl md:text-2xl font-bold text-foreground mb-3.5 flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-foreground" />
-                Puntos destacados
+                Actividades incluidas
               </h2>
               <ExpandableSection itemCount={plan.highlights.length} maxHeight={210}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -916,7 +916,7 @@ export function PlanDetail({ planId }: { planId?: string } = {}) {
               </ExpandableSection>
             </div>
 
-            {(plan.schedule || plan.meeting) && (
+            {!plan.fixedDeparture && (plan.schedule || plan.meeting) && (
               <>
                 <Separator className="my-5" />
                 {/* Schedule & Meeting */}
