@@ -473,6 +473,7 @@ export function PlanDetail({ planId }: { planId?: string } = {}) {
   );
 
   const [shareOpen, setShareOpen] = useState(false);
+  const [mobileDateExpanded, setMobileDateExpanded] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(() => {
     if (searchDate) {
       // Adding a time component avoids timezone offset parsing issues
@@ -718,27 +719,12 @@ export function PlanDetail({ planId }: { planId?: string } = {}) {
               </Button>
             </div>
           </div>
-
-          {isBookingGallery ? (
-            <div className="flex flex-col lg:flex-row gap-6 items-stretch">
-              <div className="flex-1 min-w-0">
-                <PropertyGallery
-                  images={plan.images}
-                  title={plan.name}
-                  variant="booking"
-                  className="mb-0" />
-              </div>
-              <div className="hidden lg:block">
-                <CotizadorCard {...cotizadorProps} />
-              </div>
-            </div>
-          ) : (
-            <PropertyGallery
-              images={plan.images}
-              title={plan.name}
-              variant="default"
-              className="mb-0" />
-          )}
+          
+          <PropertyGallery
+            images={plan.images}
+            title={plan.name}
+            variant={isBookingGallery ? "booking" : "default"}
+            className="mb-0" />
         </div>
 
         {/* Main Content + Sticky Price Card */}
@@ -858,19 +844,18 @@ export function PlanDetail({ planId }: { planId?: string } = {}) {
               <h2 className="text-2xl md:text-[28px] font-bold tracking-tight text-foreground mb-4">
                 {isBookingStyle ? "General" : "Acerca de este plan"}
               </h2>
-              <ExpandableSection>
-                <p className="text-foreground leading-relaxed text-base font-normal">
-                  {plan.fullDescription}
-                </p>
-              </ExpandableSection>
+              <p className="text-muted-foreground text-sm sm:text-base leading-relaxed whitespace-pre-line">
+                {plan.fullDescription}
+              </p>
             </div>
 
             <Separator className="my-5" />
 
-            {/* Qué incluye */}
+            {/* Incluye / No Incluye */}
             <div id="incluye" className="scroll-mt-24">
-              <h2 className="text-xl md:text-2xl font-bold text-foreground mb-3.5">
-                {isBookingStyle ? "Incluye" : "Qué incluye"}
+              <h2 className="text-xl md:text-2xl font-bold text-foreground mb-3.5 flex items-center gap-2">
+                <Check className="w-4 h-4 text-emerald-600" />
+                Qué incluye este plan
               </h2>
               <ExpandableSection itemCount={plan.includes.length} maxHeight={210}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -878,7 +863,26 @@ export function PlanDetail({ planId }: { planId?: string } = {}) {
                     const text = (item as any).text || item;
                     return (
                       <div key={i} className="flex items-start gap-2 py-1">
-                        <Check className="w-3.5 h-3.5 text-muted-foreground shrink-0 mt-0.5" />
+                        <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                        <span className="text-sm text-foreground">{text}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </ExpandableSection>
+
+              <div className="my-4" />
+              <h3 className="text-sm font-semibold text-muted-foreground mb-2 flex items-center gap-1.5">
+                <X className="w-3.5 h-3.5 text-muted-foreground" />
+                No incluye
+              </h3>
+              <ExpandableSection itemCount={plan.excludes.length} maxHeight={160}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {plan.excludes.map((item, i) => {
+                    const text = (item as any).text || item;
+                    return (
+                      <div key={i} className="flex items-start gap-2 py-1">
+                        <X className="w-3.5 h-3.5 text-muted-foreground shrink-0 mt-0.5" />
                         <span className="text-sm text-muted-foreground">{text}</span>
                       </div>
                     );
@@ -887,82 +891,56 @@ export function PlanDetail({ planId }: { planId?: string } = {}) {
               </ExpandableSection>
             </div>
 
-            {!isBookingStyle && (
+            <Separator className="my-5" />
+
+            {/* Puntos destacados */}
+            <div>
+              <h2 className="text-xl md:text-2xl font-bold text-foreground mb-3.5 flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-foreground" />
+                Puntos destacados
+              </h2>
+              <ExpandableSection itemCount={plan.highlights.length} maxHeight={210}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {plan.highlights.map((item, i) => {
+                    const text = (item as any).text || item;
+                    return (
+                      <div key={i} className="flex items-start gap-2 py-1">
+                        <Sparkles className="w-3.5 h-3.5 text-foreground shrink-0 mt-0.5" />
+                        <span className="text-sm text-foreground font-medium">
+                          {text}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </ExpandableSection>
+            </div>
+
+            {(plan.schedule || plan.meeting) && (
               <>
                 <Separator className="my-5" />
-
-                {/* Qué no incluye */}
+                {/* Schedule & Meeting */}
                 <div>
                   <h2 className="text-xl md:text-2xl font-bold text-foreground mb-3.5">
-                    Qué no incluye
+                    Horario y punto de encuentro
                   </h2>
-                  <ExpandableSection itemCount={plan.excludes.length} maxHeight={210}>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                      {plan.excludes.map((item, i) => {
-                        const text = (item as any).text || item;
-                        return (
-                          <div key={i} className="flex items-start gap-2 py-1">
-                            <X className="w-3.5 h-3.5 text-muted-foreground shrink-0 mt-0.5" />
-                            <span className="text-sm text-muted-foreground">{text}</span>
-                          </div>
-                        );
-                      })}
+                  <ExpandableSection itemCount={2}>
+                    <div className="space-y-3">
+                      {plan.schedule && (
+                        <InfoItem
+                          icon={Calendar}
+                          label="Horario"
+                          value={plan.schedule} />
+                      )}
+                      {plan.meeting && (
+                        <InfoItem
+                          icon={Navigation}
+                          label="Punto de encuentro"
+                          value={plan.meeting} />
+                      )}
                     </div>
                   </ExpandableSection>
                 </div>
-
-                <Separator className="my-5" />
-
-                {/* Puntos destacados */}
-                <div>
-                  <h2 className="text-xl md:text-2xl font-bold text-foreground mb-3.5 flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-foreground" />
-                    Puntos destacados
-                  </h2>
-                  <ExpandableSection itemCount={plan.highlights.length} maxHeight={210}>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                      {plan.highlights.map((item, i) => {
-                        const text = (item as any).text || item;
-                        return (
-                          <div key={i} className="flex items-start gap-2 py-1">
-                            <Sparkles className="w-3.5 h-3.5 text-foreground shrink-0 mt-0.5" />
-                            <span className="text-sm text-foreground font-medium">
-                              {text}
-                            </span>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </ExpandableSection>
-                </div>
-
-                {(plan.schedule || plan.meeting) && (
-                  <>
-                    <Separator className="my-5" />
-                    {/* Schedule & Meeting */}
-                    <div>
-                      <h2 className="text-xl md:text-2xl font-bold text-foreground mb-3.5">
-                        Horario y punto de encuentro
-                      </h2>
-                      <ExpandableSection itemCount={2}>
-                        <div className="space-y-3">
-                          {plan.schedule && (
-                            <InfoItem
-                              icon={Calendar}
-                              label="Horario"
-                              value={plan.schedule} />
-                          )}
-                          {plan.meeting && (
-                            <InfoItem
-                              icon={Navigation}
-                              label="Punto de encuentro"
-                              value={plan.meeting} />
-                          )}
-                        </div>
-                      </ExpandableSection>
-                    </div>
-                  </>
-                )}
               </>
             )}
 
@@ -1020,7 +998,7 @@ export function PlanDetail({ planId }: { planId?: string } = {}) {
             )}
           </div>
 
-          {/* Right Sticky Reservation Flow (Desktop Only) */}
+          {/* Right Sticky Reservation Flow (Desktop Only - SINGLE instance) */}
           <aside className="hidden lg:block w-full lg:w-[380px] shrink-0">
             <div className="lg:sticky lg:top-24">
               <CotizadorCard {...cotizadorProps} />
@@ -1072,22 +1050,39 @@ export function PlanDetail({ planId }: { planId?: string } = {}) {
 
             <Separator />
 
-            {/* Fecha Selector (Rich Departure Options) */}
+            {/* Fecha Selector (Collapsible for Mobile Space Saving) */}
             <div className="space-y-1.5">
               <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Fecha de viaje</label>
               {plan.fixedDeparture ? (
-                <div className="rounded-xl border border-border/80 bg-white p-1 max-h-[260px] overflow-y-auto">
-                  <DepartureDateOptions
-                    hasDepartureDates={hasDepartureDates}
-                    upcomingDepartures={upcomingDepartures}
-                    selectedDate={selectedDate}
-                    onSelectDate={(d) => setSelectedDate(d)}
-                    onConsultWhatsApp={() => {
-                      setSummaryModalOpen(false);
-                      handleWhatsAppRedirect();
-                    }}
-                  />
-                </div>
+                selectedDeparture && !mobileDateExpanded ? (
+                  <button
+                    type="button"
+                    onClick={() => setMobileDateExpanded(true)}
+                    className="w-full rounded-xl border border-ocean/40 p-3 flex items-center justify-between text-xs font-bold text-foreground bg-ocean/5 hover:bg-ocean/10 transition-all cursor-pointer"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <Calendar className="w-4 h-4 text-ocean shrink-0" />
+                      <span>{formatDepartureFull(selectedDeparture.start, selectedDeparture.end)}</span>
+                    </div>
+                    <span className="text-[11px] text-ocean font-semibold underline">Cambiar</span>
+                  </button>
+                ) : (
+                  <div className="rounded-xl border border-border/80 bg-white p-1 max-h-[260px] overflow-y-auto">
+                    <DepartureDateOptions
+                      hasDepartureDates={hasDepartureDates}
+                      upcomingDepartures={upcomingDepartures}
+                      selectedDate={selectedDate}
+                      onSelectDate={(d) => {
+                        setSelectedDate(d);
+                        setMobileDateExpanded(false); // Collapses list into 1-line card!
+                      }}
+                      onConsultWhatsApp={() => {
+                        setSummaryModalOpen(false);
+                        handleWhatsAppRedirect();
+                      }}
+                    />
+                  </div>
+                )
               ) : (
                 <button
                   type="button"
