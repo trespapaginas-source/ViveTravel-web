@@ -55,17 +55,17 @@ export function sortCabins<T extends { pricePerNight: number; reviewCount: numbe
   }
 }
 
-/** Grid CSS classes based on view mode */
+/** Grid CSS classes based on view mode (Always 1 col on mobile) */
 export function getGridCols(viewMode: string): string {
   switch (viewMode) {
     case "1":
       return "grid-cols-1";
     case "2":
-      return "grid-cols-2";
+      return "grid-cols-1 sm:grid-cols-2";
     case "3":
-      return "grid-cols-2 lg:grid-cols-3";
+      return "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3";
     default:
-      return "grid-cols-2 lg:grid-cols-3";
+      return "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3";
   }
 }
 
