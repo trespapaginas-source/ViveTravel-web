@@ -13,6 +13,10 @@ interface ProvidersProps {
   initialTripImages?: any[];
 }
 
+import cabinsData from "@/data/static/cabins.json";
+import plansData from "@/data/static/plans.json";
+import transportsData from "@/data/static/transports.json";
+
 export function Providers({
   children,
   initialSiteContent,
@@ -25,8 +29,9 @@ export function Providers({
     const qc = new QueryClient({
       defaultOptions: {
         queries: {
-          staleTime: 60 * 1000,
+          staleTime: 10 * 60 * 1000,
           refetchOnWindowFocus: false,
+          refetchOnMount: false,
         },
       },
     });
@@ -37,9 +42,10 @@ export function Providers({
     if (initialHeroImages) {
       qc.setQueryData(["hero-images"], initialHeroImages);
     }
-    if (initialPlans) {
-      qc.setQueryData(["plans"], initialPlans);
-    }
+    qc.setQueryData(["plans"], initialPlans || plansData);
+    qc.setQueryData(["cabins"], cabinsData);
+    qc.setQueryData(["transports"], transportsData);
+
     if (initialTestimonials) {
       qc.setQueryData(["testimonials"], initialTestimonials);
     }

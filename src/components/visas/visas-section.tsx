@@ -88,7 +88,7 @@ export function VisasSection() {
   return (
     <div className="bg-slate-50/70 min-h-screen text-slate-800">
       {/* Hero Header */}
-      <section className="bg-[#002B49] text-white border-b border-slate-800">
+      <section className="bg-[#002B49] text-white border-b border-slate-800 pt-16 sm:pt-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             {/* Left: Passport Graphic */}

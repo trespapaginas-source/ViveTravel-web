@@ -129,7 +129,7 @@ export function ContactSection() {
   }
 
   return (
-    <div className="bg-slate-50/70 min-h-screen py-10 sm:py-14 text-slate-800">
+    <div className="bg-slate-50/70 min-h-screen pt-24 sm:pt-28 pb-10 sm:pb-14 text-slate-800">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
         {/* Header */}
         <div className="text-center space-y-2 max-w-2xl mx-auto">

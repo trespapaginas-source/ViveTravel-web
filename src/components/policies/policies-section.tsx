@@ -38,7 +38,7 @@ export function PoliciesSection() {
   const groups = getLegalDocsByCategory();
 
   return (
-    <div className="bg-slate-50/70 min-h-screen py-8 sm:py-12 text-slate-800">
+    <div className="bg-slate-50/70 min-h-screen pt-24 sm:pt-28 pb-8 sm:pb-12 text-slate-800">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
         {/* Navigation Breadcrumb */}
         <div>

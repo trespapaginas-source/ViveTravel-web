@@ -22,6 +22,7 @@ function isItemActive(key: string, currentView: ViewType): boolean {
   if (key === "plans") return currentView === "plans" || currentView === "plan-detail";
   if (key === "cabins") return currentView === "cabins" || currentView === "cabin-detail";
   if (key === "transports") return currentView === "transports";
+  if (key === "visas") return currentView === "visas";
   if (key === "team") return currentView === "team";
   if (key === "contact") return currentView === "contact";
   if (key === "policies") return currentView === "policies";

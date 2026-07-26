@@ -34,7 +34,7 @@ export function PageBanner({
   return (
     <section
       className={cn(
-        "relative w-full h-[160px] sm:h-[300px] lg:h-[340px] overflow-hidden",
+        "relative w-full h-[220px] sm:h-[360px] lg:h-[400px] pt-16 sm:pt-20 overflow-hidden",
         "flex items-end",
         className
       )}
