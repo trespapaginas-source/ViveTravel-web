@@ -119,28 +119,52 @@ export function ScheduledDepartures() {
 
   if (departures.length === 0) return null;
 
+  const firstRow = departures.slice(0, 4);
+  const secondRow = departures.slice(4);
+
   return (
     <section id="salidas-programadas" className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 bg-zinc-50/60 border-y border-zinc-100 content-visibility-auto contain-intrinsic-size-auto">
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8">
         <SectionHeader
           title="Salidas Programadas"
           subtitle="Destinos nacionales con calendario de salidas definido. Elige tu fecha y viaja acompañado desde cualquier lugar de Colombia."
         />
 
-        <div className="mt-8 flex flex-wrap justify-center gap-5 sm:gap-6">
-          {departures.map((plan, index) => (
-            <motion.div
-              key={plan.id}
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.5, ease: "easeOut", delay: index * 0.08 }}
-              className="w-full sm:w-[340px] flex"
-            >
-              <DepartureCard plan={plan} onNavigate={handleNavigate} />
-            </motion.div>
-          ))}
-        </div>
+        {/* First Row: 4 Columns on Desktop */}
+        {firstRow.length > 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6 justify-center">
+            {firstRow.map((plan, index) => (
+              <motion.div
+                key={plan.id}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ duration: 0.5, ease: "easeOut", delay: index * 0.08 }}
+                className="w-full flex"
+              >
+                <DepartureCard plan={plan} onNavigate={handleNavigate} />
+              </motion.div>
+            ))}
+          </div>
+        )}
+
+        {/* Second Row: 3 Columns on Desktop (Centered under Row 1) */}
+        {secondRow.length > 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 max-w-5xl mx-auto justify-center">
+            {secondRow.map((plan, index) => (
+              <motion.div
+                key={plan.id}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ duration: 0.5, ease: "easeOut", delay: (firstRow.length + index) * 0.08 }}
+                className="w-full flex"
+              >
+                <DepartureCard plan={plan} onNavigate={handleNavigate} />
+              </motion.div>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
