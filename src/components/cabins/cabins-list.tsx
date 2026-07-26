@@ -196,21 +196,13 @@ const CabinCardHorizontal = memo(function CabinCardHorizontal({
           <div className="flex items-center gap-2 w-full sm:w-auto">
             <Button
               size="sm"
-              className="rounded-xl text-xs font-semibold flex-1 sm:flex-initial h-9 bg-zinc-900 hover:bg-black text-white border-none shadow-xs"
+              className="rounded-xl text-xs font-semibold px-5 h-9 bg-zinc-900 hover:bg-black text-white border-none shadow-xs cursor-pointer"
               onClick={(e) => {
                 e.stopPropagation();
                 onSelect();
               }}
             >
               Ver disponibilidad
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              className="rounded-xl text-xs font-bold flex-1 sm:flex-initial h-9 border-zinc-200 hover:bg-zinc-50"
-              onClick={handleWhatsAppClick}
-            >
-              Cotizar
             </Button>
           </div>
         </div>
@@ -334,24 +326,16 @@ const CabinCardVertical = memo(function CabinCardVertical({
             </p>
           </div>
           
-          <div className="grid grid-cols-2 gap-2">
+          <div>
             <Button
               size="sm"
-              className="rounded-xl text-[11px] font-semibold h-8.5 bg-zinc-900 hover:bg-black text-white border-none shadow-xs py-1"
+              className="w-full rounded-xl text-xs font-semibold h-9 bg-zinc-900 hover:bg-black text-white border-none shadow-xs cursor-pointer"
               onClick={(e) => {
                 e.stopPropagation();
                 onSelect();
               }}
             >
               Ver disponibilidad
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              className="rounded-xl text-[11px] font-bold h-8.5 border-zinc-200 hover:bg-zinc-50 py-1"
-              onClick={handleWhatsAppClick}
-            >
-              Cotizar
             </Button>
           </div>
         </div>
