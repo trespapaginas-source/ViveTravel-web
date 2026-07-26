@@ -1,6 +1,7 @@
 "use client";
 
 import { Star } from "lucide-react";
+import { useRef, useEffect, useState } from "react";
 import { SectionHeader } from "@/components/shared/section-header";
 import { testimonials as fallbackTestimonials } from "@/lib/data";
 import { useSiteContent } from "@/lib/use-site-content";
@@ -86,6 +87,34 @@ export function Testimonials() {
     queryFn: fetchTestimonials,
   });
 
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [userInteracted, setUserInteracted] = useState(false);
+
+  useEffect(() => {
+    if (userInteracted || !scrollRef.current) return;
+    const el = scrollRef.current;
+    const step = 306; // Card width (290px) + gap (16px)
+
+    const t1 = setTimeout(() => {
+      if (userInteracted) return;
+      el.scrollTo({ left: step, behavior: "smooth" });
+    }, 3000);
+
+    const t2 = setTimeout(() => {
+      if (userInteracted) return;
+      el.scrollTo({ left: step * 2, behavior: "smooth" });
+    }, 6500);
+
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
+  }, [userInteracted]);
+
+  const handleInteraction = () => {
+    setUserInteracted(true);
+  };
+
   // Handle marquee items duplication for seamless infinite looping
   const marqueeItems = [...testimonials, ...testimonials];
 
@@ -98,7 +127,7 @@ export function Testimonials() {
         />
       </div>
 
-      {/* ── Desktop & Tablet View: Infinite Marquee (Slower animation: 55s) ── */}
+      {/* ── Desktop & Tablet View: Infinite Marquee (Slower animation: 60s) ── */}
       <div className="hidden md:block relative w-full overflow-hidden py-4 select-none">
         {/* Left fade gradient overlay */}
         <div className="absolute top-0 left-0 bottom-0 w-32 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
@@ -115,8 +144,13 @@ export function Testimonials() {
         </div>
       </div>
 
-      {/* ── Mobile View: Native Horizontal Scroll with Snap ── */}
-      <div className="md:hidden w-full overflow-x-auto scroll-smooth snap-x snap-mandatory flex gap-4 px-6 pb-6 no-scrollbar select-none">
+      {/* ── Mobile View: Native Horizontal Scroll with Snap & Auto-Hint ── */}
+      <div 
+        ref={scrollRef}
+        onScroll={handleInteraction}
+        onTouchStart={handleInteraction}
+        className="md:hidden w-full overflow-x-auto scroll-smooth snap-x snap-mandatory flex gap-4 px-6 pb-6 no-scrollbar select-none"
+      >
         {testimonials.map((t) => (
           <div key={t.id} className="snap-center shrink-0">
             <TestimonialCard testimonial={t} />

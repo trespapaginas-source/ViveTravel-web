@@ -19,7 +19,7 @@ export function GroupTrips() {
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
           {/* Left: Content */}
-          <div>
+          <div className="text-center lg:text-left flex flex-col items-center lg:items-start">
             <div className="mb-4">
               <span className="inline-flex items-center gap-1.5 text-muted-foreground text-xs font-medium tracking-wider uppercase">
                 <Users className="w-3.5 h-3.5" />
@@ -36,11 +36,11 @@ export function GroupTrips() {
               {groupTrips.description}
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-center sm:items-stretch">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-center sm:items-stretch w-full sm:w-auto">
               <Button
                 size="lg"
                 onClick={() => navigate("contact")}
-                className="w-full max-w-[260px] sm:w-auto bg-zinc-900 text-white hover:bg-black px-6 sm:px-8 py-5 sm:py-6 text-base font-semibold rounded-xl shadow-xs transition-all duration-200"
+                className="w-full sm:w-auto bg-zinc-900 text-white hover:bg-black px-6 sm:px-8 py-5 sm:py-6 text-base font-semibold rounded-xl shadow-xs transition-all duration-200 cursor-pointer"
               >
                 {groupTrips.ctaQuote}
                 <ArrowRight className="w-5 h-5 ml-2" />
@@ -49,17 +49,16 @@ export function GroupTrips() {
                 size="lg"
                 variant="outline"
                 onClick={() => navigate("plans", "grupales", { viewMode: "1" })}
-                className="w-full max-w-[260px] sm:w-auto border-gray-200 text-foreground hover:bg-gray-100 backdrop-blur-sm px-6 py-5 sm:py-6 text-base rounded-xl transition-colors duration-200 bg-transparent"
+                className="w-full sm:w-auto border-gray-200 text-foreground hover:bg-gray-100 backdrop-blur-sm px-6 py-5 sm:py-6 text-base rounded-xl transition-colors duration-200 bg-transparent cursor-pointer"
               >
                 {groupTrips.ctaPlans}
               </Button>
             </div>
 
-
             {/* Quick stats */}
-            <div className="mt-8 flex flex-wrap gap-4 sm:gap-8">
+            <div className="mt-8 flex flex-wrap justify-center lg:justify-start gap-4 sm:gap-8 text-center lg:text-left w-full">
               {groupTrips.stats.map((stat) => (
-                <div key={stat.label} className="min-w-[80px]">
+                <div key={stat.label} className="min-w-[80px] flex-1 sm:flex-initial">
                   <p className="text-2xl sm:text-3xl font-bold text-foreground">
                     {stat.value}
                   </p>
@@ -69,8 +68,8 @@ export function GroupTrips() {
             </div>
           </div>
 
-          {/* Right: Benefit cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* Right: Benefit cards (Hidden on mobile) */}
+          <div className="hidden sm:grid grid-cols-2 gap-4">
             {groupTrips.benefits.map((benefit, index) => {
               const Icon = iconsMap[index] || Users;
               return (
