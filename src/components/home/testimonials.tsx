@@ -1,11 +1,13 @@
 "use client";
 
-import { Star } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { Star, ChevronLeft, ChevronRight } from "lucide-react";
 import { SectionHeader } from "@/components/shared/section-header";
 import { testimonials as fallbackTestimonials } from "@/lib/data";
 import { useSiteContent } from "@/lib/use-site-content";
 import { useQuery } from "@tanstack/react-query";
 import { fetchTestimonials } from "@/lib/api";
+import { motion, AnimatePresence } from "framer-motion";
 
 function GoogleIcon() {
   return (
@@ -18,6 +20,65 @@ function GoogleIcon() {
   );
 }
 
+interface TestimonialCardProps {
+  testimonial: typeof fallbackTestimonials[0];
+}
+
+function TestimonialCard({ testimonial: t }: TestimonialCardProps) {
+  return (
+    <div className="bg-white rounded-2xl border border-slate-100 p-5 sm:p-6 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:border-slate-200 transition-all duration-300 flex flex-col justify-between h-[210px] w-[290px] sm:w-[320px] shrink-0 select-none">
+      <div>
+        {/* Header */}
+        <div className="flex items-start justify-between gap-3 mb-3.5">
+          <div className="flex items-center gap-3">
+            {t.avatarUrl ? (
+              <img
+                src={t.avatarUrl}
+                alt={`Foto de ${t.name}`}
+                className="w-9 h-9 rounded-full object-cover flex-shrink-0 shadow-xs border border-slate-100"
+                referrerPolicy="no-referrer"
+              />
+            ) : (
+              <div
+                className="w-9 h-9 rounded-full flex items-center justify-center text-white font-semibold text-xs flex-shrink-0 shadow-xs"
+                style={{ backgroundColor: t.avatarBg || "#1a73e8" }}
+              >
+                {t.avatar}
+              </div>
+            )}
+
+            <div>
+              <h4 className="font-semibold text-slate-800 text-[13px] sm:text-[14px] leading-tight line-clamp-1">
+                {t.name}
+              </h4>
+              <span className="text-[11px] text-slate-400 block mt-0.5">
+                {t.location}
+              </span>
+            </div>
+          </div>
+
+          <GoogleIcon />
+        </div>
+
+        {/* Stars */}
+        <div className="flex items-center gap-0.5 mb-2.5">
+          {Array.from({ length: t.rating || 5 }).map((_, i) => (
+            <Star
+              key={i}
+              className="w-3.5 h-3.5 text-amber-400 fill-amber-400 flex-shrink-0"
+            />
+          ))}
+        </div>
+
+        {/* Review Text */}
+        <blockquote className="text-slate-600 text-[12.5px] sm:text-[13px] leading-relaxed line-clamp-4">
+          &ldquo;{t.text}&rdquo;
+        </blockquote>
+      </div>
+    </div>
+  );
+}
+
 export function Testimonials() {
   const { content } = useSiteContent();
   const testConfig = content.testimonials;
@@ -27,75 +88,90 @@ export function Testimonials() {
     queryFn: fetchTestimonials,
   });
 
+  // Mobile index state
+  const [mobileIdx, setMobileIdx] = useState(0);
+
+  const nextMobile = useCallback(() => {
+    setMobileIdx((i) => (i + 1) % testimonials.length);
+  }, [testimonials.length]);
+
+  const prevMobile = useCallback(() => {
+    setMobileIdx((i) => (i - 1 + testimonials.length) % testimonials.length);
+  }, [testimonials.length]);
+
+  // Auto-slide on mobile
+  useEffect(() => {
+    const timer = setInterval(() => {
+      nextMobile();
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [nextMobile]);
+
+  // Handle marquee items duplication for seamless infinite looping
+  const marqueeItems = [...testimonials, ...testimonials];
+
   return (
-    <section className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 content-visibility-auto contain-intrinsic-size-auto">
-      <div className="max-w-6xl mx-auto">
+    <section className="py-16 sm:py-20 lg:py-24 bg-white overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-10 text-center">
         <SectionHeader
           title={testConfig.title}
           subtitle={testConfig.subtitle}
         />
+      </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">
-          {testimonials.map((t) => (
-            <div
-              key={t.id}
-              className="bg-white rounded-2xl border border-slate-100 p-6 shadow-[0_2px_12px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_20px_rgba(0,0,0,0.08)] transition-all duration-300 flex flex-col justify-between"
-            >
-              <div>
-                {/* Header */}
-                <div className="flex items-start justify-between gap-3 mb-4">
-                  <div className="flex items-center gap-3">
-                    {/* Avatar image or dynamic background fallback */}
-                    {t.avatarUrl ? (
-                      <img
-                        src={t.avatarUrl}
-                        alt={`Foto de ${t.name}`}
-                        className="w-10 h-10 rounded-full object-cover flex-shrink-0 shadow-sm border border-slate-100"
-                        referrerPolicy="no-referrer"
-                      />
-                    ) : (
-                      <div
-                        className="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold text-sm flex-shrink-0 shadow-sm"
-                        style={{ backgroundColor: t.avatarBg || "#1a73e8" }}
-                      >
-                        {t.avatar}
-                      </div>
-                    )}
+      {/* ── Desktop & Tablet View: Infinite Marquee ── */}
+      <div className="hidden md:block relative w-full overflow-hidden py-4 select-none">
+        {/* Left fade gradient overlay */}
+        <div className="absolute top-0 left-0 bottom-0 w-32 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
+        {/* Right fade gradient overlay */}
+        <div className="absolute top-0 right-0 bottom-0 w-32 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
 
-                    {/* Name & Date */}
-                    <div>
-                      <h4 className="font-semibold text-slate-800 text-[14px] leading-tight line-clamp-1 hover:underline cursor-pointer animate-none">
-                        {t.name}
-                      </h4>
-                      <span className="text-[12px] text-slate-400 block mt-0.5">
-                        {t.location}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Google Icon */}
-                  <GoogleIcon />
-                </div>
-
-                {/* Stars */}
-                <div className="flex items-center gap-0.5 mb-3">
-                  {Array.from({ length: t.rating || 5 }).map((_, i) => (
-                    <Star
-                      key={i}
-                      className="w-4 h-4 text-amber-400 fill-amber-400 flex-shrink-0"
-                    />
-                  ))}
-                </div>
-
-                {/* Review Text */}
-                <blockquote className="text-slate-600 text-[13.5px] leading-relaxed whitespace-pre-line">
-                  &ldquo;{t.text}&rdquo;
-                </blockquote>
-              </div>
-
-
-            </div>
+        <div className="flex w-max animate-marquee hover:[animation-play-state:paused] gap-5 px-4">
+          {marqueeItems.map((t, idx) => (
+            <TestimonialCard key={`${t.id}-marquee-${idx}`} testimonial={t} />
           ))}
+        </div>
+      </div>
+
+      {/* ── Mobile View: 1-Card Looping Carousel Slider ── */}
+      <div className="md:hidden px-4 select-none">
+        <div className="max-w-md mx-auto flex flex-col items-center">
+          {/* Card Slider wrapper */}
+          <div className="relative w-full h-[210px] overflow-hidden flex justify-center items-center">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={mobileIdx}
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -50 }}
+                transition={{ duration: 0.35, ease: "easeInOut" }}
+                className="absolute"
+              >
+                <TestimonialCard testimonial={testimonials[mobileIdx]} />
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+          {/* Navigation Controls */}
+          <div className="flex items-center gap-6 mt-6">
+            <button
+              onClick={prevMobile}
+              className="w-10 h-10 rounded-full border border-slate-200 bg-white flex items-center justify-center text-slate-600 hover:bg-slate-50 active:bg-slate-100 transition-colors shadow-2xs cursor-pointer"
+              aria-label="Reseña anterior"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+            <span className="text-xs font-semibold text-slate-500 min-w-[40px] text-center">
+              {mobileIdx + 1} / {testimonials.length}
+            </span>
+            <button
+              onClick={nextMobile}
+              className="w-10 h-10 rounded-full border border-slate-200 bg-white flex items-center justify-center text-slate-600 hover:bg-slate-50 active:bg-slate-100 transition-colors shadow-2xs cursor-pointer"
+              aria-label="Siguiente reseña"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
+          </div>
         </div>
       </div>
     </section>
