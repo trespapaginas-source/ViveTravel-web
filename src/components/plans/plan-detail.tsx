@@ -1050,35 +1050,25 @@ export function PlanDetail({ planId }: { planId?: string } = {}) {
 
       {/* Mobile Sticky CTA Bar */}
       <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-border/50 px-5 py-3 safe-area-bottom">
-          <div className="flex items-center justify-between gap-3">
-            <div onClick={() => !isGrupal && setSummaryModalOpen(true)} className={!isGrupal ? "cursor-pointer" : ""}>
-              <p className="text-lg font-bold text-foreground underline decoration-foreground/30 underline-offset-4 mb-0.5">
-                {formatPrice(totalPlanPrice)}
-              </p>
-              <p className="text-[13px] text-muted-foreground underline decoration-muted-foreground/30 underline-offset-4">
-                 {isGrupal ? "Viaje grupal" : (selectedDate ? format(selectedDate, "d MMM", { locale: es }) : "")} · {guests} pax
-              </p>
-            </div>
-            {isGrupal ? (
-              <Button
-                size="sm"
-                className="bg-white border border-[#1DA851]/30 hover:bg-gray-50 text-[#1DA851] rounded-lg h-11 px-6 text-sm font-bold shadow-sm flex items-center gap-1.5"
-                onClick={handleWhatsAppRedirect}
-              >
-                <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
-                WhatsApp
-              </Button>
-            ) : (
-              <Button
-                size="sm"
-                className="bg-ocean hover:bg-ocean-dark text-white rounded-lg h-11 px-8 text-base font-semibold"
-                onClick={() => setSummaryModalOpen(true)}
-              >
-                Reservar
-              </Button>
-            )}
+        <div className="flex items-center justify-between gap-3">
+          <div onClick={() => setSummaryModalOpen(true)} className="cursor-pointer">
+            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Desde</span>
+            <p className="text-lg font-bold text-foreground leading-none">
+              {formatPrice(totalPlanPrice)}
+            </p>
+            <p className="text-[11px] text-muted-foreground mt-0.5">
+              {plan.fixedDeparture ? "Salida programada" : (selectedDate ? format(selectedDate, "d MMM", { locale: es }) : "Fecha a elegir")} · {guests} pax
+            </p>
           </div>
+          <Button
+            size="sm"
+            className="bg-[#1DA851] hover:bg-[#199346] text-white rounded-xl h-11 px-6 text-sm font-bold shadow-sm flex items-center gap-1.5 cursor-pointer"
+            onClick={() => setSummaryModalOpen(true)}
+          >
+            Elegir fecha
+          </Button>
         </div>
+      </div>
 
       {/* Share Dialog */}
       <ShareDialog
@@ -1087,69 +1077,136 @@ export function PlanDetail({ planId }: { planId?: string } = {}) {
         title={plan.name}
         text={`Mira este plan: ${plan.name} en ${plan.location}`} />
 
-      {/* Summary Modal (Desktop & Mobile) */}
+      {/* Options & Booking Summary Modal (Mobile & Desktop) */}
       <Dialog open={summaryModalOpen} onOpenChange={(open) => { setSummaryModalOpen(open); if(!open) setShowWhatsApp(false); }}>
         <DialogContent className="w-full max-w-full sm:max-w-md h-auto p-0 gap-0 flex flex-col bg-background z-[100] bottom-0 sm:top-[50%] sm:bottom-auto sm:-translate-y-[50%] top-auto translate-y-0 border-t sm:border border-border/50 rounded-t-2xl sm:rounded-2xl lg:rounded-2xl data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:slide-out-to-bottom-full sm:data-[state=closed]:slide-out-to-top-0 data-[state=open]:slide-in-from-bottom-full sm:data-[state=open]:slide-in-from-top-[48%]">
           <DialogHeader className="px-5 py-4 border-b border-border/50 bg-background/95 backdrop-blur-sm z-10 text-left flex flex-row items-center justify-between rounded-t-2xl">
-            <DialogTitle className="text-xl font-bold">Resumen de tu plan</DialogTitle>
+            <DialogTitle className="text-lg font-bold">Configura tu reserva</DialogTitle>
           </DialogHeader>
-          <div className="p-6 space-y-6 flex-1 bg-background pb-10 sm:pb-6 rounded-b-2xl">
-             
-             <div>
-               <h3 className="font-bold text-lg text-foreground">{plan.name}</h3>
-               <p className="text-sm text-muted-foreground mt-1">{plan.location}</p>
-             </div>
+          <div className="p-5 sm:p-6 space-y-5 flex-1 bg-background pb-8 sm:pb-6 rounded-b-2xl">
+            <div>
+              <h3 className="font-bold text-base text-foreground leading-snug">{plan.name}</h3>
+              <p className="text-xs text-muted-foreground mt-0.5">{plan.location}</p>
+            </div>
 
-             <Separator />
+            <Separator />
 
-             <div className="flex justify-between items-center">
-               <div>
-                 <h4 className="font-semibold text-foreground text-sm">Fecha</h4>
-                 <p className="text-sm text-muted-foreground">
-                   {plan.fixedDeparture
-                     ? selectedDeparture
-                       ? formatDepartureFull(selectedDeparture.start, selectedDeparture.end)
-                       : "Elige una fecha disponible"
-                     : selectedDate
-                     ? format(selectedDate, "EEEE, d 'de' MMMM", { locale: es })
-                     : "Selecciona una fecha"}
-                 </p>
-               </div>
-               <div className="flex gap-2">
-                 <Button variant="secondary" size="sm" className="hidden lg:flex rounded-full px-4 h-8 bg-muted text-foreground" onClick={() => {
-                   setSummaryModalOpen(false);
-                 }}>Cambiar</Button>
-                 <Button variant="secondary" size="sm" className="lg:hidden rounded-full px-4 h-8 bg-muted text-foreground" onClick={() => {
-                   setSummaryModalOpen(false);
-                   setTimeout(() => setMobileCalendarOpen(true), 150);
-                 }}>Cambiar</Button>
-               </div>
-             </div>
+            {/* Fecha Selector */}
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Fecha de viaje</label>
+              {plan.fixedDeparture ? (
+                hasDepartureDates ? (
+                  <select
+                    value={selectedDeparture ? `${selectedDeparture.start}|${selectedDeparture.end}` : ""}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      if (val) {
+                        const [start] = val.split("|");
+                        setSelectedDate(new Date(start + "T12:00:00"));
+                      }
+                    }}
+                    className="w-full rounded-xl border border-border p-3 text-xs font-semibold text-foreground bg-white focus:outline-none focus:ring-2 focus:ring-ocean/20 cursor-pointer"
+                  >
+                    <option value="">Elige una fecha de salida disponible</option>
+                    {upcomingDepartures.map((dep, idx) => (
+                      <option key={idx} value={`${dep.start}|${dep.end}`}>
+                        {formatDepartureFull(dep.start, dep.end)}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <div className="p-3 rounded-xl bg-muted/40 border border-border/50 text-xs text-muted-foreground">
+                    Consultar fechas disponibles por WhatsApp
+                  </div>
+                )
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSummaryModalOpen(false);
+                    setTimeout(() => setMobileCalendarOpen(true), 150);
+                  }}
+                  className="w-full rounded-xl border border-border p-3 flex items-center justify-between text-xs font-semibold text-foreground bg-white hover:border-ocean/40"
+                >
+                  <span>
+                    {selectedDate
+                      ? format(selectedDate, "EEEE, d 'de' MMMM", { locale: es })
+                      : "Seleccionar fecha en el calendario"}
+                  </span>
+                  <Calendar className="w-4 h-4 text-ocean shrink-0" />
+                </button>
+              )}
+            </div>
 
-             <div className="flex justify-between items-center text-base">
-               <span className="font-normal">{formatPrice(currentPrice)} x {guests} persona{guests > 1 ? "s" : ""}</span>
-               <span className="font-medium">{formatPrice(totalPlanPrice)}</span>
-             </div>
-             
-             <Separator />
+            {/* Personas Selector */}
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Número de personas</label>
+              <div className="flex items-center justify-between p-3 rounded-xl border border-border bg-white">
+                <span className="text-xs font-semibold text-foreground">
+                  {guests} viajero{guests > 1 ? "s" : ""}
+                </span>
+                <div className="flex items-center gap-3">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    className="h-7 w-7 rounded-full"
+                    onClick={() => setGuests((g) => Math.max(1, g - 1))}
+                    disabled={guests <= 1}
+                  >
+                    <Minus className="w-3.5 h-3.5" />
+                  </Button>
+                  <span className="w-5 text-center text-xs font-bold">{guests}</span>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    className="h-7 w-7 rounded-full"
+                    onClick={() => setGuests((g) => (isGrupal ? Math.min(plan.maxGuests, g + 1) : g + 1))}
+                    disabled={isGrupal ? guests >= plan.maxGuests : false}
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                  </Button>
+                </div>
+              </div>
+            </div>
 
-             <div className="flex justify-between items-center font-bold text-lg">
-               <span>Total</span>
-               <span>{formatPrice(totalPlanPrice)}</span>
-             </div>
-             
-             <div className="flex justify-center mt-6">
-               <Button className="relative inline-flex items-center justify-center gap-2 h-12 px-7 rounded-full bg-white border border-[#1DA851]/20 shadow-[0_4px_14px_0_rgba(29,168,81,0.12)] transition-all duration-300 hover:shadow-[0_6px_20px_rgba(29,168,81,0.2)] hover:-translate-y-0.5 group overflow-hidden w-full" onClick={() => {
-                 setSummaryModalOpen(false);
-                 handleWhatsAppRedirect();
-               }}>
-                 <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-[#1DA851]/10 to-transparent group-hover:animate-[shimmer_1.5s_infinite]" />
-                 <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-[#1DA851] relative z-10"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
-                 <span className="relative z-10 font-bold text-base bg-clip-text text-transparent bg-gradient-to-r from-ocean-dark to-[#1DA851]">
-                   Confirmar y Reservar por WhatsApp
-                 </span>
-               </Button>
-             </div>
+            {/* Ciudad de Salida */}
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Ciudad de salida</label>
+              <input
+                type="text"
+                value={originCity}
+                onChange={(e) => setOriginCity(e.target.value)}
+                placeholder="Ej. Barranquilla, Bogotá, Medellín..."
+                className="w-full rounded-xl border border-border p-3 text-xs font-semibold text-foreground bg-white focus:outline-none focus:ring-2 focus:ring-ocean/20"
+              />
+              <span className="text-[10px] text-muted-foreground block">
+                Detectada automáticamente según tu ubicación (puedes cambiarla).
+              </span>
+            </div>
+
+            <Separator />
+
+            {/* Precio Final */}
+            <div className="flex items-center justify-between font-bold text-base">
+              <span>Total Estimado</span>
+              <span className="text-lg text-foreground">{formatPrice(totalPlanPrice)}</span>
+            </div>
+
+            {/* Botón Reservar por WhatsApp */}
+            <div className="pt-1">
+              <Button
+                className="relative inline-flex items-center justify-center gap-2 h-12 px-6 rounded-xl bg-[#1DA851] hover:bg-[#199346] text-white shadow-sm transition-all duration-300 w-full font-bold text-sm cursor-pointer"
+                onClick={() => {
+                  setSummaryModalOpen(false);
+                  handleWhatsAppRedirect();
+                }}
+              >
+                <WhatsAppIcon className="w-5 h-5 text-white" />
+                <span>Confirmar y Reservar por WhatsApp</span>
+              </Button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
