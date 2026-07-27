@@ -52,60 +52,67 @@ function toISODate(d: Date): string {
   return `${y}-${m}-${day}`;
 }
 
-/**
- * Shape of a parsed VEVENT we care about. node-ical's full CalendarComponent
- * union is awkward to type (and we import it lazily to avoid build-time eval),
- * so we declare the narrow shape we consume.
- */
-interface ParsedVEvent {
-  type: string;
-  start?: Date | string;
-  end?: Date | string;
-  datetype?: string;
+function parseICalDate(icalStr: string): Date {
+  const cleanStr = icalStr.replace(/[^0-9T]/g, "");
+  const y = parseInt(cleanStr.substring(0, 4), 10);
+  const m = parseInt(cleanStr.substring(4, 6), 10) - 1;
+  const d = parseInt(cleanStr.substring(6, 8), 10);
+  if (cleanStr.includes("T")) {
+    const h = parseInt(cleanStr.substring(9, 11), 10) || 0;
+    const min = parseInt(cleanStr.substring(11, 13), 10) || 0;
+    const s = parseInt(cleanStr.substring(13, 15), 10) || 0;
+    return new Date(Date.UTC(y, m, d, h, min, s));
+  } else {
+    return new Date(y, m, d, 0, 0, 0);
+  }
 }
-type ParsedCalendar = Record<string, ParsedVEvent | undefined>;
 
 /**
- * Extract booked date ranges from parsed ICS events. Handles all-day events
- * (type "string"/Date) and datetime events. Returns inclusive [from, to] ranges.
+ * Extract booked date ranges directly from raw ICS content (0 external dependencies).
  */
-function extractBookedRanges(parsed: ParsedCalendar): BookedRange[] {
+function extractBookedRangesFromText(icalText: string): BookedRange[] {
+  const lines = icalText.split(/\r?\n/);
   const ranges: BookedRange[] = [];
+  let currentStart: Date | null = null;
+  let currentEnd: Date | null = null;
+  let inEvent = false;
+
   const now = new Date();
   now.setHours(0, 0, 0, 0);
 
-  for (const key of Object.keys(parsed)) {
-    const raw = parsed[key];
-    if (!raw || raw.type !== "VEVENT") continue;
-    // node-ical's CalendarComponent union includes VCalendar (no start/end);
-    // we've narrowed to VEVENT above, so cast to the VEVENT shape we need.
-    const event = raw as {
-      type: string;
-      start: Date | string;
-      end: Date | string;
-      datetype?: string;
-    };
-    if (!event.start || !event.end) continue;
-
-    // node-ical returns Date for datetimes and string|Date for all-day events.
-    const start = event.start instanceof Date ? event.start : new Date(event.start);
-    let end = event.end instanceof Date ? event.end : new Date(event.end);
-
-    // All-day ICS events use an exclusive end date (DTEND is the day AFTER the
-    // last booked night). Normalize to an inclusive end.
-    const isAllDay = typeof event.datetype === "string" && event.datetype.toLowerCase() === "date";
-    if (isAllDay) {
-      end = new Date(end.getTime() - 24 * 60 * 60 * 1000);
+  for (const line of lines) {
+    if (line.startsWith("BEGIN:VEVENT")) {
+      inEvent = true;
+      currentStart = null;
+      currentEnd = null;
+    } else if (line.startsWith("END:VEVENT")) {
+      if (inEvent && currentStart && currentEnd) {
+        let end = new Date(currentEnd);
+        // Normalize exclusive end date
+        if (end.getTime() > currentStart.getTime()) {
+          end = new Date(end.getTime() - 24 * 60 * 60 * 1000);
+        }
+        if (end >= now) {
+          const from = new Date(Math.max(currentStart.getTime(), now.getTime()));
+          ranges.push({ from: toISODate(from), to: toISODate(end >= from ? end : from) });
+        }
+      }
+      inEvent = false;
+    } else if (inEvent) {
+      if (line.startsWith("DTSTART")) {
+        const idx = line.indexOf(":");
+        if (idx !== -1) {
+          currentStart = parseICalDate(line.substring(idx + 1));
+        }
+      } else if (line.startsWith("DTEND")) {
+        const idx = line.indexOf(":");
+        if (idx !== -1) {
+          currentEnd = parseICalDate(line.substring(idx + 1));
+        }
+      }
     }
-
-    // Skip past events entirely — no need to block dates that already happened.
-    if (end < now) continue;
-
-    const from = new Date(Math.max(start.getTime(), now.getTime()));
-    ranges.push({ from: toISODate(from), to: toISODate(end) });
   }
 
-  // Merge overlapping/adjacent ranges for cleaner client-side handling.
   ranges.sort((a, b) => a.from.localeCompare(b.from));
   const merged: BookedRange[] = [];
   for (const r of ranges) {
@@ -146,11 +153,7 @@ async function fetchAvailability(cabinId: string): Promise<AvailabilityResponse>
     throw new Error(`ICS fetch failed: ${res.status}`);
   }
   const text = await res.text();
-  // Lazy import: node-ical pulls in rrule/moment which break under Turbopack's
-  // static eval at build time. Loading it at request time avoids that.
-  const ical = (await import("node-ical")).default;
-  const parsed = ical.parseICS(text) as ParsedCalendar;
-  const booked = extractBookedRanges(parsed);
+  const booked = extractBookedRangesFromText(text);
 
   return {
     cabinId,
