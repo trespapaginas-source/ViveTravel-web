@@ -75,6 +75,7 @@ function extractBookedRangesFromText(icalText: string): BookedRange[] {
   const ranges: BookedRange[] = [];
   let currentStart: Date | null = null;
   let currentEnd: Date | null = null;
+  let currentAllDay = false;
   let inEvent = false;
 
   const now = new Date();
@@ -85,11 +86,16 @@ function extractBookedRangesFromText(icalText: string): BookedRange[] {
       inEvent = true;
       currentStart = null;
       currentEnd = null;
+      currentAllDay = false;
     } else if (line.startsWith("END:VEVENT")) {
       if (inEvent && currentStart && currentEnd) {
         let end = new Date(currentEnd);
-        // Normalize exclusive end date
-        if (end.getTime() > currentStart.getTime()) {
+        // For all-day events, ICS DTEND is EXCLUSIVE (the day after the last
+        // booked night), so we subtract one day to get the last occupied day.
+        // For datetime events, DTEND falls ON the check-out day, which must
+        // also be blocked (no other guest can check in that same day), so we
+        // keep it inclusive. Reservations like "7→9 Aug" must block 7, 8 AND 9.
+        if (currentAllDay && end.getTime() > currentStart.getTime()) {
           end = new Date(end.getTime() - 24 * 60 * 60 * 1000);
         }
         if (end >= now) {
@@ -102,6 +108,8 @@ function extractBookedRangesFromText(icalText: string): BookedRange[] {
       if (line.startsWith("DTSTART")) {
         const idx = line.indexOf(":");
         if (idx !== -1) {
+          // All-day events carry VALUE=DATE and a YYYYMMDD value (no "T").
+          currentAllDay = /VALUE=DATE/i.test(line);
           currentStart = parseICalDate(line.substring(idx + 1));
         }
       } else if (line.startsWith("DTEND")) {
