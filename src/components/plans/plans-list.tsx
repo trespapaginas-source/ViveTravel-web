@@ -368,8 +368,10 @@ const PlanCardHorizontal = memo(function PlanCardHorizontal({
       onClick={() => onNavigate(plan.id)}
     >
       {/* Image */}
-      <div className="relative w-full sm:w-[260px] md:w-[300px] shrink-0 overflow-hidden aspect-[3/2] sm:aspect-auto">
-        <CardImageCarousel images={plan.images} alt={plan.name} />
+      <div className="relative w-full sm:w-[280px] md:w-[320px] shrink-0 overflow-hidden aspect-[16/10] sm:aspect-none sm:min-h-[220px] sm:self-stretch">
+        <div className="absolute inset-0">
+          <CardImageCarousel images={plan.images} alt={plan.name} />
+        </div>
         <div className="absolute inset-0 bg-gradient-to-r from-transparent to-black/10 pointer-events-none" />
 
         {/* Duration Badge (Only for National/International) */}
@@ -617,8 +619,10 @@ const PlanCardVertical = memo(function PlanCardVertical({
       {/* Top half content */}
       <div>
         {/* Image */}
-        <div className="relative aspect-[3/2] overflow-hidden">
-          <CardImageCarousel images={plan.images} alt={plan.name} />
+        <div className="relative aspect-[16/10] overflow-hidden">
+          <div className="absolute inset-0">
+            <CardImageCarousel images={plan.images} alt={plan.name} />
+          </div>
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
 
           {/* Duration Badge (Only for National/International) */}

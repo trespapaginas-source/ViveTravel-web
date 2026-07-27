@@ -75,7 +75,7 @@ export function CardImageCarousel({ images, alt }: CardImageCarouselProps) {
         src={images[currentIndex]}
         alt={`${alt} - Imagen ${currentIndex + 1}`}
         loading="lazy"
-        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+        className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
         onError={(e) => {
           e.currentTarget.src =
             "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80";

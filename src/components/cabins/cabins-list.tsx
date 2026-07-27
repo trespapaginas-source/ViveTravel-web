@@ -136,8 +136,10 @@ const CabinCardHorizontal = memo(function CabinCardHorizontal({
       onClick={onSelect}
     >
       {/* Image */}
-      <div className="relative w-full sm:w-[260px] md:w-[300px] shrink-0 overflow-hidden aspect-[3/2] sm:aspect-auto">
-        <CardImageCarousel images={cabin.images} alt={cabin.name} />
+      <div className="relative w-full sm:w-[280px] md:w-[320px] shrink-0 overflow-hidden aspect-[16/10] sm:aspect-none sm:min-h-[220px] sm:self-stretch">
+        <div className="absolute inset-0">
+          <CardImageCarousel images={cabin.images} alt={cabin.name} />
+        </div>
         {/* Favorite Button */}
         <button
           onClick={handleFavorite}
@@ -262,8 +264,10 @@ const CabinCardVertical = memo(function CabinCardVertical({
     >
       <div>
         {/* Image */}
-        <div className="relative aspect-[3/2] overflow-hidden">
-          <CardImageCarousel images={cabin.images} alt={cabin.name} />
+        <div className="relative aspect-[16/10] overflow-hidden">
+          <div className="absolute inset-0">
+            <CardImageCarousel images={cabin.images} alt={cabin.name} />
+          </div>
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
           {/* Favorite Button */}
           <button

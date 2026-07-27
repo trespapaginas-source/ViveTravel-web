@@ -1,8 +1,10 @@
 "use client";
 
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { Cabin } from "@/lib/data";
 import { fetchCabin } from "@/lib/api";
 import { AvailabilityCalendar } from "@/components/cabins/availability-calendar";
+import { useCabinAvailability, expandBookedRanges } from "@/hooks/use-cabin-availability";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigation } from "@/lib/store";
 import { PropertyGallery } from "@/components/shared/property-gallery";
@@ -66,7 +68,6 @@ import {
   Plus,
   X,
 } from "lucide-react";
-import { useState, useCallback } from "react";
 import { type DateRange } from "react-day-picker";
 import { format, differenceInDays } from "date-fns";
 import { es } from "date-fns/locale/es";
@@ -234,6 +235,12 @@ export function CabinDetail({ cabinId }: { cabinId?: string } = {}) {
     queryFn: () => fetchCabin(selectedItemId!),
     enabled: !!selectedItemId,
   });
+
+  const { data: availabilityData } = useCabinAvailability(selectedItemId);
+  const bookedDates = useMemo(
+    () => (availabilityData?.booked ? expandBookedRanges(availabilityData.booked) : []),
+    [availabilityData?.booked]
+  );
 
   const [isFav, setIsFav] = useState(() =>
     typeof window !== "undefined" && selectedItemId
@@ -887,10 +894,13 @@ export function CabinDetail({ cabinId }: { cabinId?: string } = {}) {
                 selected={mobileDateRange}
                 onSelect={setMobileDateRange}
                 numberOfMonths={12}
-                disabled={(date) => {
-                  const today = new Date();
-                  today.setHours(0, 0, 0, 0);
-                  return date < today;
+                disabled={[
+                  { before: new Date() },
+                  ...(bookedDates.length > 0 ? bookedDates : []),
+                ]}
+                modifiers={{ booked: bookedDates }}
+                modifiersStyles={{
+                  booked: { textDecoration: "line-through", color: "#9CA3AF", opacity: 0.55 },
                 }}
                 className="mx-auto w-full max-w-[320px]" />
           </div>
@@ -916,6 +926,12 @@ function PriceCard({ cabin }: { cabin: Cabin }) {
   const [datePopoverOpen, setDatePopoverOpen] = useState(false);
   const [guestPopoverOpen, setGuestPopoverOpen] = useState(false);
   const [showWhatsApp, setShowWhatsApp] = useState(false);
+
+  const { data: availabilityData } = useCabinAvailability(cabin.id);
+  const bookedDates = useMemo(
+    () => (availabilityData?.booked ? expandBookedRanges(availabilityData.booked) : []),
+    [availabilityData?.booked]
+  );
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -996,7 +1012,14 @@ function PriceCard({ cabin }: { cabin: Cabin }) {
                     setDatePopoverOpen(false);
                   }
                 }}
-                disabled={{ before: today }}
+                disabled={[
+                  { before: today },
+                  ...(bookedDates.length > 0 ? bookedDates : []),
+                ]}
+                modifiers={{ booked: bookedDates }}
+                modifiersStyles={{
+                  booked: { textDecoration: "line-through", color: "#9CA3AF", opacity: 0.55 },
+                }}
                 numberOfMonths={1}
                 locale={es}
                 defaultMonth={today} />
