@@ -124,11 +124,11 @@ export function AvailabilityCalendar({
               classNames={{
                 root: cn(!isMobile ? "w-full" : "w-fit"),
                 months: cn(!isMobile ? "flex flex-row w-full gap-8" : "flex gap-4 flex-col md:flex-row relative"),
-                month: cn(!isMobile ? "flex flex-col flex-1 gap-4" : "flex flex-col w-full gap-4"),
-                nav: "flex items-center gap-1 w-full justify-between px-1 z-10",
-                button_previous: "inline-flex items-center justify-center w-9 h-9 rounded-md border border-border bg-background hover:bg-muted text-foreground transition-colors shadow-sm",
-                button_next: "inline-flex items-center justify-center w-9 h-9 rounded-md border border-border bg-background hover:bg-muted text-foreground transition-colors shadow-sm",
-                month_caption: "flex items-center justify-center h-9 w-full text-sm font-medium",
+                month: cn(!isMobile ? "flex flex-col flex-1 gap-4" : "flex flex-col w-full gap-4 relative"),
+                nav: "absolute top-0 inset-x-0 flex items-center justify-between px-1 z-20",
+                button_previous: "inline-flex items-center justify-center w-8 h-8 rounded-md border border-border bg-background hover:bg-muted text-foreground transition-colors shadow-sm",
+                button_next: "inline-flex items-center justify-center w-8 h-8 rounded-md border border-border bg-background hover:bg-muted text-foreground transition-colors shadow-sm",
+                month_caption: "flex items-center justify-center h-8 w-full text-sm font-semibold",
                 day: cn("relative w-full h-full p-0 text-center"),
               }}
               modifiers={{
