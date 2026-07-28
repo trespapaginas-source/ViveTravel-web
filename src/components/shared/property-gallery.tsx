@@ -164,39 +164,45 @@ function BookingDesktopGallery({
   images: string[];
   onImageClick: (index: number) => void;
 }) {
-  const defaultFallbacks = [
-    "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80",
-    "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&h=600&fit=crop&q=80",
-    "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800&h=600&fit=crop&q=80",
-    "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800&h=600&fit=crop&q=80",
-    "https://images.unsplash.com/photo-1519046904884-53103b34b206?w=800&h=600&fit=crop&q=80",
-    "https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=800&h=600&fit=crop&q=80",
-    "https://images.unsplash.com/photo-1439066615861-d1af74d74000?w=800&h=600&fit=crop&q=80",
-    "https://images.unsplash.com/photo-1473116763249-2faaef81ccda?w=800&h=600&fit=crop&q=80"
-  ];
+  const count = images.length;
 
-  // Build list of valid images filled to at least 8 images
-  const safeImages = [...images];
-  let fbIdx = 0;
-  while (safeImages.length < 8) {
-    safeImages.push(defaultFallbacks[fbIdx % defaultFallbacks.length]);
-    fbIdx++;
+  // Single-image fallback: show one large hero, no thumbnail row.
+  if (count <= 1) {
+    return (
+      <div
+        className="relative h-[380px] lg:h-[440px] w-full rounded-2xl overflow-hidden cursor-pointer group"
+        onClick={() => onImageClick(0)}
+      >
+        <div className="absolute inset-0">
+          <GalleryImage src={images[0]} alt="Foto principal" priority />
+          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+        </div>
+      </div>
+    );
   }
 
-  const count = images.length;
-  const mainImage = safeImages[0];
-  const rightTopImage = safeImages[1];
-  const rightBottomImage = safeImages[2];
+  // Top block always uses the first real images (0, 1, 2).
+  // For the right column we only render a second tile when a 3rd image exists.
+  const mainImage = images[0];
+  const rightTopImage = images[1];
+  const hasThird = count >= 3;
 
-  const thumbnailStartIndex = 3;
-  const extraCount = count > 8 ? count - 8 : 0;
+  // Thumbnails = everything after the top block, capped at 5 visible slots.
+  const thumbnailStartIndex = hasThird ? 3 : 2;
+  const remaining = Math.max(0, count - thumbnailStartIndex);
+  const visibleThumbs = Math.min(remaining, 5);
+  // Photos beyond the 5 visible slots are summarised in the "+N" overlay.
+  const extraCount = Math.max(0, remaining - 5);
+
+  // When there are >5 remaining, the last slot becomes the "+N" overlay,
+  // so it always shows on the 5th thumbnail.
+  const showOverlayOnLast = extraCount > 0;
+  const thumbCols = showOverlayOnLast ? 5 : Math.max(visibleThumbs, 1);
 
   return (
     <div className="w-full">
-      {/* Top Block: 1 Large Left Image (~62%) + 2 Stacked Right Images (~38%) */}
-      <div 
-        className="grid grid-cols-12 gap-2 h-[380px] lg:h-[430px] w-full rounded-2xl overflow-hidden"
-      >
+      {/* Top Block: 1 Large Left Image (~62%) + Stacked Right Images (~38%) */}
+      <div className="grid grid-cols-12 gap-2 h-[380px] lg:h-[440px] w-full rounded-2xl overflow-hidden">
         {/* Left: Main large focal photo (col-span-7) */}
         <div
           className="col-span-7 relative h-full cursor-pointer group overflow-hidden"
@@ -208,9 +214,13 @@ function BookingDesktopGallery({
           </div>
         </div>
 
-        {/* Right: 2 Stacked Horizontal Photos (col-span-5) - Locked to 50% each */}
-        <div className="col-span-5 grid grid-rows-2 gap-2 h-full">
-          {/* Top right image */}
+        {/* Right: 1 or 2 stacked photos (col-span-5) */}
+        <div
+          className={cn(
+            "col-span-5 gap-2 h-full",
+            hasThird ? "grid grid-rows-2" : "grid grid-rows-1"
+          )}
+        >
           <div
             className="relative h-full w-full cursor-pointer group overflow-hidden"
             onClick={() => onImageClick(1)}
@@ -221,48 +231,56 @@ function BookingDesktopGallery({
             </div>
           </div>
 
-          {/* Bottom right image */}
-          <div
-            className="relative h-full w-full cursor-pointer group overflow-hidden"
-            onClick={() => onImageClick(2)}
-          >
-            <div className="absolute inset-0">
-              <GalleryImage src={rightBottomImage} alt="Foto 3" priority={false} />
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+          {hasThird && (
+            <div
+              className="relative h-full w-full cursor-pointer group overflow-hidden"
+              onClick={() => onImageClick(2)}
+            >
+              <div className="absolute inset-0">
+                <GalleryImage src={images[2]} alt="Foto 3" priority={false} />
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
 
-      {/* Bottom Row: 5 thumbnail images */}
-      <div className="grid grid-cols-5 gap-2 mt-2 h-[95px] lg:h-[110px] w-full">
-        {Array.from({ length: 5 }).map((_, idx) => {
-          const targetIndex = thumbnailStartIndex + idx;
-          const img = safeImages[targetIndex];
-          const isLast = idx === 4;
-          const showOverlay = isLast && extraCount > 0;
+      {/* Bottom Row: thumbnail strip of remaining real images */}
+      {visibleThumbs > 0 && (
+        <div
+          className="grid gap-2 mt-2 h-[95px] lg:h-[110px] w-full"
+          style={{ gridTemplateColumns: `repeat(${thumbCols}, minmax(0, 1fr))` }}
+        >
+          {Array.from({ length: visibleThumbs }).map((_, idx) => {
+            const targetIndex = thumbnailStartIndex + idx;
+            const isOverlaySlot = showOverlayOnLast && idx === visibleThumbs - 1;
 
-          return (
-            <div
-              key={idx}
-              className="relative cursor-pointer group overflow-hidden rounded-xl h-full"
-              onClick={() => onImageClick(targetIndex < count ? targetIndex : 0)}
-            >
-              <div className="absolute inset-0">
-                <GalleryImage src={img} alt={`Miniatura ${idx + 1}`} priority={false} />
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
-                {showOverlay && (
-                  <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px] flex flex-col items-center justify-center transition-all duration-300 group-hover:bg-black/70">
-                    <span className="text-white font-bold text-sm sm:text-base tracking-wide underline underline-offset-2">
-                      {extraCount} fotos más
-                    </span>
-                  </div>
-                )}
+            return (
+              <div
+                key={idx}
+                className="relative cursor-pointer group overflow-hidden rounded-xl h-full"
+                onClick={() => onImageClick(isOverlaySlot ? thumbnailStartIndex : targetIndex)}
+              >
+                <div className="absolute inset-0">
+                  <GalleryImage
+                    src={images[targetIndex]}
+                    alt={`Miniatura ${idx + 1}`}
+                    priority={false}
+                  />
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+                  {isOverlaySlot && (
+                    <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px] flex flex-col items-center justify-center transition-all duration-300 group-hover:bg-black/70">
+                      <span className="text-white font-bold text-sm sm:text-base tracking-wide underline underline-offset-2">
+                        +{extraCount} fotos
+                      </span>
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
@@ -514,37 +532,11 @@ export function PropertyGallery({ images, title, className, variant = "default" 
     setLightboxOpen(false);
   }, []);
 
-  // Fill with example images if variant is "booking"
-  let galleryImages = images;
-  if (variant === "booking") {
-    const defaultExamples = [
-      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&h=600&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1506929562872-bb421503ef21?w=800&h=600&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1473116763249-2faaef81ccda?w=800&h=600&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1519046904884-53103b34b206?w=800&h=600&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?w=800&h=600&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1439066615861-d1af74d74000?w=800&h=600&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1470233572422-67b28243076a?w=800&h=600&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1505118380757-91f5f5632de0?w=800&h=600&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1515238152791-8216bfdf89a7?w=800&h=600&fit=crop&q=80"
-    ];
-    const filled = [...images];
-    
-    // Fill until we have at least 10 images to ensure visibleImages gets 8 and extraCount has remaining
-    let idx = 0;
-    while (filled.length < 10) {
-      const fallback = defaultExamples[idx % defaultExamples.length];
-      if (!filled.includes(fallback)) {
-        filled.push(fallback);
-      } else {
-        filled.push(fallback + `&sig=${filled.length}`);
-      }
-      idx++;
-    }
-    
-    galleryImages = filled;
-  }
+  // Use the real plan images directly — never pad with fake stock photos.
+  // (Previously this inflated the gallery to 10 images with random Unsplash
+  // fallbacks, which produced duplicates and irrelevant beach photos in the
+  // lightbox for plans that had fewer than 10 real images.)
+  const galleryImages = images;
 
   return (
     <div className={cn("relative", className)}>
