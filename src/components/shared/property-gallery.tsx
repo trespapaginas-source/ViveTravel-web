@@ -164,20 +164,38 @@ function BookingDesktopGallery({
   images: string[];
   onImageClick: (index: number) => void;
 }) {
-  const count = images.length;
-  const mainImage = images[0];
-  const rightTopImage = images[1] || mainImage;
-  const rightBottomImage = images[2] || mainImage;
+  const defaultFallbacks = [
+    "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&h=600&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1506929562872-bb421503ef21?w=800&h=600&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1473116763249-2faaef81ccda?w=800&h=600&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1519046904884-53103b34b206?w=800&h=600&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?w=800&h=600&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1439066615861-d1af74d74000?w=800&h=600&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1470233572422-67b28243076a?w=800&h=600&fit=crop&q=80"
+  ];
 
-  // Images for 5 bottom thumbnails (index 3, 4, 5, 6, 7 or wrapped)
+  // Build list of valid images filled to at least 8 images
+  const safeImages = [...images];
+  let fbIdx = 0;
+  while (safeImages.length < 8) {
+    safeImages.push(defaultFallbacks[fbIdx % defaultFallbacks.length]);
+    fbIdx++;
+  }
+
+  const count = images.length;
+  const mainImage = safeImages[0];
+  const rightTopImage = safeImages[1];
+  const rightBottomImage = safeImages[2];
+
   const thumbnailStartIndex = 3;
   const extraCount = count > 8 ? count - 8 : 0;
 
   return (
     <div className="w-full">
-      {/* Top Block: 1 Large Left Image (~60%) + 2 Stacked Right Images (~40%) */}
+      {/* Top Block: 1 Large Left Image (~62%) + 2 Stacked Right Images (~38%) */}
       <div 
-        className="grid grid-cols-12 gap-2 h-[380px] lg:h-[430px] w-full rounded-2xl overflow-hidden"
+        className="grid grid-cols-12 gap-2 h-[380px] lg:h-[440px] w-full rounded-2xl overflow-hidden"
       >
         {/* Left: Main large focal photo (col-span-7) */}
         <div
@@ -189,10 +207,10 @@ function BookingDesktopGallery({
         </div>
 
         {/* Right: 2 Stacked Horizontal Photos (col-span-5) */}
-        <div className="col-span-5 flex flex-col gap-2 h-full">
+        <div className="col-span-5 grid grid-rows-2 gap-2 h-full">
           {/* Top right image */}
           <div
-            className="relative flex-1 cursor-pointer group overflow-hidden"
+            className="relative h-full w-full cursor-pointer group overflow-hidden"
             onClick={() => onImageClick(1)}
           >
             <GalleryImage src={rightTopImage} alt="Foto 2" priority />
@@ -201,7 +219,7 @@ function BookingDesktopGallery({
 
           {/* Bottom right image */}
           <div
-            className="relative flex-1 cursor-pointer group overflow-hidden"
+            className="relative h-full w-full cursor-pointer group overflow-hidden"
             onClick={() => onImageClick(2)}
           >
             <GalleryImage src={rightBottomImage} alt="Foto 3" priority={false} />
@@ -213,8 +231,8 @@ function BookingDesktopGallery({
       {/* Bottom Row: 5 thumbnail images */}
       <div className="grid grid-cols-5 gap-2 mt-2 h-[95px] lg:h-[110px] w-full">
         {Array.from({ length: 5 }).map((_, idx) => {
-          const targetIndex = (thumbnailStartIndex + idx) % count;
-          const img = images[targetIndex] || mainImage;
+          const targetIndex = thumbnailStartIndex + idx;
+          const img = safeImages[targetIndex];
           const isLast = idx === 4;
           const showOverlay = isLast && extraCount > 0;
 
@@ -222,7 +240,7 @@ function BookingDesktopGallery({
             <div
               key={idx}
               className="relative cursor-pointer group overflow-hidden rounded-xl h-full"
-              onClick={() => onImageClick(targetIndex)}
+              onClick={() => onImageClick(targetIndex < count ? targetIndex : 0)}
             >
               <GalleryImage src={img} alt={`Miniatura ${idx + 1}`} priority={false} />
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
