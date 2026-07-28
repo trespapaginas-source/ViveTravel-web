@@ -179,20 +179,20 @@ function BookingDesktopGallery({
 
   return (
     <div className="w-full">
-      {/* Top Grid: Main image (left 60%) + 2x2 Grid (right 40%) */}
+      {/* Top Grid: Main image (left 60%, 620:508 ratio) + 2x2 Grid (right 40%) */}
       <div 
-        className="grid grid-cols-12 gap-2 h-[420px] lg:h-[460px] w-full rounded-2xl overflow-hidden"
+        className="grid grid-cols-12 gap-2 w-full rounded-2xl overflow-hidden"
       >
-        {/* Left: Main focal image (60% width, 7 cols) */}
+        {/* Left: Main focal image (60% width, 7 cols, 620:508 proportion) */}
         <div
-          className="col-span-7 relative h-full cursor-pointer group overflow-hidden"
+          className="col-span-7 relative aspect-[620/508] cursor-pointer group overflow-hidden"
           onClick={() => onImageClick(0)}
         >
           <GalleryImage src={mainImage} alt="Foto principal" priority />
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
         </div>
 
-        {/* Right: 2x2 Grid of 4 square photos (5 cols) */}
+        {/* Right: 2x2 Grid of 4 square photos (5 cols) matching height */}
         <div className="col-span-5 grid grid-cols-2 grid-rows-2 gap-2 h-full">
           {rightGridImages.map((img, idx) => {
             const realIndex = (idx + 1) < count ? idx + 1 : idx % count;
@@ -210,8 +210,8 @@ function BookingDesktopGallery({
         </div>
       </div>
 
-      {/* Bottom Row: 5 thumbnail images */}
-      <div className="grid grid-cols-5 gap-2 mt-2 h-[90px] lg:h-[100px] w-full">
+      {/* Bottom Row: 5 thumbnail images matching the SAME 620:508 proportion */}
+      <div className="grid grid-cols-5 gap-2 mt-2 w-full">
         {Array.from({ length: 5 }).map((_, idx) => {
           const targetIndex = (thumbnailStartIndex + idx) % count;
           const img = images[targetIndex] || mainImage;
@@ -221,7 +221,7 @@ function BookingDesktopGallery({
           return (
             <div
               key={idx}
-              className="relative cursor-pointer group overflow-hidden rounded-xl h-full"
+              className="relative aspect-[620/508] cursor-pointer group overflow-hidden rounded-xl w-full"
               onClick={() => onImageClick(targetIndex)}
             >
               <GalleryImage src={img} alt={`Miniatura ${idx + 1}`} priority={false} />
