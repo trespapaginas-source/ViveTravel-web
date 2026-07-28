@@ -802,20 +802,36 @@ export function CabinDetail({ cabinId }: { cabinId?: string } = {}) {
             </button>
           </DialogHeader>
           <div className="overflow-y-auto p-5 sm:p-6 space-y-8 flex-1 pb-10">
-            {displayRooms.map((room: any) => (
-              <div key={room.id} className="space-y-3">
-                <div>
-                  <h3 className="text-xl font-bold text-foreground">{room.title}</h3>
-                  <p className="text-sm text-muted-foreground mt-0.5">{room.beds}</p>
+            {displayRooms.map((room: any) => {
+              const roomImages: string[] = room.images && room.images.length > 0 ? room.images : [room.image];
+              return (
+                <div key={room.id} className="space-y-3">
+                  <div>
+                    <h3 className="text-xl font-bold text-foreground">{room.title}</h3>
+                    <p className="text-sm font-medium text-muted-foreground mt-0.5">{room.beds}</p>
+                  </div>
+                  <div className="flex overflow-x-auto gap-3 pb-2 snap-x snap-mandatory hide-scrollbar">
+                    {roomImages.map((imgUrl: string, idx: number) => (
+                      <div
+                        key={idx}
+                        className="w-[240px] sm:w-[320px] aspect-[4/3] rounded-xl overflow-hidden relative border border-border/30 shadow-sm shrink-0 snap-start"
+                      >
+                        <img
+                          src={imgUrl}
+                          alt={`${room.title} - Foto ${idx + 1}`}
+                          className="object-cover w-full h-full"
+                          onError={(e) => {
+                            e.currentTarget.src =
+                              "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80";
+                            e.currentTarget.onerror = null;
+                          }}
+                        />
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                <div className="aspect-[4/3] sm:aspect-video rounded-xl overflow-hidden relative border border-border/30 shadow-sm">
-                  <img                     src={room.image || "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"}
-                    alt={room.title}
-                    className="object-cover w-full h-full"
-                   onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"; e.currentTarget.onerror = null; }} />
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </DialogContent>
       </Dialog>

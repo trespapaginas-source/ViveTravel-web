@@ -72,25 +72,46 @@
     "bedroomDetails": [
       {
         "id": "room-0",
-        "title": "Habitación Familiar 01",
-        "beds": "2 camas literas (4 huéspedes), A/C, Baño privado, TV",
+        "title": "Habitación 01",
+        "beds": "1 cama doble",
         "image": "/images/cabanas/La-Martina/H1/IMG_7565.jpg",
+        "images": [
+          "/images/cabanas/La-Martina/H1/IMG_7565.jpg",
+          "/images/cabanas/La-Martina/H1/IMG_7566.jpg",
+          "/images/cabanas/La-Martina/H1/IMG_7567.jpg",
+          "/images/cabanas/La-Martina/H1/IMG_7570.jpg",
+          "/images/cabanas/La-Martina/H1/IMG_7571.jpg"
+        ],
         "order": 0,
         "active": true
       },
       {
         "id": "room-1",
-        "title": "Habitación Familiar 02",
-        "beds": "2 camas literas (4 huéspedes), A/C, Baño privado, TV",
+        "title": "Habitación 02",
+        "beds": "2 camas literas",
         "image": "/images/cabanas/La-Martina/H2/IMG_7546.jpg",
+        "images": [
+          "/images/cabanas/La-Martina/H2/IMG_7546.jpg",
+          "/images/cabanas/La-Martina/H2/IMG_7548.jpg",
+          "/images/cabanas/La-Martina/H2/IMG_7549.jpg",
+          "/images/cabanas/La-Martina/H2/IMG_7551.jpg",
+          "/images/cabanas/La-Martina/H2/IMG_7552.jpg"
+        ],
         "order": 1,
         "active": true
       },
       {
         "id": "room-2",
-        "title": "Habitación Matrimonial 03",
-        "beds": "Cama principal (2 a 6 huéspedes), A/C, Baño privado, TV",
+        "title": "Habitación 03",
+        "beds": "2 camas literas",
         "image": "/images/cabanas/La-Martina/H3/IMG_7518.jpg",
+        "images": [
+          "/images/cabanas/La-Martina/H3/IMG_7518.jpg",
+          "/images/cabanas/La-Martina/H3/IMG_7519.jpg",
+          "/images/cabanas/La-Martina/H3/IMG_7520.jpg",
+          "/images/cabanas/La-Martina/H3/IMG_7523.jpg",
+          "/images/cabanas/La-Martina/H3/IMG_7524.jpg"
+        ],
         "order": 2,
         "active": true
       }
