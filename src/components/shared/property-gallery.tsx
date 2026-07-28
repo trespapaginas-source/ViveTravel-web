@@ -63,39 +63,8 @@ function DesktopGallery({
     );
   }
 
-  // 3+ images: Booking.com layout — 1 large left, 2 stacked right
-  return (
-    <div className="flex gap-2 rounded-2xl overflow-hidden h-[460px]">
-      {/* Left: Main large image */}
-      <div
-        className="relative flex-[3] cursor-pointer group overflow-hidden"
-        onClick={() => onImageClick(0)}
-      >
-        <GalleryImage src={images[0]} alt="Imagen 1" priority />
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
-      </div>
-
-      {/* Right: 2 stacked images */}
-      <div className="flex-[2] flex flex-col gap-2">
-        <div
-          className="relative flex-1 cursor-pointer group overflow-hidden"
-          onClick={() => onImageClick(1)}
-        >
-          <GalleryImage src={images[1]} alt="Imagen 2" priority />
-          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
-        </div>
-        <div
-          className="relative flex-1 cursor-pointer group overflow-hidden"
-          onClick={() => onImageClick(2)}
-        >
-          <GalleryImage src={images[2]} alt="Imagen 3" priority={false} />
-          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
-          {/* "+N fotos" overlay */}
-          {extraCount > 0 && <MorePhotosOverlay count={extraCount} />}
-        </div>
-      </div>
-    </div>
-  );
+  // 3+ images: Airbnb layout — 1 large left (~60%), 2x2 grid right, 5 thumbnails bottom
+  return <BookingDesktopGallery images={images} onImageClick={onImageClick} />;
 }
 
 // ─── Desktop Gallery: Cabin style (Booking.com Exact) ──────────────────────
@@ -184,10 +153,9 @@ function CabinDesktopGallery({
   );
 }
 
-// ─── Desktop Gallery: Booking.com Exact Style ────────────────────────────────
-// 4 columns, 2 rows: Left spans 2 cols & 2 rows (50% wide, 100% tall)
-// Center/Right columns have 2 rows of smaller images (25% wide, 50% tall each)
-// Total 5 visible images, keeping a symmetric and photographic 3:2 aspect ratio.
+// ─── Desktop Gallery: Airbnb Style ──────────────────────────────────────────
+// 1 Main focal image on left (~60% width) + 2x2 grid of 4 photos on right
+// Bottom: Row of 5 thumbnails with "+N fotos" overlay on the 5th thumbnail
 
 function BookingDesktopGallery({
   images,
@@ -197,92 +165,71 @@ function BookingDesktopGallery({
   onImageClick: (index: number) => void;
 }) {
   const count = images.length;
-  const visibleImages = images.slice(0, 8);
+  const mainImage = images[0];
+
+  // Images for right 2x2 grid (index 1, 2, 3, 4)
+  const rightGridImages = Array.from({ length: 4 }).map((_, idx) => {
+    const targetIdx = idx + 1;
+    return images[targetIdx] || images[targetIdx % count] || mainImage;
+  });
+
+  // Images for 5 bottom thumbnails (index 3, 4, 5, 6, 7 or wrapped)
+  const thumbnailStartIndex = 3;
   const extraCount = count > 8 ? count - 8 : 0;
 
   return (
-    <div className="w-full rounded-2xl overflow-hidden">
-      {/* Top Grid: 1 large on left, 2 stacked on right */}
+    <div className="w-full">
+      {/* Top Grid: Main image (left 60%) + 2x2 Grid (right 40%) */}
       <div 
-        className="grid gap-2 h-[340px] w-full"
-        style={{ gridTemplateColumns: "2fr 1.15fr", gridTemplateRows: "1fr 1fr" }}
+        className="grid grid-cols-12 gap-2 h-[420px] lg:h-[460px] w-full rounded-2xl overflow-hidden"
       >
-        {/* Left: Main large image spanning 2 rows */}
+        {/* Left: Main focal image (60% width, 7 cols) */}
         <div
-          className="relative cursor-pointer group overflow-hidden"
-          style={{ gridRow: "1 / span 2" }}
+          className="col-span-7 relative h-full cursor-pointer group overflow-hidden"
           onClick={() => onImageClick(0)}
         >
-          <GalleryImage src={visibleImages[0]} alt="Imagen principal" priority />
+          <GalleryImage src={mainImage} alt="Foto principal" priority />
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
         </div>
 
-        {/* Right Top */}
-        <div
-          className="relative cursor-pointer group overflow-hidden"
-          onClick={() => onImageClick(1)}
-        >
-          <GalleryImage src={visibleImages[1]} alt="Imagen 2" priority />
-          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
-        </div>
-
-        {/* Right Bottom */}
-        <div
-          className="relative cursor-pointer group overflow-hidden"
-          onClick={() => onImageClick(2)}
-        >
-          <GalleryImage src={visibleImages[2]} alt="Imagen 3" priority={false} />
-          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+        {/* Right: 2x2 Grid of 4 square photos (5 cols) */}
+        <div className="col-span-5 grid grid-cols-2 grid-rows-2 gap-2 h-full">
+          {rightGridImages.map((img, idx) => {
+            const realIndex = (idx + 1) < count ? idx + 1 : idx % count;
+            return (
+              <div
+                key={idx}
+                className="relative h-full w-full cursor-pointer group overflow-hidden"
+                onClick={() => onImageClick(realIndex)}
+              >
+                <GalleryImage src={img} alt={`Foto ${idx + 2}`} priority={idx < 2} />
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+              </div>
+            );
+          })}
         </div>
       </div>
 
-      {/* Bottom Row: 5 small images */}
-      <div className="grid grid-cols-5 gap-2 mt-2 h-[100px] w-full">
-        {/* Image 4 */}
-        <div
-          className="relative cursor-pointer group overflow-hidden"
-          onClick={() => onImageClick(3)}
-        >
-          <GalleryImage src={visibleImages[3]} alt="Imagen 4" priority={false} />
-          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
-        </div>
+      {/* Bottom Row: 5 thumbnail images */}
+      <div className="grid grid-cols-5 gap-2 mt-2 h-[90px] lg:h-[100px] w-full">
+        {Array.from({ length: 5 }).map((_, idx) => {
+          const targetIndex = (thumbnailStartIndex + idx) % count;
+          const img = images[targetIndex] || mainImage;
+          const isLast = idx === 4;
+          const showOverlay = isLast && extraCount > 0;
 
-        {/* Image 5 */}
-        <div
-          className="relative cursor-pointer group overflow-hidden"
-          onClick={() => onImageClick(4)}
-        >
-          <GalleryImage src={visibleImages[4]} alt="Imagen 5" priority={false} />
-          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
-        </div>
-
-        {/* Image 6 */}
-        <div
-          className="relative cursor-pointer group overflow-hidden"
-          onClick={() => onImageClick(5)}
-        >
-          <GalleryImage src={visibleImages[5]} alt="Imagen 6" priority={false} />
-          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
-        </div>
-
-        {/* Image 7 */}
-        <div
-          className="relative cursor-pointer group overflow-hidden"
-          onClick={() => onImageClick(6)}
-        >
-          <GalleryImage src={visibleImages[6]} alt="Imagen 7" priority={false} />
-          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
-        </div>
-
-        {/* Image 8 with Overlay */}
-        <div
-          className="relative cursor-pointer group overflow-hidden"
-          onClick={() => onImageClick(7)}
-        >
-          <GalleryImage src={visibleImages[7]} alt="Imagen 8" priority={false} />
-          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
-          {extraCount > 0 && <MorePhotosOverlay count={extraCount} />}
-        </div>
+          return (
+            <div
+              key={idx}
+              className="relative cursor-pointer group overflow-hidden rounded-xl h-full"
+              onClick={() => onImageClick(targetIndex)}
+            >
+              <GalleryImage src={img} alt={`Miniatura ${idx + 1}`} priority={false} />
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+              {showOverlay && <MorePhotosOverlay count={extraCount} />}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
