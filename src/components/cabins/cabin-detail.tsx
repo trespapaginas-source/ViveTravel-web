@@ -256,6 +256,7 @@ export function CabinDetail({ cabinId }: { cabinId?: string } = {}) {
   // Mobile reservation flow states
   const [mobileBottomSheetOpen, setMobileBottomSheetOpen] = useState(false);
   const [mobileCalendarModalOpen, setMobileCalendarModalOpen] = useState(false);
+  const [mobileGuests, setMobileGuests] = useState(1);
   const [mobileDateRange, setMobileDateRange] = useState<DateRange | undefined>(() => {
     if (searchDate && searchDateEnd) {
       const from = new Date(searchDate + "T12:00:00");
@@ -337,15 +338,16 @@ export function CabinDetail({ cabinId }: { cabinId?: string } = {}) {
       `📍 *Ubicación:* ${cabin.location}`,
       `📅 *Check-in:* ${checkInStr}`,
       `📅 *Check-out:* ${checkOutStr}`,
+      `👥 *Huéspedes:* ${mobileGuests} persona${mobileGuests > 1 ? "s" : ""} (máx. ${cabin.capacity})`,
       roomsBreakdown ? `🏨 *Habitaciones:* ${roomsBreakdown}` : "",
       `🌙 *Estadía:* ${mobileNightCount} noche${mobileNightCount > 1 ? "s" : ""}`,
       `💵 *Total estimado:* ${totalStr}`,
       ``,
       `Hola, me interesa reservar esta cabaña en las fechas indicadas. ¿Podrían confirmarme la disponibilidad y pasos a seguir?`
     ].filter(Boolean).join("\n");
-    
+
     window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, "_blank");
-  }, [cabin, mobileDateRange, mobileNightCount, mobileTotal, searchRoomsDetail]);
+  }, [cabin, mobileDateRange, mobileNightCount, mobileTotal, mobileGuests, searchRoomsDetail]);
 
   if (isLoading || isFetching || !selectedItemId) {
     return (
@@ -746,7 +748,7 @@ export function CabinDetail({ cabinId }: { cabinId?: string } = {}) {
               {formatPrice(mobileTotal)}
             </p>
             <p className="text-[13px] text-muted-foreground underline decoration-muted-foreground/30 underline-offset-4">
-               {mobileDateSummaryText}
+               {mobileDateSummaryText} · {mobileGuests} huésped{mobileGuests > 1 ? "es" : ""}
             </p>
           </div>
           <Button
@@ -857,7 +859,43 @@ export function CabinDetail({ cabinId }: { cabinId?: string } = {}) {
                  setTimeout(() => setMobileCalendarModalOpen(true), 150);
                }}>Cambia</Button>
              </div>
-             
+
+             <Separator />
+
+             <div className="flex justify-between items-center">
+               <div>
+                 <h4 className="font-semibold text-foreground text-sm">Huéspedes</h4>
+                 <p className="text-sm text-muted-foreground">
+                   {mobileGuests} persona{mobileGuests > 1 ? "s" : ""} · máx. {cabin.capacity}
+                 </p>
+               </div>
+               <div className="flex items-center gap-3">
+                 <Button
+                   variant="outline"
+                   size="icon"
+                   className="h-8 w-8 rounded-full shrink-0"
+                   onClick={() => setMobileGuests((g) => Math.max(1, g - 1))}
+                   disabled={mobileGuests <= 1}
+                   aria-label="Reducir huéspedes"
+                 >
+                   <Minus className="w-4 h-4" />
+                 </Button>
+                 <span className="w-5 text-center text-sm font-semibold text-foreground tabular-nums">
+                   {mobileGuests}
+                 </span>
+                 <Button
+                   variant="outline"
+                   size="icon"
+                   className="h-8 w-8 rounded-full shrink-0"
+                   onClick={() => setMobileGuests((g) => Math.min(cabin.capacity, g + 1))}
+                   disabled={mobileGuests >= cabin.capacity}
+                   aria-label="Aumentar huéspedes"
+                 >
+                   <Plus className="w-4 h-4" />
+                 </Button>
+               </div>
+             </div>
+
              <Separator />
 
               <div className="flex justify-between items-center font-bold text-lg">
