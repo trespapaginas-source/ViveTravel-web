@@ -721,30 +721,7 @@ export function CabinDetail({ cabinId }: { cabinId?: string } = {}) {
               </div>
             </div>
 
-            <Separator className="my-5" />
 
-            {/* Mobile Airbnb-style Reservation Flow (Visible only on mobile/tablet) */}
-            <div className="lg:hidden">
-              <h2 className="text-2xl font-bold text-foreground mb-3">
-                Fechas de estadía
-              </h2>
-              <button
-                onClick={() => setMobileCalendarModalOpen(true)}
-                className="w-full flex items-center justify-between p-4 rounded-2xl border border-border bg-muted/20 hover:border-ocean/40 transition-colors text-left"
-              >
-                <div>
-                  <p className="text-sm font-semibold text-foreground">
-                    {mobileNightCount > 0 ? `${mobileNightCount} noches en esta cabaña` : "Seleccionar fechas"}
-                  </p>
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    {mobileDateRange?.from && mobileDateRange?.to
-                      ? `${format(mobileDateRange.from, "d 'de' MMM", { locale: es })} – ${format(mobileDateRange.to, "d 'de' MMM", { locale: es })}`
-                      : "Añade tus fechas de viaje para obtener una cotización"}
-                  </p>
-                </div>
-                <Calendar className="w-5 h-5 text-ocean/80 shrink-0" />
-              </button>
-            </div>
 
 
 
@@ -900,20 +877,24 @@ export function CabinDetail({ cabinId }: { cabinId?: string } = {}) {
         </DialogContent>
       </Dialog>
 
-      {/* Mobile Calendar Modal */}
+      {/* Mobile Calendar Modal (Bottom Sheet - Occupies bottom ~50-60% of screen) */}
       <Dialog open={mobileCalendarModalOpen} onOpenChange={setMobileCalendarModalOpen}>
-        <DialogContent className="w-full max-w-full h-[100dvh] p-0 gap-0 overflow-hidden flex flex-col bg-background z-[100] top-0 translate-y-0 border-0 lg:hidden">
-          <DialogHeader className="px-5 py-4 border-b border-border/50 sticky top-0 bg-background/95 backdrop-blur-sm z-10 text-left flex flex-row items-center justify-between">
-            <DialogTitle className="text-xl font-bold">Selecciona tus fechas</DialogTitle>
+        <DialogContent className="w-full max-w-full h-auto max-h-[80vh] p-0 gap-0 overflow-hidden flex flex-col bg-background z-[100] bottom-0 top-auto translate-y-0 border-t border-border/50 rounded-t-3xl rounded-b-none lg:hidden data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:slide-out-to-bottom-full data-[state=open]:slide-in-from-bottom-full">
+          {/* Drag indicator handle */}
+          <div className="w-12 h-1.5 bg-muted-foreground/20 rounded-full mx-auto my-2.5 flex-shrink-0" />
+
+          <DialogHeader className="px-5 py-2.5 border-b border-border/50 bg-background/95 backdrop-blur-sm z-10 text-left flex flex-row items-center justify-between">
+            <DialogTitle className="text-lg font-bold">Selecciona tus fechas</DialogTitle>
             <button
               onClick={() => setMobileCalendarModalOpen(false)}
               aria-label="Cerrar modal de fechas"
-              className="flex items-center justify-center w-9 h-9 rounded-full hover:bg-muted transition-colors text-muted-foreground hover:text-foreground -mr-1 flex-shrink-0"
+              className="flex items-center justify-center w-8 h-8 rounded-full hover:bg-muted transition-colors text-muted-foreground hover:text-foreground -mr-1 flex-shrink-0"
             >
               <X className="w-5 h-5" />
             </button>
           </DialogHeader>
-          <div className="overflow-y-auto p-4 flex-1 pb-32 flex flex-col items-center justify-center mobile-airbnb-calendar">
+          
+          <div className="p-3 flex-1 overflow-y-auto flex flex-col items-center justify-center mobile-airbnb-calendar">
              <Calendar
                 initialFocus
                 mode="range"
@@ -932,9 +913,10 @@ export function CabinDetail({ cabinId }: { cabinId?: string } = {}) {
                 }}
                 className="mx-auto w-full max-w-[340px]" />
           </div>
-          <div className="fixed bottom-0 left-0 right-0 p-4 px-6 border-t border-border/50 bg-background z-20 flex justify-between items-center">
-             <Button variant="link" className="px-0 underline text-foreground" onClick={() => setMobileDateRange(undefined)}>Borrar fechas</Button>
-             <Button className="h-11 px-8 font-semibold rounded-xl bg-ocean text-white hover:bg-ocean-dark" onClick={() => {
+
+          <div className="p-4 px-6 border-t border-border/50 bg-background z-20 flex justify-between items-center shrink-0">
+             <Button variant="link" className="px-0 underline text-foreground text-sm" onClick={() => setMobileDateRange(undefined)}>Borrar fechas</Button>
+             <Button className="h-10 px-7 font-semibold rounded-xl bg-ocean text-white hover:bg-ocean-dark text-sm" onClick={() => {
                setMobileCalendarModalOpen(false);
                setTimeout(() => setMobileBottomSheetOpen(true), 150);
              }}>
