@@ -768,7 +768,9 @@ export function CabinDetail({ cabinId }: { cabinId?: string } = {}) {
 
       {/* Rooms Modal */}
       <Dialog open={roomsModalOpen} onOpenChange={setRoomsModalOpen}>
-        <DialogContent className="w-full max-w-full h-[100dvh] sm:h-[85vh] sm:max-w-2xl sm:rounded-2xl p-0 gap-0 overflow-hidden flex flex-col bg-background z-[100] top-0 translate-y-0 sm:top-[50%] sm:-translate-y-[50%] sm:border border-0">
+        <DialogContent
+          showCloseButton={false}
+          className="w-full max-w-full h-[100dvh] sm:h-[85vh] sm:max-w-2xl sm:rounded-2xl p-0 gap-0 overflow-hidden flex flex-col bg-background z-[100] top-0 translate-y-0 sm:top-[50%] sm:-translate-y-[50%] sm:border border-0">
           <DialogHeader className="px-5 py-4 border-b border-border/50 sticky top-0 bg-background/95 backdrop-blur-sm z-10 text-left flex flex-row items-center justify-between">
             <DialogTitle className="text-xl font-bold">¿Dónde vas a dormir?</DialogTitle>
             <button
@@ -819,7 +821,9 @@ export function CabinDetail({ cabinId }: { cabinId?: string } = {}) {
 
       {/* Mobile Bottom Sheet (Price Details) */}
       <Dialog open={mobileBottomSheetOpen} onOpenChange={setMobileBottomSheetOpen}>
-        <DialogContent className="w-full max-w-full h-auto p-0 gap-0 flex flex-col bg-background z-[100] bottom-0 top-auto translate-y-0 border-t border-border/50 rounded-t-2xl rounded-b-none lg:hidden data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:slide-out-to-bottom-full data-[state=open]:slide-in-from-bottom-full">
+        <DialogContent
+          showCloseButton={false}
+          className="w-full max-w-full h-auto p-0 gap-0 flex flex-col bg-background z-[100] bottom-0 top-auto translate-y-0 border-t border-border/50 rounded-t-2xl rounded-b-none lg:hidden data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:slide-out-to-bottom-full data-[state=open]:slide-in-from-bottom-full">
           <div className="w-12 h-1.5 bg-muted-foreground/20 rounded-full mx-auto my-3 flex-shrink-0" />
           <DialogHeader className="px-5 py-2 border-b border-border/50 bg-background/95 backdrop-blur-sm z-10 text-left flex flex-row items-center justify-between">
             <DialogTitle className="text-xl font-bold">Detalles del precio</DialogTitle>
@@ -879,7 +883,9 @@ export function CabinDetail({ cabinId }: { cabinId?: string } = {}) {
 
       {/* Mobile Calendar Modal (Bottom Sheet - Occupies bottom ~50-60% of screen) */}
       <Dialog open={mobileCalendarModalOpen} onOpenChange={setMobileCalendarModalOpen}>
-        <DialogContent className="w-full max-w-full h-auto max-h-[80vh] p-0 gap-0 overflow-hidden flex flex-col bg-background z-[100] bottom-0 top-auto translate-y-0 border-t border-border/50 rounded-t-3xl rounded-b-none lg:hidden data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:slide-out-to-bottom-full data-[state=open]:slide-in-from-bottom-full">
+        <DialogContent
+          showCloseButton={false}
+          className="w-full max-w-full h-auto max-h-[80vh] p-0 gap-0 overflow-hidden flex flex-col bg-background z-[100] bottom-0 top-auto translate-y-0 border-t border-border/50 rounded-t-3xl rounded-b-none lg:hidden data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:slide-out-to-bottom-full data-[state=open]:slide-in-from-bottom-full">
           {/* Drag indicator handle */}
           <div className="w-12 h-1.5 bg-muted-foreground/20 rounded-full mx-auto my-2.5 flex-shrink-0" />
 
@@ -903,6 +909,7 @@ export function CabinDetail({ cabinId }: { cabinId?: string } = {}) {
                 onSelect={setMobileDateRange}
                 numberOfMonths={1}
                 locale={es}
+                showOutsideDays={false}
                 disabled={[
                   { before: new Date() },
                   ...(bookedDates.length > 0 ? bookedDates : []),

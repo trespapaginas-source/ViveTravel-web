@@ -119,6 +119,7 @@ export function AvailabilityCalendar({
               numberOfMonths={isMobile ? 1 : 2}
               locale={es}
               defaultMonth={today}
+              showOutsideDays={!isMobile}
               className={isMobile ? "mobile-airbnb-calendar w-full" : "mobile-airbnb-calendar desktop-full-calendar"}
               style={!isMobile ? { "--cell-size": "48px" } as React.CSSProperties : undefined}
               classNames={{
