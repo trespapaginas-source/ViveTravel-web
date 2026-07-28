@@ -210,7 +210,7 @@ function BookingDesktopGallery({
         <div className="col-span-5 flex flex-col gap-2 h-full">
           {/* Top right image */}
           <div
-            className="relative flex-1 h-full cursor-pointer group overflow-hidden"
+            className="relative flex-1 min-h-0 cursor-pointer group overflow-hidden"
             onClick={() => onImageClick(1)}
           >
             <GalleryImage src={rightTopImage} alt="Foto 2" priority />
@@ -219,7 +219,7 @@ function BookingDesktopGallery({
 
           {/* Bottom right image */}
           <div
-            className="relative flex-1 h-full cursor-pointer group overflow-hidden"
+            className="relative flex-1 min-h-0 cursor-pointer group overflow-hidden"
             onClick={() => onImageClick(2)}
           >
             <GalleryImage src={rightBottomImage} alt="Foto 3" priority={false} />
