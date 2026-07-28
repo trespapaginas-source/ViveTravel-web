@@ -195,35 +195,41 @@ function BookingDesktopGallery({
     <div className="w-full">
       {/* Top Block: 1 Large Left Image (~62%) + 2 Stacked Right Images (~38%) */}
       <div 
-        className="grid grid-cols-12 gap-2 h-[380px] lg:h-[440px] w-full rounded-2xl overflow-hidden"
+        className="grid grid-cols-12 gap-2 h-[380px] lg:h-[430px] w-full rounded-2xl overflow-hidden"
       >
         {/* Left: Main large focal photo (col-span-7) */}
         <div
           className="col-span-7 relative h-full cursor-pointer group overflow-hidden"
           onClick={() => onImageClick(0)}
         >
-          <GalleryImage src={mainImage} alt="Foto principal" priority />
-          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+          <div className="absolute inset-0">
+            <GalleryImage src={mainImage} alt="Foto principal" priority />
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+          </div>
         </div>
 
-        {/* Right: 2 Stacked Horizontal Photos (col-span-5) */}
-        <div className="col-span-5 flex flex-col gap-2 h-full">
+        {/* Right: 2 Stacked Horizontal Photos (col-span-5) - Locked to 50% each */}
+        <div className="col-span-5 grid grid-rows-2 gap-2 h-full">
           {/* Top right image */}
           <div
-            className="relative flex-1 min-h-0 cursor-pointer group overflow-hidden"
+            className="relative h-full w-full cursor-pointer group overflow-hidden"
             onClick={() => onImageClick(1)}
           >
-            <GalleryImage src={rightTopImage} alt="Foto 2" priority />
-            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+            <div className="absolute inset-0">
+              <GalleryImage src={rightTopImage} alt="Foto 2" priority />
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+            </div>
           </div>
 
           {/* Bottom right image */}
           <div
-            className="relative flex-1 min-h-0 cursor-pointer group overflow-hidden"
+            className="relative h-full w-full cursor-pointer group overflow-hidden"
             onClick={() => onImageClick(2)}
           >
-            <GalleryImage src={rightBottomImage} alt="Foto 3" priority={false} />
-            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+            <div className="absolute inset-0">
+              <GalleryImage src={rightBottomImage} alt="Foto 3" priority={false} />
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+            </div>
           </div>
         </div>
       </div>
@@ -242,15 +248,17 @@ function BookingDesktopGallery({
               className="relative cursor-pointer group overflow-hidden rounded-xl h-full"
               onClick={() => onImageClick(targetIndex < count ? targetIndex : 0)}
             >
-              <GalleryImage src={img} alt={`Miniatura ${idx + 1}`} priority={false} />
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
-              {showOverlay && (
-                <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px] flex flex-col items-center justify-center transition-all duration-300 group-hover:bg-black/70">
-                  <span className="text-white font-bold text-sm sm:text-base tracking-wide underline underline-offset-2">
-                    {extraCount} fotos más
-                  </span>
-                </div>
-              )}
+              <div className="absolute inset-0">
+                <GalleryImage src={img} alt={`Miniatura ${idx + 1}`} priority={false} />
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+                {showOverlay && (
+                  <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px] flex flex-col items-center justify-center transition-all duration-300 group-hover:bg-black/70">
+                    <span className="text-white font-bold text-sm sm:text-base tracking-wide underline underline-offset-2">
+                      {extraCount} fotos más
+                    </span>
+                  </div>
+                )}
+              </div>
             </div>
           );
         })}
