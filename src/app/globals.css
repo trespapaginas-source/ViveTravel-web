@@ -281,3 +281,18 @@ html {
     width: 100%;
   }
 }
+
+/* ── Mobile Availability Calendar: full-width responsive ── */
+@media (max-width: 767px) {
+  .mobile-airbnb-calendar {
+    width: 100% !important;
+  }
+  .mobile-airbnb-calendar [data-slot="calendar"],
+  .mobile-airbnb-calendar .rdp-root,
+  .mobile-airbnb-calendar .rdp-months,
+  .mobile-airbnb-calendar .rdp-month,
+  .mobile-airbnb-calendar table {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}

@@ -5,6 +5,7 @@ import { Cabin } from "@/lib/data";
 import { fetchCabin } from "@/lib/api";
 import { AvailabilityCalendar } from "@/components/cabins/availability-calendar";
 import { useCabinAvailability, expandBookedRanges } from "@/hooks/use-cabin-availability";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigation } from "@/lib/store";
 import { PropertyGallery } from "@/components/shared/property-gallery";
@@ -248,6 +249,7 @@ export function CabinDetail({ cabinId }: { cabinId?: string } = {}) {
       : false
   );
 
+  const isMobile = useIsMobile();
   const [shareOpen, setShareOpen] = useState(false);
   const [roomsModalOpen, setRoomsModalOpen] = useState(false);
 
@@ -749,11 +751,13 @@ export function CabinDetail({ cabinId }: { cabinId?: string } = {}) {
           </div>
 
           {/* Right Column - Sticky Price Card (Desktop) */}
-          <div className="hidden lg:block w-[380px] shrink-0">
-            <div className="sticky top-28">
-              <PriceCard cabin={cabin} />
+          {!isMobile && (
+            <div className="hidden lg:block w-[380px] shrink-0">
+              <div className="sticky top-28">
+                <PriceCard cabin={cabin} />
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
 
@@ -901,15 +905,23 @@ export function CabinDetail({ cabinId }: { cabinId?: string } = {}) {
         <DialogContent className="w-full max-w-full h-[100dvh] p-0 gap-0 overflow-hidden flex flex-col bg-background z-[100] top-0 translate-y-0 border-0 lg:hidden">
           <DialogHeader className="px-5 py-4 border-b border-border/50 sticky top-0 bg-background/95 backdrop-blur-sm z-10 text-left flex flex-row items-center justify-between">
             <DialogTitle className="text-xl font-bold">Selecciona tus fechas</DialogTitle>
+            <button
+              onClick={() => setMobileCalendarModalOpen(false)}
+              aria-label="Cerrar modal de fechas"
+              className="flex items-center justify-center w-9 h-9 rounded-full hover:bg-muted transition-colors text-muted-foreground hover:text-foreground -mr-1 flex-shrink-0"
+            >
+              <X className="w-5 h-5" />
+            </button>
           </DialogHeader>
-          <div className="overflow-y-auto p-4 flex-1 pb-32 flex flex-col items-center mobile-airbnb-calendar">
+          <div className="overflow-y-auto p-4 flex-1 pb-32 flex flex-col items-center justify-center mobile-airbnb-calendar">
              <Calendar
                 initialFocus
                 mode="range"
-                defaultMonth={mobileDateRange?.from}
+                defaultMonth={mobileDateRange?.from ?? new Date()}
                 selected={mobileDateRange}
                 onSelect={setMobileDateRange}
-                numberOfMonths={12}
+                numberOfMonths={1}
+                locale={es}
                 disabled={[
                   { before: new Date() },
                   ...(bookedDates.length > 0 ? bookedDates : []),
@@ -918,7 +930,7 @@ export function CabinDetail({ cabinId }: { cabinId?: string } = {}) {
                 modifiersStyles={{
                   booked: { textDecoration: "line-through", color: "#9CA3AF", opacity: 0.55 },
                 }}
-                className="mx-auto w-full max-w-[320px]" />
+                className="mx-auto w-full max-w-[340px]" />
           </div>
           <div className="fixed bottom-0 left-0 right-0 p-4 px-6 border-t border-border/50 bg-background z-20 flex justify-between items-center">
              <Button variant="link" className="px-0 underline text-foreground" onClick={() => setMobileDateRange(undefined)}>Borrar fechas</Button>

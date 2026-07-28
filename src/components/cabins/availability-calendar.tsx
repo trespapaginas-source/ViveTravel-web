@@ -107,7 +107,7 @@ export function AvailabilityCalendar({
             <Skeleton className="w-full max-w-[320px] h-[340px]" />
           </div>
         ) : (
-          <div className="availability-calendar flex justify-center overflow-x-auto md:block md:overflow-x-visible">
+          <div className="availability-calendar flex justify-center w-full overflow-x-auto md:overflow-x-visible">
             <Calendar
               mode="range"
               selected={range}
@@ -119,11 +119,11 @@ export function AvailabilityCalendar({
               numberOfMonths={isMobile ? 1 : 2}
               locale={es}
               defaultMonth={today}
-              className={isMobile ? "mobile-airbnb-calendar" : "mobile-airbnb-calendar desktop-full-calendar"}
+              className={isMobile ? "mobile-airbnb-calendar w-full" : "mobile-airbnb-calendar desktop-full-calendar"}
               style={!isMobile ? { "--cell-size": "48px" } as React.CSSProperties : undefined}
               classNames={{
-                root: cn(!isMobile ? "w-full" : "w-fit"),
-                months: cn(!isMobile ? "flex flex-row w-full gap-8" : "flex gap-4 flex-col md:flex-row relative"),
+                root: "w-full max-w-full",
+                months: cn(!isMobile ? "flex flex-row w-full gap-8" : "flex gap-4 flex-col w-full relative"),
                 month: cn(!isMobile ? "flex flex-col flex-1 gap-4" : "flex flex-col w-full gap-4 relative"),
                 nav: "absolute top-0 inset-x-0 flex items-center justify-between px-1 z-20",
                 button_previous: "inline-flex items-center justify-center w-8 h-8 rounded-md border border-border bg-background hover:bg-muted text-foreground transition-colors shadow-sm",
