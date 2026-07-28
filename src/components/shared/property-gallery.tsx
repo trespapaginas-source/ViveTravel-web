@@ -167,12 +167,12 @@ function BookingDesktopGallery({
   const defaultFallbacks = [
     "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80",
     "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&h=600&fit=crop&q=80",
-    "https://images.unsplash.com/photo-1506929562872-bb421503ef21?w=800&h=600&fit=crop&q=80",
-    "https://images.unsplash.com/photo-1473116763249-2faaef81ccda?w=800&h=600&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800&h=600&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800&h=600&fit=crop&q=80",
     "https://images.unsplash.com/photo-1519046904884-53103b34b206?w=800&h=600&fit=crop&q=80",
-    "https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?w=800&h=600&fit=crop&q=80",
+    "https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=800&h=600&fit=crop&q=80",
     "https://images.unsplash.com/photo-1439066615861-d1af74d74000?w=800&h=600&fit=crop&q=80",
-    "https://images.unsplash.com/photo-1470233572422-67b28243076a?w=800&h=600&fit=crop&q=80"
+    "https://images.unsplash.com/photo-1473116763249-2faaef81ccda?w=800&h=600&fit=crop&q=80"
   ];
 
   // Build list of valid images filled to at least 8 images
@@ -207,10 +207,10 @@ function BookingDesktopGallery({
         </div>
 
         {/* Right: 2 Stacked Horizontal Photos (col-span-5) */}
-        <div className="col-span-5 grid grid-rows-2 gap-2 h-full">
+        <div className="col-span-5 flex flex-col gap-2 h-full">
           {/* Top right image */}
           <div
-            className="relative h-full w-full cursor-pointer group overflow-hidden"
+            className="relative flex-1 h-full cursor-pointer group overflow-hidden"
             onClick={() => onImageClick(1)}
           >
             <GalleryImage src={rightTopImage} alt="Foto 2" priority />
@@ -219,7 +219,7 @@ function BookingDesktopGallery({
 
           {/* Bottom right image */}
           <div
-            className="relative h-full w-full cursor-pointer group overflow-hidden"
+            className="relative flex-1 h-full cursor-pointer group overflow-hidden"
             onClick={() => onImageClick(2)}
           >
             <GalleryImage src={rightBottomImage} alt="Foto 3" priority={false} />
