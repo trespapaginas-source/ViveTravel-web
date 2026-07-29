@@ -82,3 +82,53 @@ export function isRangeBooked(
     return f <= rTo && t >= rFrom;
   });
 }
+
+/**
+ * Given a check-in date and the list of booked days, return the last
+ * selectable check-out day — i.e. the day BEFORE the first booked day that
+ * follows the check-in. This is what makes a range behave like Airbnb/Booking:
+ * once the user picks a `from`, they can only pick a contiguous run of free
+ * nights up to (but not crossing) the next occupied day.
+ *
+ * Returns `null` when there is no blocking day ahead (open-ended availability).
+ */
+export function getRangeLimit(from: Date, bookedDays: Date[]): Date | null {
+  const start = new Date(from);
+  start.setHours(0, 0, 0, 0);
+
+  const upcoming = bookedDays
+    .filter((d) => {
+      const day = new Date(d);
+      day.setHours(0, 0, 0, 0);
+      // A booked day counts as a boundary only if it is strictly AFTER the
+      // check-in (the checkout day itself may equal a booked day in ICS terms,
+      // but the night of check-in must be free).
+      return day.getTime() > start.getTime();
+    })
+    .sort((a, b) => a.getTime() - b.getTime());
+
+  if (upcoming.length === 0) return null;
+
+  const firstBlock = new Date(upcoming[0]);
+  firstBlock.setHours(0, 0, 0, 0);
+  // The limit is the day before the first block — the last free checkout day.
+  const limit = new Date(firstBlock);
+  limit.setDate(limit.getDate() - 1);
+  return limit;
+}
+
+/**
+ * react-day-picker `disabled` matcher factory for the in-progress range case.
+ * When the user has picked a `from` but not yet a `to`, every day AFTER the
+ * contiguous free run must be non-selectable so the range can't cross a booked
+ * night. Combine the result with the usual `{ before: today }` + booked days.
+ */
+export function buildRangeDisabledAfterFrom(
+  from: Date | undefined,
+  bookedDays: Date[]
+): { after: Date }[] {
+  if (!from) return [];
+  const limit = getRangeLimit(from, bookedDays);
+  if (!limit) return [];
+  return [{ after: limit }];
+}

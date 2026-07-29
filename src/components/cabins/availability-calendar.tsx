@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import {
   useCabinAvailability,
   expandBookedRanges,
+  buildRangeDisabledAfterFrom,
 } from "@/hooks/use-cabin-availability";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useState, useMemo } from "react";
@@ -101,6 +102,22 @@ export function AvailabilityCalendar({
   const isDateBooked = (date: Date) =>
     bookedSet.has(date.toISOString().slice(0, 10));
 
+  // While the user is mid-selection (from picked, to not yet), restrict the
+  // selectable checkout days to the contiguous free run before the next booked
+  // day — Airbnb/Booking style. Once both ends are set, a new click resets the
+  // range (handled in handleSelect) so this re-enables the whole calendar.
+  const rangeInProgress = !!range?.from && !range?.to;
+  const disabledMatchers = useMemo(() => {
+    const base = [
+      { before: today },
+      ...(bookedDates.length > 0 ? bookedDates : []),
+    ] as Array<{ before: Date } | { after: Date } | Date>;
+    if (rangeInProgress) {
+      base.push(...buildRangeDisabledAfterFrom(range!.from, bookedDates));
+    }
+    return base;
+  }, [today, bookedDates, rangeInProgress, range]);
+
   return (
     <section className="mb-8">
       <div className="flex items-center gap-2 mb-1">
@@ -150,10 +167,7 @@ export function AvailabilityCalendar({
               mode="range"
               selected={range}
               onSelect={readOnly ? undefined : handleSelect}
-              disabled={[
-                { before: today },
-                ...(bookedDates.length > 0 ? bookedDates : []),
-              ]}
+              disabled={disabledMatchers}
               numberOfMonths={isMobile ? 1 : 2}
               locale={es}
               defaultMonth={today}

@@ -5,7 +5,7 @@ import { Cabin } from "@/lib/data";
 import { fetchCabin } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { AvailabilityCalendar } from "@/components/cabins/availability-calendar";
-import { useCabinAvailability, expandBookedRanges } from "@/hooks/use-cabin-availability";
+import { useCabinAvailability, expandBookedRanges, buildRangeDisabledAfterFrom } from "@/hooks/use-cabin-availability";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigation } from "@/lib/store";
@@ -340,6 +340,30 @@ export function CabinDetail({ cabinId }: { cabinId?: string } = {}) {
       prevRangeCompleteRef.current = nowComplete;
     },
     [triggerReservePulse]
+  );
+
+  // Airbnb-style selection for the modal calendar: if a complete range exists,
+  // tapping any day starts a fresh range. react-day-picker v9 passes the
+  // clicked day as the second onSelect argument.
+  const handleModalCalendarSelect = useCallback(
+    (next: DateRange | undefined, selectedDay?: Date) => {
+      if (!next) {
+        setMobileDateRange(undefined);
+        return;
+      }
+      const current = mobileDateRange;
+      const currentIsComplete = !!(current?.from && current?.to);
+      if (currentIsComplete && selectedDay) {
+        setMobileDateRange({ from: selectedDay, to: undefined });
+        return;
+      }
+      if (next.from) {
+        setMobileDateRange(next);
+      } else if (selectedDay) {
+        setMobileDateRange({ from: selectedDay, to: undefined });
+      }
+    },
+    [mobileDateRange]
   );
 
   const handleWhatsAppReservation = useCallback(() => {
@@ -981,13 +1005,16 @@ export function CabinDetail({ cabinId }: { cabinId?: string } = {}) {
                 mode="range"
                 defaultMonth={mobileDateRange?.from ?? new Date()}
                 selected={mobileDateRange}
-                onSelect={setMobileDateRange}
+                onSelect={handleModalCalendarSelect}
                 numberOfMonths={1}
                 locale={es}
                 showOutsideDays={false}
                 disabled={[
                   { before: new Date() },
                   ...(bookedDates.length > 0 ? bookedDates : []),
+                  ...(mobileDateRange?.from && !mobileDateRange?.to
+                    ? buildRangeDisabledAfterFrom(mobileDateRange.from, bookedDates)
+                    : []),
                 ]}
                 modifiers={{ booked: bookedDates }}
                 modifiersStyles={{
