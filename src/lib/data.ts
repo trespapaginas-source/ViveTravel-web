@@ -31,6 +31,9 @@ export interface TourPlan {
    * Past windows are filtered out at render time, not here. */
   departureDates?: Array<{ start: string; end: string }>;
   itinerary?: Array<{ title: string; description: string }>;
+  /** Important notices shown in a dedicated "Información importante" section
+   * (e.g. flight requirements, minors documentation, house rules, extras). */
+  notes?: string[];
 }
 
 export interface TransportVehicle {

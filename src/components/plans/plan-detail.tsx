@@ -16,6 +16,7 @@ import {
   Heart,
   Share2,
   ChevronDown,
+  Info,
   type LucideIcon,
 } from "lucide-react";
 
@@ -915,6 +916,34 @@ export function PlanDetail({ planId }: { planId?: string } = {}) {
                 </div>
               </ExpandableSection>
             </div>
+
+            {plan.notes && plan.notes.length > 0 && (
+              <>
+                <Separator className="my-5" />
+                {/* Información importante */}
+                <div>
+                  <h2 className="text-xl md:text-2xl font-bold text-foreground mb-3.5 flex items-center gap-2">
+                    <Info className="w-4 h-4 text-ocean" />
+                    Información importante
+                  </h2>
+                  <ExpandableSection itemCount={plan.notes.length} maxHeight={260}>
+                    <div className="space-y-2">
+                      {plan.notes.map((note, i) => (
+                        <div
+                          key={i}
+                          className="flex items-start gap-2.5 py-1.5 px-3 rounded-lg bg-muted/40 border border-border/40"
+                        >
+                          <Info className="w-3.5 h-3.5 text-ocean/70 shrink-0 mt-0.5" />
+                          <span className="text-sm text-foreground/90 leading-relaxed">
+                            {note}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </ExpandableSection>
+                </div>
+              </>
+            )}
 
             {!plan.fixedDeparture && (plan.schedule || plan.meeting) && (
               <>
