@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { Cabin } from "@/lib/data";
 import { fetchCabin } from "@/lib/api";
+import { cn } from "@/lib/utils";
 import { AvailabilityCalendar } from "@/components/cabins/availability-calendar";
 import { useCabinAvailability, expandBookedRanges } from "@/hooks/use-cabin-availability";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -257,6 +258,7 @@ export function CabinDetail({ cabinId }: { cabinId?: string } = {}) {
   const [mobileBottomSheetOpen, setMobileBottomSheetOpen] = useState(false);
   const [mobileCalendarModalOpen, setMobileCalendarModalOpen] = useState(false);
   const [mobileGuests, setMobileGuests] = useState(1);
+  const [pulseReserveButton, setPulseReserveButton] = useState(false);
   const [mobileDateRange, setMobileDateRange] = useState<DateRange | undefined>(() => {
     if (searchDate && searchDateEnd) {
       const from = new Date(searchDate + "T12:00:00");
@@ -312,6 +314,33 @@ export function CabinDetail({ cabinId }: { cabinId?: string } = {}) {
     const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
     window.open(whatsappUrl, "_blank");
   }, [cabin]);
+
+  // Tracks whether the previous selection was a half-range (only `from`),
+  // so we can detect the moment a range is completed in the inline calendar
+  // and pulse the sticky "Reservar" button to draw the user's attention.
+  const prevRangeCompleteRef = useRef(true);
+
+  const triggerReservePulse = useCallback(() => {
+    setPulseReserveButton(true);
+    const t = setTimeout(() => setPulseReserveButton(false), 1600);
+    return () => clearTimeout(t);
+  }, []);
+
+  const handleInlineCalendarSelect = useCallback(
+    (range: DateRange | undefined) => {
+      const nowComplete = !!(range?.from && range?.to);
+      setMobileDateRange(range);
+      // Pulse only on the transition from incomplete → complete.
+      if (nowComplete && !prevRangeCompleteRef.current) {
+        triggerReservePulse();
+        // Subtle nudge: scroll the sticky CTA into view so the pulse is visible.
+        const sticky = document.querySelector('[data-mobile-reserve-cta]');
+        if (sticky) (sticky as HTMLElement).scrollIntoView({ behavior: "smooth", block: "end" });
+      }
+      prevRangeCompleteRef.current = nowComplete;
+    },
+    [triggerReservePulse]
+  );
 
   const handleWhatsAppReservation = useCallback(() => {
     if (!cabin || !mobileDateRange?.from || !mobileDateRange?.to) return;
@@ -566,7 +595,12 @@ export function CabinDetail({ cabinId }: { cabinId?: string } = {}) {
             <Separator className="my-6" />
 
             {/* Availability calendar (real-time, from ICS feed) */}
-            <AvailabilityCalendar cabinId={cabin.id} cabinName={cabin.name} />
+            <AvailabilityCalendar
+              cabinId={cabin.id}
+              cabinName={cabin.name}
+              selectedRange={isMobile ? mobileDateRange : undefined}
+              onSelectRange={isMobile ? handleInlineCalendarSelect : undefined}
+            />
 
             <Separator className="my-6" />
 
@@ -741,7 +775,7 @@ export function CabinDetail({ cabinId }: { cabinId?: string } = {}) {
       </div>
 
       {/* Mobile Sticky CTA Bar */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-border/50 px-5 py-3">
+      <div data-mobile-reserve-cta className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-border/50 px-5 py-3">
         <div className="flex items-center justify-between gap-3">
           <div onClick={() => setMobileBottomSheetOpen(true)} className="cursor-pointer">
             <p className="text-lg font-bold text-foreground underline decoration-foreground/30 underline-offset-4 mb-0.5">
@@ -753,7 +787,10 @@ export function CabinDetail({ cabinId }: { cabinId?: string } = {}) {
           </div>
           <Button
             size="sm"
-            className="bg-ocean hover:bg-ocean-dark text-white rounded-lg h-11 px-8 text-base font-semibold"
+            className={cn(
+              "bg-ocean hover:bg-ocean-dark text-white rounded-lg h-11 px-8 text-base font-semibold shadow-md",
+              pulseReserveButton && "reserve-pulse"
+            )}
             onClick={() => setMobileBottomSheetOpen(true)}
           >
             Reservar

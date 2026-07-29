@@ -37,10 +37,48 @@ export function AvailabilityCalendar({
     undefined
   );
 
-  const range = readOnly ? selectedRange : selectedRange ?? internalRange;
+  // When the parent controls the range (mobile reservation flow), use it as the
+  // single source of truth and forward clicks directly. Otherwise fall back to
+  // the component's own internal state (display-only / standalone usage).
+  const isControlled = !readOnly && !!onSelectRange;
+  const range = isControlled
+    ? selectedRange
+    : readOnly
+      ? selectedRange
+      : selectedRange ?? internalRange;
   const setRange = (r: DateRange | undefined) => {
-    if (!readOnly) setInternalRange(r);
+    if (!readOnly && !isControlled) setInternalRange(r);
     onSelectRange?.(r);
+  };
+
+  // Airbnb-style selection: if a complete range already exists, clicking any
+  // day starts a brand-new range (instead of extending the previous one). This
+  // matches the behaviour users expect on the inline availability calendar.
+  // react-day-picker v9 onSelect passes (range, selectedDay) — we use the
+  // clicked day to decide whether to begin a new range.
+  const handleSelect = (
+    next: DateRange | undefined,
+    selectedDay?: Date
+  ) => {
+    if (readOnly || !next) {
+      setRange(next);
+      return;
+    }
+    const current = range;
+    const currentIsComplete = !!(current?.from && current?.to);
+
+    if (currentIsComplete && selectedDay) {
+      // A complete range exists and the user tapped a day → start fresh.
+      setRange({ from: selectedDay, to: undefined });
+      return;
+    }
+    // Mid-selection: react-day-picker returns the in-progress range. Only keep
+    // it when it actually contains a `from`; otherwise we'd wipe the start day.
+    if (next.from) {
+      setRange(next);
+    } else if (selectedDay) {
+      setRange({ from: selectedDay, to: undefined });
+    }
   };
 
   const today = useMemo(() => {
@@ -111,7 +149,7 @@ export function AvailabilityCalendar({
             <Calendar
               mode="range"
               selected={range}
-              onSelect={readOnly ? undefined : (r) => setRange(r ?? undefined)}
+              onSelect={readOnly ? undefined : handleSelect}
               disabled={[
                 { before: today },
                 ...(bookedDates.length > 0 ? bookedDates : []),

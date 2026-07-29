@@ -227,6 +227,32 @@ html {
   }
 }
 
+/* Subtle pulse for the mobile "Reservar" CTA when a date range is completed
+   in the inline availability calendar. Two gentle beats + a glow ring. */
+@keyframes reserve-pulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 4px 12px 0 rgba(0, 105, 138, 0.3);
+  }
+  15% {
+    transform: scale(1.06);
+    box-shadow: 0 0 0 6px rgba(0, 105, 138, 0.18), 0 6px 18px 0 rgba(0, 105, 138, 0.4);
+  }
+  30% {
+    transform: scale(1);
+    box-shadow: 0 4px 12px 0 rgba(0, 105, 138, 0.3);
+  }
+  45% {
+    transform: scale(1.06);
+    box-shadow: 0 0 0 6px rgba(0, 105, 138, 0.18), 0 6px 18px 0 rgba(0, 105, 138, 0.4);
+  }
+}
+
+.reserve-pulse {
+  animation: reserve-pulse 1.4s ease-out;
+  z-index: 50;
+}
+
 @keyframes heartbeat {
   0% {
     transform: scale(1);
