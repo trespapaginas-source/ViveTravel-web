@@ -9,7 +9,7 @@ import { useCabinAvailability, expandBookedRanges, rangeCrossesBooked } from "@/
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigation } from "@/lib/store";
-import { PropertyGallery } from "@/components/shared/property-gallery";
+import { PropertyGallery, Lightbox } from "@/components/shared/property-gallery";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -68,6 +68,8 @@ import {
   TreeDeciduous,
   Minus,
   Plus,
+  Maximize2,
+  ChevronRight,
   X,
 } from "lucide-react";
 import { type DateRange } from "react-day-picker";
@@ -253,6 +255,10 @@ export function CabinDetail({ cabinId }: { cabinId?: string } = {}) {
   const isMobile = useIsMobile();
   const [shareOpen, setShareOpen] = useState(false);
   const [roomsModalOpen, setRoomsModalOpen] = useState(false);
+  // Room photos lightbox: { images, index, title } when open
+  const [roomLightbox, setRoomLightbox] = useState<
+    { images: string[]; index: number; title: string } | null
+  >(null);
 
   // Mobile reservation flow states
   const [mobileBottomSheetOpen, setMobileBottomSheetOpen] = useState(false);
@@ -488,6 +494,14 @@ export function CabinDetail({ cabinId }: { cabinId?: string } = {}) {
     return rooms;
   })();
 
+  // Collect ALL room images into a flat list for full browsing. Each entry
+  // remembers which room it came from so the lightbox title is meaningful.
+  const allRoomImages = displayRooms.flatMap((room: any) => {
+    const imgs: string[] =
+      room.images && room.images.length > 0 ? room.images : [room.image];
+    return imgs.map((src: string) => ({ src: src || "", title: room.title }));
+  });
+
   return (
     <div className="pb-28 lg:pb-16">
       {/* Back Button (Desktop) */}
@@ -652,27 +666,55 @@ export function CabinDetail({ cabinId }: { cabinId?: string } = {}) {
             {displayRooms.length > 0 && (
               <>
                 <div>
-                  <h2 className="text-2xl md:text-[28px] font-bold tracking-tight text-foreground mb-4">
-                    ¿Dónde vas a dormir?
-                  </h2>
+                  <button
+                    type="button"
+                    onClick={() => setRoomsModalOpen(true)}
+                    className="flex items-center gap-2 mb-4 group focus:outline-none focus:ring-2 focus:ring-ocean/40 rounded-lg -ml-1 px-1"
+                    aria-label="Ver detalle completo de habitaciones"
+                  >
+                    <h2 className="text-2xl md:text-[28px] font-bold tracking-tight text-foreground group-hover:text-ocean transition-colors">
+                      ¿Dónde vas a dormir?
+                    </h2>
+                    <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-ocean group-hover:translate-x-0.5 transition-all mt-1" />
+                  </button>
                   <div className="flex overflow-x-auto gap-4 pb-4 overscroll-behavior-x-contain snap-x snap-mandatory hide-scrollbar">
-                    {displayRooms.map((bedroom: any) => (
-                      <div 
-                        key={bedroom.id} 
-                        className="w-[160px] flex-none group cursor-pointer overflow-hidden overflow-x-hidden snap-start"
-                        onClick={() => setRoomsModalOpen(true)}
+                    {displayRooms.map((bedroom: any, roomIdx: number) => {
+                      // Global index of this room's first image in the flat list.
+                      let globalBase = 0;
+                      for (let i = 0; i < roomIdx; i++) {
+                        const r = displayRooms[i];
+                        const n = r.images && r.images.length > 0 ? r.images.length : 1;
+                        globalBase += n;
+                      }
+                      return (
+                      <button
+                        key={bedroom.id}
+                        type="button"
+                        className="w-[160px] flex-none group cursor-pointer overflow-hidden overflow-x-hidden snap-start text-left block focus:outline-none focus:ring-2 focus:ring-ocean/40 rounded-xl"
+                        aria-label={`Ver fotos de ${bedroom.title}`}
+                        onClick={() =>
+                          setRoomLightbox({
+                            images: allRoomImages.map((i: any) => i.src),
+                            index: globalBase,
+                            title: bedroom.title,
+                          })
+                        }
                       >
                         <div className="w-full h-[110px] rounded-xl overflow-hidden mb-2 relative">
-                          <img 
-                            src={bedroom.image || "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"} 
-                            alt={bedroom.title} 
+                          <img
+                            src={bedroom.image || "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"}
+                            alt={bedroom.title}
                             className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
                            onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"; e.currentTarget.onerror = null; }} />
+                          <span className="absolute top-1.5 right-1.5 inline-flex items-center justify-center w-6 h-6 rounded-full bg-black/45 backdrop-blur-sm text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                            <Maximize2 className="w-3 h-3" />
+                          </span>
                         </div>
                         <h3 className="font-medium text-sm text-foreground">{bedroom.title}</h3>
                         <p className="text-xs text-muted-foreground mt-0.5">{bedroom.beds}</p>
-                      </div>
-                    ))}
+                      </button>
+                      );
+                    })}
                   </div>
 
                 </div>
@@ -868,8 +910,15 @@ export function CabinDetail({ cabinId }: { cabinId?: string } = {}) {
             </button>
           </DialogHeader>
           <div className="overflow-y-auto p-5 sm:p-6 space-y-8 flex-1 pb-10">
-            {displayRooms.map((room: any) => {
+            {displayRooms.map((room: any, roomIdx: number) => {
               const roomImages: string[] = room.images && room.images.length > 0 ? room.images : [room.image];
+              // Global index of this room's first image in the flat allRoomImages list.
+              let globalBase = 0;
+              for (let i = 0; i < roomIdx; i++) {
+                const r = displayRooms[i];
+                const n = r.images && r.images.length > 0 ? r.images.length : 1;
+                globalBase += n;
+              }
               return (
                 <div key={room.id} className="space-y-3">
                   <div>
@@ -878,21 +927,33 @@ export function CabinDetail({ cabinId }: { cabinId?: string } = {}) {
                   </div>
                   <div className="flex overflow-x-auto gap-3 pb-2 snap-x snap-mandatory hide-scrollbar">
                     {roomImages.map((imgUrl: string, idx: number) => (
-                      <div
+                      <button
                         key={idx}
-                        className="w-[240px] sm:w-[320px] aspect-[4/3] rounded-xl overflow-hidden relative border border-border/30 shadow-sm shrink-0 snap-start"
+                        type="button"
+                        onClick={() =>
+                          setRoomLightbox({
+                            images: allRoomImages.map((i: any) => i.src),
+                            index: globalBase + idx,
+                            title: room.title,
+                          })
+                        }
+                        className="group w-[240px] sm:w-[320px] aspect-[4/3] rounded-xl overflow-hidden relative border border-border/30 shadow-sm shrink-0 snap-start cursor-pointer block focus:outline-none focus:ring-2 focus:ring-ocean/40"
+                        aria-label={`Ampliar foto ${idx + 1} de ${room.title}`}
                       >
                         <img
                           src={imgUrl}
                           alt={`${room.title} - Foto ${idx + 1}`}
-                          className="object-cover w-full h-full"
+                          className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
                           onError={(e) => {
                             e.currentTarget.src =
                               "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80";
                             e.currentTarget.onerror = null;
                           }}
                         />
-                      </div>
+                        <span className="absolute top-2 right-2 inline-flex items-center justify-center w-7 h-7 rounded-full bg-black/45 backdrop-blur-sm text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                          <Maximize2 className="w-3.5 h-3.5" />
+                        </span>
+                      </button>
                     ))}
                   </div>
                 </div>
@@ -901,6 +962,17 @@ export function CabinDetail({ cabinId }: { cabinId?: string } = {}) {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Room photos full-screen lightbox */}
+      {roomLightbox && (
+        <Lightbox
+          key={roomLightbox.index}
+          images={roomLightbox.images}
+          initialIndex={roomLightbox.index}
+          title={roomLightbox.title}
+          onClose={() => setRoomLightbox(null)}
+        />
+      )}
 
       {/* Mobile Bottom Sheet (Price Details) */}
       <Dialog open={mobileBottomSheetOpen} onOpenChange={setMobileBottomSheetOpen}>

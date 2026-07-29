@@ -363,7 +363,7 @@ function MorePhotosOverlay({ count }: { count: number }) {
 
 // ─── Full-Screen Lightbox ──────────────────────────────────────────────────────
 
-function Lightbox({
+export function Lightbox({
   images,
   initialIndex,
   onClose,
