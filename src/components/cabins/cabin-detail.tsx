@@ -28,8 +28,6 @@ import {
 } from "@/components/ui/dialog";
 import {
   ArrowLeft,
-  ChevronLeft,
-  ChevronRight,
   MapPin,
   Navigation,
   Users,
@@ -255,40 +253,6 @@ export function CabinDetail({ cabinId }: { cabinId?: string } = {}) {
   const isMobile = useIsMobile();
   const [shareOpen, setShareOpen] = useState(false);
   const [roomsModalOpen, setRoomsModalOpen] = useState(false);
-
-  // Bedroom Photo Lightbox States
-  const [bedroomLightboxOpen, setBedroomLightboxOpen] = useState(false);
-  const [bedroomLightboxImages, setBedroomLightboxImages] = useState<string[]>([]);
-  const [bedroomLightboxIndex, setBedroomLightboxIndex] = useState(0);
-  const [bedroomLightboxTitle, setBedroomLightboxTitle] = useState("");
-
-  const openBedroomLightbox = (images: string[], startIndex: number = 0, title: string = "") => {
-    setBedroomLightboxImages(images);
-    setBedroomLightboxIndex(startIndex);
-    setBedroomLightboxTitle(title);
-    setBedroomLightboxOpen(true);
-  };
-
-  useEffect(() => {
-    if (!bedroomLightboxOpen) return;
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        setBedroomLightboxOpen(false);
-      } else if (e.key === "ArrowLeft") {
-        setBedroomLightboxIndex((prev) =>
-          prev > 0 ? prev - 1 : bedroomLightboxImages.length - 1
-        );
-      } else if (e.key === "ArrowRight") {
-        setBedroomLightboxIndex((prev) =>
-          prev < bedroomLightboxImages.length - 1 ? prev + 1 : 0
-        );
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [bedroomLightboxOpen, bedroomLightboxImages.length]);
 
   // Mobile reservation flow states
   const [mobileBottomSheetOpen, setMobileBottomSheetOpen] = useState(false);
@@ -692,31 +656,23 @@ export function CabinDetail({ cabinId }: { cabinId?: string } = {}) {
                     ¿Dónde vas a dormir?
                   </h2>
                   <div className="flex overflow-x-auto gap-4 pb-4 overscroll-behavior-x-contain snap-x snap-mandatory hide-scrollbar">
-                    {displayRooms.map((bedroom: any) => {
-                      const roomImages: string[] = bedroom.images && bedroom.images.length > 0 ? bedroom.images : [bedroom.image];
-                      return (
-                        <div 
-                          key={bedroom.id} 
-                          className="w-[160px] flex-none group cursor-pointer overflow-hidden overflow-x-hidden snap-start"
-                          onClick={() => openBedroomLightbox(roomImages, 0, bedroom.title)}
-                        >
-                          <div className="w-full h-[110px] rounded-xl overflow-hidden mb-2 relative border border-border/30 group-hover:border-ocean/50 transition-all shadow-sm">
-                            <img 
-                              src={bedroom.image || "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"} 
-                              alt={bedroom.title} 
-                              className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
-                              onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"; e.currentTarget.onerror = null; }} />
-                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-                              <span className="opacity-0 group-hover:opacity-100 bg-black/70 text-white text-[11px] font-semibold px-2.5 py-1 rounded-full backdrop-blur-xs transition-opacity flex items-center gap-1">
-                                <Eye className="w-3 h-3" /> Ampliar
-                              </span>
-                            </div>
-                          </div>
-                          <h3 className="font-medium text-sm text-foreground group-hover:text-ocean transition-colors">{bedroom.title}</h3>
-                          <p className="text-xs text-muted-foreground mt-0.5">{bedroom.beds}</p>
+                    {displayRooms.map((bedroom: any) => (
+                      <div 
+                        key={bedroom.id} 
+                        className="w-[160px] flex-none group cursor-pointer overflow-hidden overflow-x-hidden snap-start"
+                        onClick={() => setRoomsModalOpen(true)}
+                      >
+                        <div className="w-full h-[110px] rounded-xl overflow-hidden mb-2 relative">
+                          <img 
+                            src={bedroom.image || "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"} 
+                            alt={bedroom.title} 
+                            className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
+                           onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80"; e.currentTarget.onerror = null; }} />
                         </div>
-                      );
-                    })}
+                        <h3 className="font-medium text-sm text-foreground">{bedroom.title}</h3>
+                        <p className="text-xs text-muted-foreground mt-0.5">{bedroom.beds}</p>
+                      </div>
+                    ))}
                   </div>
 
                 </div>
@@ -924,24 +880,18 @@ export function CabinDetail({ cabinId }: { cabinId?: string } = {}) {
                     {roomImages.map((imgUrl: string, idx: number) => (
                       <div
                         key={idx}
-                        className="w-[240px] sm:w-[320px] aspect-[4/3] rounded-xl overflow-hidden relative border border-border/30 shadow-sm shrink-0 snap-start cursor-pointer group"
-                        onClick={() => openBedroomLightbox(roomImages, idx, room.title)}
+                        className="w-[240px] sm:w-[320px] aspect-[4/3] rounded-xl overflow-hidden relative border border-border/30 shadow-sm shrink-0 snap-start"
                       >
                         <img
                           src={imgUrl}
                           alt={`${room.title} - Foto ${idx + 1}`}
-                          className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
+                          className="object-cover w-full h-full"
                           onError={(e) => {
                             e.currentTarget.src =
                               "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80";
                             e.currentTarget.onerror = null;
                           }}
                         />
-                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-                          <span className="opacity-0 group-hover:opacity-100 bg-black/70 text-white text-xs font-semibold px-3 py-1.5 rounded-full backdrop-blur-xs transition-opacity flex items-center gap-1.5 shadow-lg">
-                            <Eye className="w-3.5 h-3.5" /> Ampliar foto
-                          </span>
-                        </div>
                       </div>
                     ))}
                   </div>
@@ -949,100 +899,6 @@ export function CabinDetail({ cabinId }: { cabinId?: string } = {}) {
               );
             })}
           </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Bedroom Photo Lightbox Modal (Full Screen Interactive Viewer) */}
-      <Dialog open={bedroomLightboxOpen} onOpenChange={setBedroomLightboxOpen}>
-        <DialogContent
-          showCloseButton={false}
-          className="w-full max-w-full h-[100dvh] p-0 gap-0 overflow-hidden flex flex-col bg-black/95 backdrop-blur-md z-[150] top-0 translate-y-0 border-0 rounded-none text-white focus:outline-none"
-        >
-          {/* Header */}
-          <div className="px-5 py-4 flex items-center justify-between z-20 bg-gradient-to-b from-black/80 to-transparent">
-            <div>
-              <h3 className="font-bold text-lg text-white">{bedroomLightboxTitle || "Fotos de habitación"}</h3>
-              {bedroomLightboxImages.length > 0 && (
-                <p className="text-xs text-white/70 mt-0.5">
-                  Foto {bedroomLightboxIndex + 1} de {bedroomLightboxImages.length}
-                </p>
-              )}
-            </div>
-            <button
-              onClick={() => setBedroomLightboxOpen(false)}
-              aria-label="Cerrar visor"
-              className="flex items-center justify-center w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
-            >
-              <X className="w-5 h-5" />
-            </button>
-          </div>
-
-          {/* Main Image View */}
-          <div className="flex-1 relative flex items-center justify-center p-4 sm:p-8 select-none">
-            {bedroomLightboxImages.length > 0 && (
-              <img
-                src={bedroomLightboxImages[bedroomLightboxIndex]}
-                alt={`${bedroomLightboxTitle} - ${bedroomLightboxIndex + 1}`}
-                className="max-h-full max-w-full object-contain rounded-lg shadow-2xl transition-all duration-300 animate-in fade-in-50 zoom-in-95"
-                onError={(e) => {
-                  e.currentTarget.src =
-                    "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&q=80";
-                  e.currentTarget.onerror = null;
-                }}
-              />
-            )}
-
-            {/* Navigation Arrows */}
-            {bedroomLightboxImages.length > 1 && (
-              <>
-                <button
-                  onClick={() =>
-                    setBedroomLightboxIndex((prev) =>
-                      prev > 0 ? prev - 1 : bedroomLightboxImages.length - 1
-                    )
-                  }
-                  aria-label="Foto anterior"
-                  className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-black/50 hover:bg-black/80 border border-white/20 text-white flex items-center justify-center backdrop-blur-sm transition-all hover:scale-110 active:scale-95"
-                >
-                  <ChevronLeft className="w-6 h-6" />
-                </button>
-                <button
-                  onClick={() =>
-                    setBedroomLightboxIndex((prev) =>
-                      prev < bedroomLightboxImages.length - 1 ? prev + 1 : 0
-                    )
-                  }
-                  aria-label="Siguiente foto"
-                  className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-black/50 hover:bg-black/80 border border-white/20 text-white flex items-center justify-center backdrop-blur-sm transition-all hover:scale-110 active:scale-95"
-                >
-                  <ChevronRight className="w-6 h-6" />
-                </button>
-              </>
-            )}
-          </div>
-
-          {/* Bottom Thumbnail Strip */}
-          {bedroomLightboxImages.length > 1 && (
-            <div className="p-4 bg-gradient-to-t from-black/90 via-black/60 to-transparent flex justify-center gap-2 overflow-x-auto hide-scrollbar z-20">
-              {bedroomLightboxImages.map((thumbUrl, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setBedroomLightboxIndex(idx)}
-                  className={`w-14 h-10 rounded-md overflow-hidden border-2 transition-all shrink-0 ${
-                    idx === bedroomLightboxIndex
-                      ? "border-ocean scale-105 opacity-100 shadow-md"
-                      : "border-transparent opacity-50 hover:opacity-80"
-                  }`}
-                >
-                  <img
-                    src={thumbUrl}
-                    alt={`Miniatura ${idx + 1}`}
-                    className="w-full h-full object-cover"
-                  />
-                </button>
-              ))}
-            </div>
-          )}
         </DialogContent>
       </Dialog>
 
