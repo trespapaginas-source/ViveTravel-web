@@ -6,7 +6,6 @@ import { Badge } from "@/components/ui/badge";
 import {
   useCabinAvailability,
   expandBookedRanges,
-  buildRangeDisabledAfterFrom,
   rangeCrossesBooked,
 } from "@/hooks/use-cabin-availability";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -126,21 +125,16 @@ export function AvailabilityCalendar({
   const isDateBooked = (date: Date) =>
     bookedSet.has(date.toISOString().slice(0, 10));
 
-  // While the user is mid-selection (from picked, to not yet), restrict the
-  // selectable checkout days to the contiguous free run before the next booked
-  // day — Airbnb/Booking style. Once both ends are set, a new click resets the
-  // range (handled in handleSelect) so this re-enables the whole calendar.
-  const rangeInProgress = !!range?.from && !range?.to;
+  // Static disabled list: only past days and genuinely booked days are
+  // non-selectable. Range contiguity is enforced defensively in handleSelect
+  // (rangeCrossesBooked), so we do NOT grey out future days while a range is
+  // in progress — that would wrongly disable whole weeks after the check-in.
   const disabledMatchers = useMemo(() => {
-    const base = [
+    return [
       { before: today },
       ...(bookedDates.length > 0 ? bookedDates : []),
-    ] as Array<{ before: Date } | { after: Date } | Date>;
-    if (rangeInProgress) {
-      base.push(...buildRangeDisabledAfterFrom(range!.from, bookedDates));
-    }
-    return base;
-  }, [today, bookedDates, rangeInProgress, range]);
+    ];
+  }, [today, bookedDates]);
 
   return (
     <section className="mb-8">

@@ -5,7 +5,7 @@ import { Cabin } from "@/lib/data";
 import { fetchCabin } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { AvailabilityCalendar } from "@/components/cabins/availability-calendar";
-import { useCabinAvailability, expandBookedRanges, buildRangeDisabledAfterFrom, rangeCrossesBooked } from "@/hooks/use-cabin-availability";
+import { useCabinAvailability, expandBookedRanges, rangeCrossesBooked } from "@/hooks/use-cabin-availability";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigation } from "@/lib/store";
@@ -1032,9 +1032,6 @@ export function CabinDetail({ cabinId }: { cabinId?: string } = {}) {
                 disabled={[
                   { before: new Date() },
                   ...(bookedDates.length > 0 ? bookedDates : []),
-                  ...(mobileDateRange?.from && !mobileDateRange?.to
-                    ? buildRangeDisabledAfterFrom(mobileDateRange.from, bookedDates)
-                    : []),
                 ]}
                 modifiers={{ booked: bookedDates }}
                 modifiersStyles={{
