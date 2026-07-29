@@ -494,14 +494,6 @@ export function CabinDetail({ cabinId }: { cabinId?: string } = {}) {
     return rooms;
   })();
 
-  // Collect ALL room images into a flat list for full browsing. Each entry
-  // remembers which room it came from so the lightbox title is meaningful.
-  const allRoomImages = displayRooms.flatMap((room: any) => {
-    const imgs: string[] =
-      room.images && room.images.length > 0 ? room.images : [room.image];
-    return imgs.map((src: string) => ({ src: src || "", title: room.title }));
-  });
-
   return (
     <div className="pb-28 lg:pb-16">
       {/* Back Button (Desktop) */}
@@ -678,14 +670,12 @@ export function CabinDetail({ cabinId }: { cabinId?: string } = {}) {
                     <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-ocean group-hover:translate-x-0.5 transition-all mt-1" />
                   </button>
                   <div className="flex overflow-x-auto gap-4 pb-4 overscroll-behavior-x-contain snap-x snap-mandatory hide-scrollbar">
-                    {displayRooms.map((bedroom: any, roomIdx: number) => {
-                      // Global index of this room's first image in the flat list.
-                      let globalBase = 0;
-                      for (let i = 0; i < roomIdx; i++) {
-                        const r = displayRooms[i];
-                        const n = r.images && r.images.length > 0 ? r.images.length : 1;
-                        globalBase += n;
-                      }
+                    {displayRooms.map((bedroom: any) => {
+                      // Only this room's own photos go into the lightbox.
+                      const roomImages: string[] =
+                        bedroom.images && bedroom.images.length > 0
+                          ? bedroom.images
+                          : [bedroom.image];
                       return (
                       <button
                         key={bedroom.id}
@@ -694,8 +684,8 @@ export function CabinDetail({ cabinId }: { cabinId?: string } = {}) {
                         aria-label={`Ver fotos de ${bedroom.title}`}
                         onClick={() =>
                           setRoomLightbox({
-                            images: allRoomImages.map((i: any) => i.src),
-                            index: globalBase,
+                            images: roomImages,
+                            index: 0,
                             title: bedroom.title,
                           })
                         }
@@ -910,15 +900,8 @@ export function CabinDetail({ cabinId }: { cabinId?: string } = {}) {
             </button>
           </DialogHeader>
           <div className="overflow-y-auto p-5 sm:p-6 space-y-8 flex-1 pb-10">
-            {displayRooms.map((room: any, roomIdx: number) => {
+            {displayRooms.map((room: any) => {
               const roomImages: string[] = room.images && room.images.length > 0 ? room.images : [room.image];
-              // Global index of this room's first image in the flat allRoomImages list.
-              let globalBase = 0;
-              for (let i = 0; i < roomIdx; i++) {
-                const r = displayRooms[i];
-                const n = r.images && r.images.length > 0 ? r.images.length : 1;
-                globalBase += n;
-              }
               return (
                 <div key={room.id} className="space-y-3">
                   <div>
@@ -932,8 +915,8 @@ export function CabinDetail({ cabinId }: { cabinId?: string } = {}) {
                         type="button"
                         onClick={() =>
                           setRoomLightbox({
-                            images: allRoomImages.map((i: any) => i.src),
-                            index: globalBase + idx,
+                            images: roomImages,
+                            index: idx,
                             title: room.title,
                           })
                         }
