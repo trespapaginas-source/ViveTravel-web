@@ -7,6 +7,7 @@ import {
   useCabinAvailability,
   expandBookedRanges,
   buildRangeDisabledAfterFrom,
+  rangeCrossesBooked,
 } from "@/hooks/use-cabin-availability";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useState, useMemo } from "react";
@@ -52,34 +53,57 @@ export function AvailabilityCalendar({
     onSelectRange?.(r);
   };
 
-  // Airbnb-style selection: if a complete range already exists, clicking any
-  // day starts a brand-new range (instead of extending the previous one). This
-  // matches the behaviour users expect on the inline availability calendar.
-  // react-day-picker v9 onSelect passes (range, selectedDay) — we use the
-  // clicked day to decide whether to begin a new range.
+  // Deterministic, defensive selection. We ignore the `next` range that
+  // react-day-picker computes (it can invert or extend ranges across booked
+  // days) and instead decide the outcome ourselves from the clicked day +
+  // current state + the booked set. The contiguity rule is absolute: a range
+  // is only accepted if NO booked day lies strictly between from and to.
   const handleSelect = (
-    next: DateRange | undefined,
+    _next: DateRange | undefined,
     selectedDay?: Date
   ) => {
-    if (readOnly || !next) {
-      setRange(next);
+    if (readOnly || !selectedDay) {
+      if (readOnly) setRange(_next);
       return;
     }
-    const current = range;
-    const currentIsComplete = !!(current?.from && current?.to);
+    const clicked = new Date(selectedDay);
+    clicked.setHours(0, 0, 0, 0);
 
-    if (currentIsComplete && selectedDay) {
-      // A complete range exists and the user tapped a day → start fresh.
-      setRange({ from: selectedDay, to: undefined });
+    const current = range;
+    const hasFrom = !!current?.from;
+    const hasTo = !!current?.to;
+
+    // Case A: no selection yet, or a complete range exists → start fresh.
+    if (!hasFrom || (hasFrom && hasTo)) {
+      setRange({ from: clicked, to: undefined });
       return;
     }
-    // Mid-selection: react-day-picker returns the in-progress range. Only keep
-    // it when it actually contains a `from`; otherwise we'd wipe the start day.
-    if (next.from) {
-      setRange(next);
-    } else if (selectedDay) {
-      setRange({ from: selectedDay, to: undefined });
+
+    // Case B: a `from` exists, no `to`. Decide based on the clicked day.
+    const from = new Date(current!.from!);
+    from.setHours(0, 0, 0, 0);
+
+    if (clicked.getTime() === from.getTime()) {
+      // Tapping the same start day → clear (start over).
+      setRange(undefined);
+      return;
     }
+
+    if (clicked.getTime() < from.getTime()) {
+      // Tapped BEFORE the current from: Airbnb semantics — make this the new
+      // check-in. Never extend backwards across a booked day.
+      setRange({ from: clicked, to: undefined });
+      return;
+    }
+
+    // Tapped AFTER from: would-be checkout. Only accept if the span [from,
+    // clicked] contains no booked night. Otherwise reject (keep the from).
+    if (rangeCrossesBooked(from, clicked, bookedDates)) {
+      // Invalid checkout — keep the current check-in, do NOT extend.
+      setRange({ from, to: undefined });
+      return;
+    }
+    setRange({ from, to: clicked });
   };
 
   const today = useMemo(() => {

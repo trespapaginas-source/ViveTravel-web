@@ -5,7 +5,7 @@ import { Cabin } from "@/lib/data";
 import { fetchCabin } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { AvailabilityCalendar } from "@/components/cabins/availability-calendar";
-import { useCabinAvailability, expandBookedRanges, buildRangeDisabledAfterFrom } from "@/hooks/use-cabin-availability";
+import { useCabinAvailability, expandBookedRanges, buildRangeDisabledAfterFrom, rangeCrossesBooked } from "@/hooks/use-cabin-availability";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigation } from "@/lib/store";
@@ -342,28 +342,48 @@ export function CabinDetail({ cabinId }: { cabinId?: string } = {}) {
     [triggerReservePulse]
   );
 
-  // Airbnb-style selection for the modal calendar: if a complete range exists,
-  // tapping any day starts a fresh range. react-day-picker v9 passes the
-  // clicked day as the second onSelect argument.
+  // Deterministic, defensive selection for the modal calendar — mirrors the
+  // inline calendar's handler. The contiguity rule is absolute: a range is only
+  // accepted when no booked day lies strictly between from and to. We ignore
+  // react-day-picker's computed `next` and decide from the clicked day.
   const handleModalCalendarSelect = useCallback(
-    (next: DateRange | undefined, selectedDay?: Date) => {
-      if (!next) {
+    (_next: DateRange | undefined, selectedDay?: Date) => {
+      if (!selectedDay) {
+        setMobileDateRange(_next);
+        return;
+      }
+      const clicked = new Date(selectedDay);
+      clicked.setHours(0, 0, 0, 0);
+
+      const current = mobileDateRange;
+      const hasFrom = !!current?.from;
+      const hasTo = !!current?.to;
+
+      // No selection yet, or a complete range exists → start fresh.
+      if (!hasFrom || (hasFrom && hasTo)) {
+        setMobileDateRange({ from: clicked, to: undefined });
+        return;
+      }
+
+      const from = new Date(current!.from!);
+      from.setHours(0, 0, 0, 0);
+
+      if (clicked.getTime() === from.getTime()) {
         setMobileDateRange(undefined);
         return;
       }
-      const current = mobileDateRange;
-      const currentIsComplete = !!(current?.from && current?.to);
-      if (currentIsComplete && selectedDay) {
-        setMobileDateRange({ from: selectedDay, to: undefined });
+      if (clicked.getTime() < from.getTime()) {
+        setMobileDateRange({ from: clicked, to: undefined });
         return;
       }
-      if (next.from) {
-        setMobileDateRange(next);
-      } else if (selectedDay) {
-        setMobileDateRange({ from: selectedDay, to: undefined });
+      // Would-be checkout: reject if it crosses any booked night.
+      if (rangeCrossesBooked(from, clicked, bookedDates)) {
+        setMobileDateRange({ from, to: undefined });
+        return;
       }
+      setMobileDateRange({ from, to: clicked });
     },
-    [mobileDateRange]
+    [mobileDateRange, bookedDates]
   );
 
   const handleWhatsAppReservation = useCallback(() => {

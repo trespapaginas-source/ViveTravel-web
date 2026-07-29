@@ -84,6 +84,30 @@ export function isRangeBooked(
 }
 
 /**
+ * Returns true when ANY booked day falls strictly between `from` and `to`
+ * (exclusive of both endpoints — check-in on a booked day is rejected earlier
+ * by `disabled`, and checkout may legitimately equal a booked day in ICS terms).
+ * This is the authoritative contiguity check used to reject ranges that would
+ * cross occupied nights, regardless of how the user reached them.
+ */
+export function rangeCrossesBooked(
+  from: Date,
+  to: Date,
+  bookedDays: Date[]
+): boolean {
+  const f = new Date(from);
+  f.setHours(0, 0, 0, 0);
+  const t = new Date(to);
+  t.setHours(0, 0, 0, 0);
+  if (t.getTime() <= f.getTime()) return false; // not a forward range
+  return bookedDays.some((d) => {
+    const day = new Date(d);
+    day.setHours(0, 0, 0, 0);
+    return day.getTime() > f.getTime() && day.getTime() < t.getTime();
+  });
+}
+
+/**
  * Given a check-in date and the list of booked days, return the last
  * selectable check-out day — i.e. the day BEFORE the first booked day that
  * follows the check-in. This is what makes a range behave like Airbnb/Booking:
