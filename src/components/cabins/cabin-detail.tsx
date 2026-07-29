@@ -260,6 +260,11 @@ export function CabinDetail({ cabinId }: { cabinId?: string } = {}) {
     { images: string[]; index: number; title: string } | null
   >(null);
 
+  // Desktop reservation flow state — shared between the inline availability
+  // calendar and the PriceCard so picking dates in one immediately reflects in
+  // the other (mirrors the mobile behaviour, minimising clicks).
+  const [desktopDateRange, setDesktopDateRange] = useState<DateRange | undefined>(undefined);
+
   // Mobile reservation flow states
   const [mobileBottomSheetOpen, setMobileBottomSheetOpen] = useState(false);
   const [mobileCalendarModalOpen, setMobileCalendarModalOpen] = useState(false);
@@ -390,6 +395,47 @@ export function CabinDetail({ cabinId }: { cabinId?: string } = {}) {
       setMobileDateRange({ from, to: clicked });
     },
     [mobileDateRange, bookedDates]
+  );
+
+  // Desktop inline-calendar selection — same deterministic, defensive logic as
+  // the mobile handlers so a range can never cross booked nights. This is the
+  // single source of truth for desktop dates (shared with the PriceCard).
+  const handleDesktopCalendarSelect = useCallback(
+    (_next: DateRange | undefined, selectedDay?: Date) => {
+      if (!selectedDay) {
+        setDesktopDateRange(_next);
+        return;
+      }
+      const clicked = new Date(selectedDay);
+      clicked.setHours(0, 0, 0, 0);
+
+      const current = desktopDateRange;
+      const hasFrom = !!current?.from;
+      const hasTo = !!current?.to;
+
+      if (!hasFrom || (hasFrom && hasTo)) {
+        setDesktopDateRange({ from: clicked, to: undefined });
+        return;
+      }
+
+      const from = new Date(current!.from!);
+      from.setHours(0, 0, 0, 0);
+
+      if (clicked.getTime() === from.getTime()) {
+        setDesktopDateRange(undefined);
+        return;
+      }
+      if (clicked.getTime() < from.getTime()) {
+        setDesktopDateRange({ from: clicked, to: undefined });
+        return;
+      }
+      if (rangeCrossesBooked(from, clicked, bookedDates)) {
+        setDesktopDateRange({ from, to: undefined });
+        return;
+      }
+      setDesktopDateRange({ from, to: clicked });
+    },
+    [desktopDateRange, bookedDates]
   );
 
   const handleWhatsAppReservation = useCallback(() => {
@@ -648,8 +694,14 @@ export function CabinDetail({ cabinId }: { cabinId?: string } = {}) {
             <AvailabilityCalendar
               cabinId={cabin.id}
               cabinName={cabin.name}
-              selectedRange={isMobile ? mobileDateRange : undefined}
-              onSelectRange={isMobile ? handleInlineCalendarSelect : undefined}
+              selectedRange={
+                isMobile ? mobileDateRange : desktopDateRange
+              }
+              onSelectRange={
+                isMobile
+                  ? handleInlineCalendarSelect
+                  : handleDesktopCalendarSelect
+              }
             />
 
             <Separator className="my-6" />
@@ -843,7 +895,12 @@ export function CabinDetail({ cabinId }: { cabinId?: string } = {}) {
           {!isMobile && (
             <div className="hidden lg:block w-[380px] shrink-0">
               <div className="sticky top-28">
-                <PriceCard cabin={cabin} />
+                <PriceCard
+                  cabin={cabin}
+                  dateRange={desktopDateRange}
+                  onDateRangeChange={setDesktopDateRange}
+                  bookedDates={bookedDates}
+                />
               </div>
             </div>
           )}
@@ -1110,19 +1167,22 @@ export function CabinDetail({ cabinId }: { cabinId?: string } = {}) {
   );
 }
 
-function PriceCard({ cabin }: { cabin: Cabin }) {
+function PriceCard({
+  cabin,
+  dateRange,
+  onDateRangeChange,
+  bookedDates,
+}: {
+  cabin: Cabin;
+  dateRange: DateRange | undefined;
+  onDateRangeChange: (range: DateRange | undefined) => void;
+  bookedDates: Date[];
+}) {
   const { navigate } = useNavigation();
-  const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined);
   const [guests, setGuests] = useState(1);
   const [datePopoverOpen, setDatePopoverOpen] = useState(false);
   const [guestPopoverOpen, setGuestPopoverOpen] = useState(false);
   const [showWhatsApp, setShowWhatsApp] = useState(false);
-
-  const { data: availabilityData } = useCabinAvailability(cabin.id);
-  const bookedDates = useMemo(
-    () => (availabilityData?.booked ? expandBookedRanges(availabilityData.booked) : []),
-    [availabilityData?.booked]
-  );
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -1197,11 +1257,39 @@ function PriceCard({ cabin }: { cabin: Cabin }) {
               <Calendar
                 mode="range"
                 selected={dateRange}
-                onSelect={(range) => {
-                  setDateRange(range);
-                  if (range?.to) {
-                    setDatePopoverOpen(false);
+                onSelect={(_next, selectedDay) => {
+                  if (!selectedDay) {
+                    onDateRangeChange(_next);
+                    return;
                   }
+                  const clicked = new Date(selectedDay);
+                  clicked.setHours(0, 0, 0, 0);
+
+                  const hasFrom = !!dateRange?.from;
+                  const hasTo = !!dateRange?.to;
+
+                  if (!hasFrom || (hasFrom && hasTo)) {
+                    onDateRangeChange({ from: clicked, to: undefined });
+                    return;
+                  }
+
+                  const from = new Date(dateRange!.from!);
+                  from.setHours(0, 0, 0, 0);
+
+                  if (clicked.getTime() === from.getTime()) {
+                    onDateRangeChange(undefined);
+                    return;
+                  }
+                  if (clicked.getTime() < from.getTime()) {
+                    onDateRangeChange({ from: clicked, to: undefined });
+                    return;
+                  }
+                  if (rangeCrossesBooked(from, clicked, bookedDates)) {
+                    onDateRangeChange({ from, to: undefined });
+                    return;
+                  }
+                  onDateRangeChange({ from, to: clicked });
+                  setDatePopoverOpen(false);
                 }}
                 disabled={[
                   { before: today },
