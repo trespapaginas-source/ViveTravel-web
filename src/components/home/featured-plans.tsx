@@ -32,7 +32,7 @@ const PlanCard = memo(function PlanCard({
 }) {
   return (
     <Card
-      className="group w-full h-full flex flex-col cursor-pointer overflow-hidden overflow-x-hidden rounded-2xl border border-zinc-100 hover:border-zinc-200 bg-white transition-all duration-300 hover:-translate-y-1 shadow-none"
+      className="group w-full h-full flex flex-col cursor-pointer overflow-hidden overflow-x-hidden rounded-2xl border border-zinc-100 hover:border-zinc-200 bg-white transition-all duration-300 hover:-translate-y-1 shadow-none py-0 gap-0"
       onClick={() => onNavigate(plan.id)}
     >
       {/* Image */}
