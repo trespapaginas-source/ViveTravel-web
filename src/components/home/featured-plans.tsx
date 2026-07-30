@@ -1,7 +1,7 @@
 "use client";
 
 import { memo, useCallback } from "react";
-import { Clock, MapPin, ArrowRight, Star } from "lucide-react";
+import { Clock, MapPin, ArrowRight, Star, Calendar, Users } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { formatShortDuration, formatShortLocation, cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -27,7 +27,7 @@ const PlanCard = memo(function PlanCard({
   plan,
   onNavigate,
 }: {
-  plan: { id: string; name: string; images: string[]; category: string; duration: string; location: string; shortDescription: string; price: number; rating: number; reviewCount: number };
+  plan: { id: string; name: string; images: string[]; category: string; duration: string; location: string; shortDescription: string; price: number; rating: number; reviewCount: number; fecha_salida?: string; maxGuests?: number };
   onNavigate: (id: string) => void;
 }) {
   return (
@@ -40,10 +40,30 @@ const PlanCard = memo(function PlanCard({
         <CardImageCarousel images={plan.images} alt={plan.name} />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-80 pointer-events-none" />
 
-        <div className="absolute top-3 left-3 z-10 flex items-center gap-1 bg-black/50 backdrop-blur-md px-2 py-0.5 rounded-full text-white text-[11px] font-semibold border border-white/10 shadow-sm pointer-events-none">
+        {/* Group-trip departure date — top left (same style as plans-list grupales) */}
+        {plan.fecha_salida && (
+          <div className="absolute top-3 left-3 z-10 bg-white/95 backdrop-blur-md px-2.5 py-1 rounded-full flex items-center gap-1.5 text-[11px] font-semibold text-slate-700 shadow-sm border border-black/5">
+            <Calendar className="w-3.5 h-3.5 shrink-0 text-slate-600" />
+            <span>{plan.fecha_salida}</span>
+          </div>
+        )}
+
+        {/* Duration badge — top right (or top left when no fecha_salida) */}
+        <div className={cn(
+          "absolute top-3 z-10 flex items-center gap-1 bg-black/50 backdrop-blur-md px-2 py-0.5 rounded-full text-white text-[11px] font-semibold border border-white/10 shadow-sm pointer-events-none",
+          plan.fecha_salida ? "right-3" : "left-3"
+        )}>
           <Clock className="w-3 h-3 text-white/90" />
           <span className="text-white/90">{formatShortDuration(plan.duration)}</span>
         </div>
+
+        {/* Limited spots badge — bottom left (group trips only) */}
+        {plan.fecha_salida && plan.maxGuests && (
+          <div className="absolute bottom-3 left-3 z-10 bg-zinc-900/90 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 animate-[pulse_2s_ease-in-out_infinite] shadow-sm">
+            <Users className="w-2.5 h-2.5" />
+            Solo {plan.maxGuests} cupos
+          </div>
+        )}
       </div>
 
       <CardContent className="p-5 flex flex-col flex-grow">
@@ -140,7 +160,8 @@ export function FeaturedPlans() {
           subtitle={featured.subtitle}
         />
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+        {/* Mobile: horizontal carousel (one card at a time). Desktop: 3×2 grid. */}
+        <div className="flex gap-4 overflow-x-auto sm:grid sm:grid-cols-2 lg:grid-cols-3 sm:overflow-visible sm:gap-6 scroll-smooth snap-x snap-mandatory px-4 sm:px-0 -mx-4 sm:mx-0 pb-4 sm:pb-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           {featuredPlans.map((plan, index) => {
             return (
               <motion.div
@@ -153,7 +174,7 @@ export function FeaturedPlans() {
                   ease: [0.16, 1, 0.3, 1],
                   delay: index * 0.1,
                 }}
-                className="w-full flex"
+                className="flex-none w-[85vw] max-w-[320px] snap-start shrink-0 sm:w-full sm:max-w-none flex"
               >
                 <PlanCard plan={plan} onNavigate={handleNavigate} />
               </motion.div>
