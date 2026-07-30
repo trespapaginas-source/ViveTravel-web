@@ -37,6 +37,9 @@ export interface TourPlan {
   /** Position (1-based) in the home "Planes Destacados" carousel. Plans with a
    * lower featuredOrder appear first. Omitted/null → not featured. */
   featuredOrder?: number;
+  /** Places featured in a visual "Lugares a Conocer" carousel on the plan
+   * detail page (national fixed-departure plans only). */
+  lugares?: Array<{ name: string; image: string }>;
 }
 
 export interface TransportVehicle {

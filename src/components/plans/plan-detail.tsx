@@ -16,6 +16,8 @@ import {
   Heart,
   Share2,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   type LucideIcon,
 } from "lucide-react";
 
@@ -39,7 +41,8 @@ import { useQuery } from "@tanstack/react-query";
 import { isFavorite, toggleFavorite } from "@/lib/favorites";
 import { ShareDialog } from "@/components/shared/share-dialog";
 import { ExpandableSection } from "@/components/shared/expandable-section";
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
+import useEmblaCarousel from "embla-carousel-react";
 import { cn } from "@/lib/utils";
 import { format, addDays } from "date-fns";
 import { es } from "date-fns/locale";
@@ -421,6 +424,98 @@ function CotizadorCard({
   );
 }
 
+/* ---------- Lugares a Conocer Carousel ---------- */
+
+function LugaresCarousel({ lugares }: { lugares: Array<{ name: string; image: string }> }) {
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    align: "start",
+    slidesToScroll: 1,
+    containScroll: "trimSnaps",
+  });
+  const [canScrollPrev, setCanScrollPrev] = useState(false);
+  const [canScrollNext, setCanScrollNext] = useState(false);
+
+  const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
+  const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
+
+  const onSelect = useCallback(() => {
+    if (!emblaApi) return;
+    setCanScrollPrev(emblaApi.canScrollPrev());
+    setCanScrollNext(emblaApi.canScrollNext());
+  }, [emblaApi]);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    onSelect();
+    emblaApi.on("select", onSelect);
+    emblaApi.on("reInit", onSelect);
+    return () => { emblaApi.off("select", onSelect); };
+  }, [emblaApi, onSelect]);
+
+  // Hide arrows if all slides are visible
+  const showArrows = lugares.length > 3;
+
+  return (
+    <div id="lugares" className="scroll-mt-24">
+      <h2 className="text-2xl md:text-[28px] font-bold tracking-tight text-foreground mb-4">
+        Lugares a Conocer
+      </h2>
+
+      <div className="relative">
+        {/* Carousel */}
+        <div className="overflow-hidden" ref={emblaRef}>
+          <div className="flex -ml-3 sm:-ml-4">
+            {lugares.map((lugar, i) => (
+              <div
+                key={i}
+                className="flex-[0_0_72%] sm:flex-[0_0_48%] lg:flex-[0_0_30%] min-w-0 pl-3 sm:pl-4"
+              >
+                <div className="relative rounded-xl overflow-hidden aspect-[3/2]">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={lugar.image}
+                    alt={lugar.name}
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                  />
+                  {/* Gradient overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent pointer-events-none" />
+                  {/* Place name */}
+                  <span className="absolute bottom-2.5 left-3 text-white text-sm font-semibold leading-tight drop-shadow-sm">
+                    {lugar.name}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Navigation arrows */}
+        {showArrows && (
+          <>
+            <button
+              onClick={scrollPrev}
+              disabled={!canScrollPrev}
+              className="absolute left-1 sm:left-0 top-1/2 -translate-y-1/2 sm:-translate-x-3 z-10 bg-white hover:bg-ocean hover:text-white text-foreground shadow-lg rounded-full p-2 sm:p-2.5 transition-colors duration-200 min-w-[36px] min-h-[36px] flex items-center justify-center disabled:opacity-40 disabled:cursor-default"
+              aria-label="Anterior"
+            >
+              <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+            </button>
+            <button
+              onClick={scrollNext}
+              disabled={!canScrollNext}
+              className="absolute right-1 sm:right-0 top-1/2 -translate-y-1/2 sm:translate-x-3 z-10 bg-white hover:bg-ocean hover:text-white text-foreground shadow-lg rounded-full p-2 sm:p-2.5 transition-colors duration-200 min-w-[36px] min-h-[36px] flex items-center justify-center disabled:opacity-40 disabled:cursor-default"
+              aria-label="Siguiente"
+            >
+              <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
+            </button>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export function PlanDetail({ planId }: { planId?: string } = {}) {
   const {
     selectedItemId: storeSelectedItemId,
@@ -785,6 +880,9 @@ export function PlanDetail({ planId }: { planId?: string } = {}) {
                 <div className="flex overflow-x-auto gap-6 hide-scrollbar pt-2 pb-0">
                   {[
                     { id: "general", label: "General" },
+                    ...(plan.lugares && plan.lugares.length > 0
+                      ? [{ id: "lugares", label: "Lugares" }]
+                      : []),
                     { id: "incluye", label: "Incluye" },
                     { id: "itinerario", label: "Itinerario" },
                     { id: "condiciones", label: "Condiciones" },
@@ -850,6 +948,11 @@ export function PlanDetail({ planId }: { planId?: string } = {}) {
             </div>
 
             <Separator className="my-5" />
+
+            {/* Lugares a Conocer — carousel (national fixed-departure plans only) */}
+            {plan.lugares && plan.lugares.length > 0 && (
+              <LugaresCarousel lugares={plan.lugares} />
+            )}
 
             {/* Incluye / No Incluye */}
             <div id="incluye" className="scroll-mt-24">

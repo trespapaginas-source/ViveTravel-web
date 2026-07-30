@@ -262,51 +262,6 @@
     "order": 2
   },
   {
-    "id": "aa5c4ac9-8c08-428e-8102-6b67d7dd5b60",
-    "name": "Plan Tour Galápago del Atlántico",
-    "slug": "plan-tour-galapago-atlantico",
-    "shortDescription": "Visita el santuario de tortugas galápagos y aprende sobre conservación marina en el Atlántico.",
-    "fullDescription": "Conoce el fascinante mundo de las tortugas galápagos en este tour educativo y ecológico por el Atlántico. Visitarás el centro de conservación donde expertos biólogos te explicarán los programas de protección de estas especies milenarias. Podrás observar las tortugas en su entorno natural, aprender sobre su ciclo de vida y los esfuerzos para preservarlas. El tour también incluye un paseo en lancha por la bahía y tiempo para disfrutar de la playa cercana. Una experiencia perfecta para familias y amantes de la naturaleza.",
-    "images": [
-      "https://images.unsplash.com/photo-1433086966358-54859d0ed716?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&h=600&fit=crop"
-    ],
-    "price": 110000,
-    "priceRange": "$110.000 - $160.000 COP",
-    "duration": "Medio día (5 horas)",
-    "location": "Santa Marta, Tayrona",
-    "category": "Ecoturismo",
-    "includes": [
-      "Guía biólogo marino",
-      "Visita al centro de conservación",
-      "Paseo en lancha por la bahía",
-      "Refrigerio ecológico",
-      "Seguro de accidentes",
-      "Material educativo",
-      "Transporte desde punto de encuentro"
-    ],
-    "excludes": [
-      "Souvenirs y artesanías",
-      "Gastos personales",
-      "Fotografía profesional bajo el agua"
-    ],
-    "highlights": [
-      "Observación de tortugas galápagos",
-      "Centro de conservación marino",
-      "Paseo en lancha",
-      "Educación ambiental"
-    ],
-    "rating": 4.6,
-    "reviewCount": 56,
-    "maxGuests": 15,
-    "difficulty": "Fácil",
-    "schedule": "8:00 AM - 1:00 PM",
-    "meeting": "Plaza de Santa Verónica",
-    "published": true,
-    "order": 3
-  },
-  {
     "id": "efc65d75-2595-40b7-be35-2d160163049e",
     "name": "Plan Noche de Estrellas en la Costa",
     "slug": "plan-noche-estrellas-costa",
@@ -395,47 +350,6 @@
     "meeting": "Museo Bolivariano, Barranquilla",
     "published": true,
     "order": 5
-  },
-  {
-    "id": "78818d56-dcc0-4841-9abf-a82a6d314e39",
-    "name": "Magia del Eje Cafetero",
-    "slug": "magia-eje-cafetero",
-    "shortDescription": "Descubre la cultura cafetera, paisajes verdes y pueblos con encanto en un viaje inolvidable de 4 días.",
-    "fullDescription": "Un viaje de 4 días y 3 noches por el corazón de Colombia. Recorre el Valle de Cocora con sus imponentes palmas de cera, visita fincas cafeteras tradicionales donde aprenderás todo el proceso del café desde la semilla hasta la taza, y relájate en las aguas termales de Santa Rosa de Cabal. Incluye alojamiento en hacienda típica, alimentación completa y guías expertos de la región.",
-    "images": [
-      "https://images.unsplash.com/photo-1622308644420-b30fbdf94f1c?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1518182170546-076616fdcbdd?w=800&h=600&fit=crop"
-    ],
-    "price": 1250000,
-    "priceRange": "$1.250.000 - $1.500.000 COP",
-    "duration": "4 días, 3 noches",
-    "location": "Eje Cafetero, Colombia",
-    "category": "Nacional",
-    "includes": [
-      "Vuelos ida y vuelta",
-      "Alojamiento 3 noches",
-      "Desayunos y cenas",
-      "Tour cafetero",
-      "Entrada a termales"
-    ],
-    "excludes": [
-      "Almuerzos",
-      "Propinas",
-      "Gastos personales"
-    ],
-    "highlights": [
-      "Valle de Cocora",
-      "Tour del Café",
-      "Termales de Santa Rosa"
-    ],
-    "rating": 4.9,
-    "reviewCount": 156,
-    "maxGuests": 15,
-    "difficulty": "Fácil",
-    "schedule": "Salidas todos los jueves",
-    "meeting": "Aeropuerto El Dorado",
-    "published": true,
-    "order": 6
   },
   {
     "id": "plan-santander-inolvidable",
@@ -605,6 +519,28 @@
       {
         "start": "2027-01-09",
         "end": "2027-01-13"
+      }
+    ],
+    "lugares": [
+      {
+        "name": "Cañón del Chicamocha",
+        "image": "https://images.unsplash.com/photo-1572507007728-39ef5113bdc2?w=600&h=400&fit=crop&q=80"
+      },
+      {
+        "name": "Bucaramanga",
+        "image": "https://images.unsplash.com/photo-1590073242678-70ee3fc28e8e?w=600&h=400&fit=crop&q=80"
+      },
+      {
+        "name": "Girón",
+        "image": "https://images.unsplash.com/photo-1588668214407-2ff9a5e4dd4b?w=600&h=400&fit=crop&q=80"
+      },
+      {
+        "name": "Barichara",
+        "image": "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=600&h=400&fit=crop&q=80"
+      },
+      {
+        "name": "Parque del Agua",
+        "image": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=400&fit=crop&q=80"
       }
     ]
   },
@@ -791,6 +727,28 @@
       {
         "start": "2027-01-09",
         "end": "2027-01-13"
+      }
+    ],
+    "lugares": [
+      {
+        "name": "Villa de Leyva",
+        "image": "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&h=400&fit=crop&q=80"
+      },
+      {
+        "name": "Paipa",
+        "image": "https://images.unsplash.com/photo-1569164139804-a628955c3a47?w=600&h=400&fit=crop&q=80"
+      },
+      {
+        "name": "Laguna de Tota",
+        "image": "https://images.unsplash.com/photo-1439066615861-d1af74d74000?w=600&h=400&fit=crop&q=80"
+      },
+      {
+        "name": "Monguí",
+        "image": "https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=600&h=400&fit=crop&q=80"
+      },
+      {
+        "name": "Ruta Libertadora",
+        "image": "https://images.unsplash.com/photo-1504198453319-5ce911bafcde?w=600&h=400&fit=crop&q=80"
       }
     ]
   },
@@ -1098,7 +1056,29 @@
         "end": "2027-02-01"
       }
     ],
-    "featuredOrder": 3
+    "featuredOrder": 3,
+    "lugares": [
+      {
+        "name": "Salento",
+        "image": "https://images.unsplash.com/photo-1588668214407-2ff9a5e4dd4b?w=600&h=400&fit=crop&q=80"
+      },
+      {
+        "name": "Filandia",
+        "image": "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=600&h=400&fit=crop&q=80"
+      },
+      {
+        "name": "Valle del Cócora",
+        "image": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=400&fit=crop&q=80"
+      },
+      {
+        "name": "Pereira",
+        "image": "https://images.unsplash.com/photo-1590073242678-70ee3fc28e8e?w=600&h=400&fit=crop&q=80"
+      },
+      {
+        "name": "Armenia",
+        "image": "https://images.unsplash.com/photo-1572507007728-39ef5113bdc2?w=600&h=400&fit=crop&q=80"
+      }
+    ]
   },
   {
     "id": "plan-huila-inolvidable",
@@ -1288,6 +1268,24 @@
       {
         "start": "2027-01-08",
         "end": "2027-01-13"
+      }
+    ],
+    "lugares": [
+      {
+        "name": "Desierto de la Tatacoa",
+        "image": "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?w=600&h=400&fit=crop&q=80"
+      },
+      {
+        "name": "Neiva",
+        "image": "https://images.unsplash.com/photo-1590073242678-70ee3fc28e8e?w=600&h=400&fit=crop&q=80"
+      },
+      {
+        "name": "Villavieja",
+        "image": "https://images.unsplash.com/photo-1569164139804-a628955c3a47?w=600&h=400&fit=crop&q=80"
+      },
+      {
+        "name": "Termales de Rivera",
+        "image": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=400&fit=crop&q=80"
       }
     ]
   },
@@ -1479,6 +1477,24 @@
         "start": "2027-01-22",
         "end": "2027-01-25"
       }
+    ],
+    "lugares": [
+      {
+        "name": "Laberintos Rojos",
+        "image": "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?w=600&h=400&fit=crop&q=80"
+      },
+      {
+        "name": "Cuzco",
+        "image": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=400&fit=crop&q=80"
+      },
+      {
+        "name": "Villavieja",
+        "image": "https://images.unsplash.com/photo-1569164139804-a628955c3a47?w=600&h=400&fit=crop&q=80"
+      },
+      {
+        "name": "Observatorio Astronómico",
+        "image": "https://images.unsplash.com/photo-1504198453319-5ce911bafcde?w=600&h=400&fit=crop&q=80"
+      }
     ]
   },
   {
@@ -1649,48 +1665,29 @@
         "start": "2027-01-20",
         "end": "2027-01-25"
       }
+    ],
+    "lugares": [
+      {
+        "name": "Pasto",
+        "image": "https://images.unsplash.com/photo-1590073242678-70ee3fc28e8e?w=600&h=400&fit=crop&q=80"
+      },
+      {
+        "name": "Laguna de La Cocha",
+        "image": "https://images.unsplash.com/photo-1439066615861-d1af74d74000?w=600&h=400&fit=crop&q=80"
+      },
+      {
+        "name": "Túquerres",
+        "image": "https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=600&h=400&fit=crop&q=80"
+      },
+      {
+        "name": "Ipiales",
+        "image": "https://images.unsplash.com/photo-1504198453319-5ce911bafcde?w=600&h=400&fit=crop&q=80"
+      },
+      {
+        "name": "Santuario de Las Lajas",
+        "image": "https://images.unsplash.com/photo-1572507007728-39ef5113bdc2?w=600&h=400&fit=crop&q=80"
+      }
     ]
-  },
-  {
-    "id": "e30d09c8-7bb5-4991-b949-84a2e71c96a9",
-    "name": "Aventura en Parque Tayrona",
-    "slug": "aventura-parque-tayrona",
-    "shortDescription": "Conecta con la selva y el mar en el espectacular Parque Nacional Natural Tayrona por 3 noches.",
-    "fullDescription": "Explora uno de los parques naturales más hermosos del mundo durante 4 días y 3 noches. Camina por senderos ecológicos rodeados de selva tropical hasta llegar a playas paradisíacas como Cabo San Juan y Arrecifes. Duerme en eco-habs con vista al mar y disfruta de la gastronomía local. Una experiencia perfecta para desconectar y llenarse de la energía de la Sierra Nevada.",
-    "images": [
-      "https://images.unsplash.com/photo-1596422846543-75c6fc197f07?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1620002093390-8d5926ec3fb4?w=800&h=600&fit=crop"
-    ],
-    "price": 980000,
-    "priceRange": "$980.000 - $1.200.000 COP",
-    "duration": "4 días, 3 noches",
-    "location": "Santa Marta, Colombia",
-    "category": "Nacional",
-    "includes": [
-      "Transporte terrestre",
-      "Alojamiento en eco-habs",
-      "Desayunos",
-      "Entrada al Parque",
-      "Seguro médico"
-    ],
-    "excludes": [
-      "Almuerzos y cenas",
-      "Gastos personales"
-    ],
-    "highlights": [
-      "Cabo San Juan",
-      "Senderismo guiado",
-      "Playas vírgenes"
-    ],
-    "rating": 4.8,
-    "reviewCount": 210,
-    "maxGuests": 12,
-    "difficulty": "Moderado",
-    "schedule": "Salidas viernes y sábados",
-    "meeting": "Terminal de Transportes",
-    "published": true,
-    "order": 7,
-    "featuredOrder": 5
   },
   {
     "id": "3e7dd645-73f2-45e9-ac75-1fb05f7ad900",
