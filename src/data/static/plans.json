@@ -441,8 +441,15 @@
     "id": "plan-santander-inolvidable",
     "name": "Santander Inolvidable",
     "slug": "santander-inolvidable",
-    "shortDescription": "Pueblos coloniales, naturaleza, aventura y cultura por Santander, viajando cómodamente en avión desde Barranquilla.",
-    "fullDescription": "Vive una experiencia única recorriendo los paisajes más impresionantes de Santander. Disfruta de pueblos coloniales, naturaleza, aventura y cultura, viajando cómodamente en avión desde Barranquilla. Son 5 días y 4 noches con acomodación múltiple: 3 noches en San Gil y 1 noche en Bucaramanga, con recorridos por Panachi (Cañón del Chicamocha), Barichara, Girón, Floridablanca, las Cascadas de Juan Curí, la Mesa de los Santos, el Parque El Gallineral, el Socorro, el Mercado Campesino y la Virgen de la Salud.",
+    "shortDescription": "Cañón del Chicamocha, Barichara, San Gil y el Socorro: historia, cultura y paisajes majestuosos en el corazón de Santander con salidas programadas.",
+    "fullDescription": "Santander no es solo un destino; es una experiencia que despierta los sentidos. Desde la arquitectura colonial que susurra historias de independencia hasta la adrenalina pura del Cañón del Chicamocha, este viaje es la mezcla perfecta de cultura, historia y paisajes de ensueño. Ven a descubrir el pueblo más lindo de Colombia, a deleitarte con los sabores más auténticos de nuestra tierra y a vivir unas vacaciones inolvidables donde cada rincón te invita a explorar algo nuevo.",
+    "itinerary": [
+      { "title": "Inmersión Colonial", "description": "Llegada y bienvenida en Bucaramanga. Iniciaremos con un city tour que incluye el encanto de Girón, la dulzura de Floridablanca y un recorrido de compras por las mejores fábricas de calzado." },
+      { "title": "Panoramas y Tradiciones", "description": "Salida hacia San Gil, visitando el Mercado Campesino, la Hacienda el Roble y el majestuoso Parque Nacional del Chicamocha (Panachi), donde cruzarás el cañón en teleférico. Conoceremos el proceso del fique en Curití antes de llegar a nuestro alojamiento." },
+      { "title": "Naturaleza y Libertad", "description": "Exploración de las cascadas de Juan Curí y visita a la Virgen de la Salud en el municipio del Páramo. Por la tarde, viajaremos a la historia en el Socorro y Pinchote para entender la revolución de los comuneros." },
+      { "title": "El pueblo más lindo", "description": "Disfruta de un tour panorámico por San Gil, seguido de una visita inolvidable a Barichara, donde la arquitectura y la historia se encuentran." },
+      { "title": "Despedida", "description": "Traslado al aeropuerto de Bucaramanga con la maleta llena de recuerdos." }
+    ],
     "images": [
       "/images/destinos/santander-inolvidable/portada.jpg",
       "https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=800&h=600&fit=crop",
@@ -456,34 +463,42 @@
     "price": 2650000,
     "priceRange": "$2.650.000 COP",
     "duration": "5 días, 4 noches",
-    "location": "San Gil, Barichara y Bucaramanga",
+    "location": "Santander",
     "category": "Nacional",
     "includes": [
-      "Tiquetes aéreos Barranquilla – Bucaramanga – Barranquilla",
-      "Traslados durante todo el recorrido",
-      "Alojamiento 4 noches: 3 en San Gil y 1 en Bucaramanga (acomodación múltiple)",
+      "Tiquetes aéreos ida y regreso",
+      "Traslados desde el aeropuerto de Bucaramanga o terminal de transportes a todos los sitios de interés",
+      "Guía acompañante durante todo el recorrido",
+      "Alojamiento: 4 noches y 5 días (1 noche en Bucaramanga, 3 noches en San Gil)",
       "Alimentación: 4 desayunos y 4 cenas",
-      "Guía acompañante",
-      "Tarjeta de asistencia médica"
+      "Tarjeta de asistencia médica",
+      "Tours guiados: Girón, Floridablanca, Bucaramanga, Parque Nacional del Chicamocha (Panachi), Hacienda el Roble, San Gil, Socorro, el Páramo, cascadas de Juan Curí, Barichara y Mesa de los Santos",
+      "Entradas a experiencias como el Mercado Campesino y presentaciones teatrales locales"
     ],
     "excludes": [
-      "Almuerzos",
-      "Gastos personales y servicios no especificados"
+      "Gastos personales o servicios no especificados en el programa"
     ],
     "highlights": [
-      "Cañón del Chicamocha y Parque Panachi",
-      "Barichara, Girón y el Socorro",
-      "Cascadas de Juan Curí",
-      "Parque El Gallineral en San Gil",
-      "Mesa de los Santos y Mercado Campesino",
-      "Virgen de la Salud en Floridablanca"
+      "Cañón del Chicamocha (Panachi) con cruce en teleférico",
+      "Barichara, el municipio más bello de Colombia",
+      "Cascadas de Juan Curí y Virgen de la Salud (Páramo)",
+      "Socorro y Pinchote: la revolución de los comuneros",
+      "Obleas de Floridablanca y Café Umpala en la Hacienda el Roble",
+      "Girón, Mercado Campesino y Mesa de los Santos"
     ],
     "rating": 0,
     "reviewCount": 0,
     "maxGuests": 30,
     "difficulty": "Fácil",
     "schedule": "Salidas programadas de julio a enero",
-    "meeting": "Aeropuerto Ernesto Cortissoz, Barranquilla",
+    "meeting": "Aeropuerto Palonegro, Bucaramanga (llegada antes de las 9:00 a.m.; vuelos de regreso después de las 4:00 p.m.)",
+    "notes": [
+      "Vuelos: es obligatorio que tu llegada al destino sea antes de las 9:00 a.m. y que tu vuelo de regreso sea programado después de las 4:00 p.m.",
+      "Convivencia: para garantizar una experiencia armoniosa, no está permitido el uso de parlantes en vehículos ni habitaciones; recomendamos el uso de audífonos personales.",
+      "Bienestar: está prohibido el consumo de licor, sustancias psicoactivas o cigarrillos (incluyendo electrónicos) en vehículos y hoteles. El incumplimiento de estas normas puede resultar en el retiro del programa.",
+      "Requisitos para menores: si viajas con menores de edad, es indispensable presentar el Registro Civil y, si es necesario, el permiso notariado de los padres para acreditar el parentesco.",
+      "Recomendaciones: te sugerimos llevar una cobija viajera para los recorridos en vehículo y verificar los detalles finales de hoteles al momento de confirmar tu reserva."
+    ],
     "published": true,
     "order": 7,
     "fixedDeparture": true,
