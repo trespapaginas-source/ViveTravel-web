@@ -34,6 +34,9 @@ export interface TourPlan {
   /** Important notices shown in a dedicated "Información importante" section
    * (e.g. flight requirements, minors documentation, house rules, extras). */
   notes?: string[];
+  /** Position (1-based) in the home "Planes Destacados" carousel. Plans with a
+   * lower featuredOrder appear first. Omitted/null → not featured. */
+  featuredOrder?: number;
 }
 
 export interface TransportVehicle {

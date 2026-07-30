@@ -106,9 +106,9 @@ export function FeaturedPlans() {
             title={featured.title}
             subtitle={featured.subtitle}
           />
-          <div className="mt-8 flex sm:grid overflow-x-auto sm:overflow-visible sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 scroll-smooth pb-4 sm:pb-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="flex-none w-[80vw] max-w-[290px] sm:w-full sm:max-w-none">
+          <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="w-full">
                 <Card className="w-full h-full flex flex-col overflow-hidden rounded-2xl shadow-none border border-zinc-100">
                   <Skeleton className="h-[220px] w-full" />
                   <CardContent className="p-4 space-y-3">
@@ -125,7 +125,12 @@ export function FeaturedPlans() {
     );
   }
 
-  const featuredPlans = allPlans.filter((p) => p.published !== false).slice(0, 4);
+  // Featured plans are pinned by `featuredOrder` (1-based). Plans without it
+  // are never featured here, regardless of their general `order`.
+  const featuredPlans = allPlans
+    .filter((p) => p.published !== false && typeof p.featuredOrder === "number")
+    .sort((a, b) => (a.featuredOrder! - b.featuredOrder!))
+    .slice(0, 6);
 
   return (
     <section className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 content-visibility-auto contain-intrinsic-size-auto overflow-hidden">
@@ -135,7 +140,7 @@ export function FeaturedPlans() {
           subtitle={featured.subtitle}
         />
 
-        <div className="flex gap-4 sm:grid overflow-x-auto sm:overflow-visible sm:grid-cols-2 lg:grid-cols-4 sm:gap-6 scroll-smooth pb-4 sm:pb-0 px-4 sm:px-0 -mx-4 sm:mx-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] snap-x snap-mandatory scroll-pl-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
           {featuredPlans.map((plan, index) => {
             return (
               <motion.div
@@ -148,7 +153,7 @@ export function FeaturedPlans() {
                   ease: [0.16, 1, 0.3, 1],
                   delay: index * 0.1,
                 }}
-                className="flex-none w-[80vw] max-w-[290px] sm:w-full sm:max-w-none snap-start snap-always flex sm:block"
+                className="w-full flex"
               >
                 <PlanCard plan={plan} onNavigate={handleNavigate} />
               </motion.div>
