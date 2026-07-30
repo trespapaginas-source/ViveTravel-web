@@ -160,8 +160,12 @@ export function FeaturedPlans() {
           subtitle={featured.subtitle}
         />
 
-        {/* Grid 3×2 on desktop, single column on mobile — no horizontal drag. */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+        {/* Mobile: horizontal carousel (no elastic drag, free horizontal scroll).
+            Desktop: 3×2 grid. */}
+        <div
+          className="flex gap-4 sm:grid sm:grid-cols-2 lg:grid-cols-3 sm:gap-6 overflow-x-auto sm:overflow-visible px-4 sm:px-0 -mx-4 sm:mx-0 pb-4 sm:pb-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+          style={{ WebkitOverflowScrolling: "touch", overscrollBehaviorX: "contain", touchAction: "pan-x" }}
+        >
           {featuredPlans.map((plan, index) => {
             return (
               <motion.div
@@ -174,7 +178,7 @@ export function FeaturedPlans() {
                   ease: [0.16, 1, 0.3, 1],
                   delay: index * 0.1,
                 }}
-                className="w-full flex"
+                className="shrink-0 w-[85vw] max-w-[320px] sm:w-full sm:max-w-none flex"
               >
                 <PlanCard plan={plan} onNavigate={handleNavigate} />
               </motion.div>
