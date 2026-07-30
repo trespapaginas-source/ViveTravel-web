@@ -84,108 +84,114 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Explorar (2 cols) */}
-          <div className="lg:col-span-2 space-y-3">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-200">
-              Explorar
-            </h3>
-            <ul className="space-y-2 text-xs">
-              {[
-                { label: "Experiencias y viajes", href: "/planes" },
-                { label: "Cabañas", href: "/cabanas" },
-                { label: "Transporte", href: "/transporte" },
-                { label: "Visas y requisitos", href: "/visas" },
-                { label: "Nuestro equipo", href: "/equipo" },
-              ].map((item) => (
-                <li key={item.label}>
-                  <Link
-                    href={item.href}
-                    className="text-slate-400 hover:text-white transition-colors"
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+          {/* Column 1: Explorar + Legal — 2-col on mobile, stacked on md, 2+2 on lg */}
+          <div className="lg:col-span-4 grid grid-cols-2 gap-6 lg:gap-8">
+            {/* Explorar */}
+            <div className="space-y-3">
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-200">
+                Explorar
+              </h3>
+              <ul className="space-y-2 text-xs">
+                {[
+                  { label: "Experiencias y viajes", href: "/planes" },
+                  { label: "Cabañas", href: "/cabanas" },
+                  { label: "Transporte", href: "/transporte" },
+                  { label: "Visas y requisitos", href: "/visas" },
+                  { label: "Nuestro equipo", href: "/equipo" },
+                ].map((item) => (
+                  <li key={item.label}>
+                    <Link
+                      href={item.href}
+                      className="text-slate-400 hover:text-white transition-colors"
+                    >
+                      {item.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Legal */}
+            <div className="space-y-3">
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-200">
+                Legal
+              </h3>
+              <ul className="space-y-2 text-xs">
+                {[
+                  { label: "Términos y condiciones", href: "/politicas/terminos" },
+                  { label: "Política de privacidad", href: "/politicas/privacidad" },
+                  { label: "Tratamiento de datos", href: "/politicas/datos" },
+                  { label: "Política de cookies", href: "/politicas/cookies" },
+                  { label: "Reservas y cancelaciones", href: "/politicas/reservas" },
+                ].map((item) => (
+                  <li key={item.label}>
+                    <Link
+                      href={item.href}
+                      className="text-slate-400 hover:text-white transition-colors"
+                    >
+                      {item.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
 
-          {/* Soporte (2 cols) */}
-          <div className="lg:col-span-2 space-y-3">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-200">
-              Soporte
-            </h3>
-            <ul className="space-y-2 text-xs">
-              {[
-                { label: "Contacto", href: "/contacto" },
-                { label: "PQR y sugerencias", href: "/politicas/pqr" },
-                { label: "Manual del viajero", href: "/politicas/manual-viajero" },
-              ].map((item) => (
-                <li key={item.label}>
-                  <Link
-                    href={item.href}
-                    className="text-slate-400 hover:text-white transition-colors"
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+          {/* Column 2: Soporte + Contacto — 2-col on mobile, stacked on md, 2+2 on lg */}
+          <div className="lg:col-span-4 grid grid-cols-2 gap-6 lg:gap-8">
+            {/* Soporte */}
+            <div className="space-y-3">
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-200">
+                Soporte
+              </h3>
+              <ul className="space-y-2 text-xs">
+                {[
+                  { label: "Contacto", href: "/contacto" },
+                  { label: "PQR y sugerencias", href: "/politicas/pqr" },
+                  { label: "Manual del viajero", href: "/politicas/manual-viajero" },
+                ].map((item) => (
+                  <li key={item.label}>
+                    <Link
+                      href={item.href}
+                      className="text-slate-400 hover:text-white transition-colors"
+                    >
+                      {item.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-          {/* Legal (2 cols) */}
-          <div className="lg:col-span-2 space-y-3">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-200">
-              Legal
-            </h3>
-            <ul className="space-y-2 text-xs">
-              {[
-                { label: "Términos y condiciones", href: "/politicas/terminos" },
-                { label: "Política de privacidad", href: "/politicas/privacidad" },
-                { label: "Tratamiento de datos", href: "/politicas/datos" },
-                { label: "Política de cookies", href: "/politicas/cookies" },
-                { label: "Reservas y cancelaciones", href: "/politicas/reservas" },
-              ].map((item) => (
-                <li key={item.label}>
-                  <Link
-                    href={item.href}
-                    className="text-slate-400 hover:text-white transition-colors"
+            {/* Contacto */}
+            <div className="space-y-3">
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-200">
+                Contacto
+              </h3>
+              <ul className="space-y-2.5 text-xs">
+                <li>
+                  <a
+                    href={`tel:${f.phone.replace(/\s/g, "")}`}
+                    className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors group"
                   >
-                    {item.label}
-                  </Link>
+                    <Phone className="w-3.5 h-3.5 text-slate-500 group-hover:text-emerald-400 shrink-0 transition-colors" />
+                    <span>{f.phone}</span>
+                  </a>
                 </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Contacto (2 cols) */}
-          <div className="lg:col-span-2 space-y-3">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-200">
-              Contacto
-            </h3>
-            <ul className="space-y-2.5 text-xs">
-              <li>
-                <a
-                  href={`tel:${f.phone.replace(/\s/g, "")}`}
-                  className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors group"
-                >
-                  <Phone className="w-3.5 h-3.5 text-slate-500 group-hover:text-emerald-400 shrink-0 transition-colors" />
-                  <span>{f.phone}</span>
-                </a>
-              </li>
-              <li>
-                <a
-                  href={`mailto:${f.email}`}
-                  className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors group"
-                >
-                  <Mail className="w-3.5 h-3.5 text-slate-500 group-hover:text-emerald-400 shrink-0 transition-colors" />
-                  <span className="break-all">{f.email}</span>
-                </a>
-              </li>
-              <li className="flex items-start gap-2 text-slate-400">
-                <MapPin className="w-3.5 h-3.5 text-slate-500 mt-0.5 shrink-0" />
-                <span>{f.location}</span>
-              </li>
-            </ul>
+                <li>
+                  <a
+                    href={`mailto:${f.email}`}
+                    className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors group"
+                  >
+                    <Mail className="w-3.5 h-3.5 text-slate-500 group-hover:text-emerald-400 shrink-0 transition-colors" />
+                    <span className="break-all">{f.email}</span>
+                  </a>
+                </li>
+                <li className="flex items-start gap-2 text-slate-400">
+                  <MapPin className="w-3.5 h-3.5 text-slate-500 mt-0.5 shrink-0" />
+                  <span>{f.location}</span>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
 

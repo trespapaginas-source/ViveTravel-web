@@ -44,7 +44,7 @@ const PlanCard = memo(function PlanCard({
         {plan.fecha_salida && (
           <div className="absolute top-3 left-3 z-10 bg-white/95 backdrop-blur-md px-2.5 py-1 rounded-full flex items-center gap-1.5 text-[11px] font-semibold text-slate-700 shadow-sm border border-black/5">
             <Calendar className="w-3.5 h-3.5 shrink-0 text-slate-600" />
-            <span>{plan.fecha_salida}</span>
+            <span>Salida {plan.fecha_salida.replace(" de septiembre", " de sep")}</span>
           </div>
         )}
 
@@ -61,7 +61,7 @@ const PlanCard = memo(function PlanCard({
         {plan.fecha_salida && plan.maxGuests && (
           <div className="absolute bottom-3 left-3 z-10 bg-zinc-900/90 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 animate-[pulse_2s_ease-in-out_infinite] shadow-sm">
             <Users className="w-2.5 h-2.5" />
-            Solo {plan.maxGuests} cupos
+            Viaje grupal
           </div>
         )}
       </div>
