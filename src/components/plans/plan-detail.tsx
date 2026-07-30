@@ -916,32 +916,6 @@ export function PlanDetail({ planId }: { planId?: string } = {}) {
               </ExpandableSection>
             </div>
 
-            {plan.notes && plan.notes.length > 0 && (
-              <>
-                <Separator className="my-5" />
-                {/* Información importante */}
-                <div>
-                  <h2 className="text-xl md:text-2xl font-bold text-foreground mb-3.5">
-                    Información importante
-                  </h2>
-                  <ExpandableSection itemCount={plan.notes.length} maxHeight={260}>
-                    <div className="space-y-2">
-                      {plan.notes.map((note, i) => (
-                        <div
-                          key={i}
-                          className="py-1.5 px-3 rounded-lg bg-muted/40 border border-border/40"
-                        >
-                          <span className="text-sm text-foreground/90 leading-relaxed">
-                            {note}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </ExpandableSection>
-                </div>
-              </>
-            )}
-
             {!plan.fixedDeparture && (plan.schedule || plan.meeting) && (
               <>
                 <Separator className="my-5" />
@@ -999,6 +973,32 @@ export function PlanDetail({ planId }: { planId?: string } = {}) {
                 </div>
 
                 <Separator className="my-5" />
+
+                {plan.notes && plan.notes.length > 0 && (
+                  <>
+                    {/* Información importante (penúltima sección) */}
+                    <div>
+                      <h2 className="text-xl md:text-2xl font-bold text-foreground mb-3.5">
+                        Información importante
+                      </h2>
+                      <ExpandableSection itemCount={plan.notes.length} maxHeight={260}>
+                        <div className="space-y-2">
+                          {plan.notes.map((note, i) => (
+                            <div
+                              key={i}
+                              className="py-1.5 px-3 rounded-lg bg-muted/40 border border-border/40"
+                            >
+                              <span className="text-sm text-foreground/90 leading-relaxed">
+                                {note}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </ExpandableSection>
+                    </div>
+                    <Separator className="my-5" />
+                  </>
+                )}
 
                 {/* Condiciones */}
                 <div id="condiciones" className="scroll-mt-24">
