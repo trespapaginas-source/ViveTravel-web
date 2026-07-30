@@ -811,27 +811,62 @@
     "id": "plan-tatacoa-inolvidable",
     "name": "Desierto de la Tatacoa Estelar",
     "slug": "tatacoa-inolvidable",
-    "shortDescription": "Cielos nocturnos de observación astronómica y laberintos de tierra roja en un viaje con salidas programadas.",
-    "fullDescription": "Vive la experiencia del desierto de la Tatacoa, sus formaciones rocosas y sus cielos ideales para la observación astronómica, en un viaje con salida programada durante todo el año desde cualquier punto del país. Itinerario, hospedaje y recorridos detallados próximamente.",
+    "shortDescription": "Desierto, observación astronómica y termales en el Huila: una aventura bajo un firmamento infinito con salidas programadas en avión.",
+    "fullDescription": "Explora la magia del Huila en una aventura inolvidable. Descubre los paisajes más sorprendentes de Colombia, donde el cielo se encuentra con la tierra. Desde formaciones geológicas de colores ocres y grises hasta noches estrelladas bajo un firmamento infinito, este viaje está diseñado para quienes buscan una conexión profunda con la naturaleza y un descanso reparador.",
+    "itinerary": [
+      { "title": "¡Bienvenido al Huila!", "description": "Traslados desde el aeropuerto de Neiva hacia el hotel. Tarde libre para descansar y disfrutar del entorno." },
+      { "title": "Miradores y Aguas Termales", "description": "Visita al Ecoparque \"Mano del Gigante\" para disfrutar de la majestuosidad de la montaña. Por la tarde, traslado a los Termales de Rivera para una inmersión reparadora." },
+      { "title": "El Desierto de las Estrellas", "description": "Tour panorámico por Neiva y Villa Vieja. Exploración profunda del Desierto de la Tatacoa (Valle de los Cordones y Cuzco/Valle de los Hoyos). Cierre mágico con ingreso al observatorio astronómico." },
+      { "title": "Despedida", "description": "Desayuno y traslado hacia el aeropuerto de Neiva para tu regreso a casa." }
+    ],
     "images": [
       "/images/destinos/tatacoa-estelar/desierto-all-star.jpg",
       "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1532978879514-6cac7b25b6f8?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1518398046578-8cca57782e17?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1473580044384-7ba9967e16a0?w=800&h=600&fit=crop"
     ],
     "price": 2600000,
     "priceRange": "$2.600.000 COP",
     "duration": "4 días, 3 noches",
-    "location": "Desierto de la Tatacoa, Huila",
+    "location": "Huila",
     "category": "Nacional",
-    "includes": [],
-    "excludes": [],
-    "highlights": [],
+    "includes": [
+      "Tiquetes aéreos ida y regreso",
+      "Traslados: transporte aeropuerto – hotel – aeropuerto y todos los recorridos a los sitios de interés en vehículos de turismo",
+      "Alojamiento: 3 noches de estadía en hoteles categoría turista",
+      "Alimentación: 3 desayunos y 3 cenas (según noches de alojamiento)",
+      "Experiencias: ingreso al observatorio astronómico y al Ecoparque \"Mano del Gigante\"",
+      "Guía: acompañamiento permanente de guía turístico local",
+      "Seguridad: tarjeta de asistencia médica"
+    ],
+    "excludes": [
+      "Gastos personales o servicios no especificados en el programa"
+    ],
+    "highlights": [
+      "Observatorio astronómico bajo cielos libres de contaminación lumínica",
+      "Desierto de la Tatacoa: Cuzco, Valle de los Hoyos y Valle de los Cordones",
+      "Ecoparque \"Mano del Gigante\" con vistas panorámicas",
+      "Termales de Rivera",
+      "Villa Vieja y la cerveza artesanal de cactus",
+      "Tour panorámico por Neiva"
+    ],
     "rating": 0,
     "reviewCount": 0,
     "maxGuests": 30,
     "difficulty": "Fácil",
     "schedule": "Salidas programadas todo el año",
-    "meeting": "Por confirmar",
+    "meeting": "Aeropuerto Benito Salas, Neiva (llegada después de las 9:00 a.m.; vuelos de regreso después de las 12:00 m.)",
+    "notes": [
+      "Logística de vuelos: es fundamental programar tu llegada después de las 9:00 a.m. y tu vuelo de regreso después de las 12:00 m.",
+      "Viaje con menores: es obligatorio presentar el registro civil del menor y la documentación que acredite el parentesco. Si el menor viaja con terceros, se requiere permiso autenticado ante notaría.",
+      "Normas de convivencia: en nuestras instalaciones y vehículos, el respeto es clave. No se permite el uso de parlantes (por favor, usa audífonos personales). Está prohibido el consumo de licor, cigarrillos (incluyendo electrónicos) o sustancias psicoactivas. La mala conducta que interfiera con el programa puede resultar en el retiro del mismo.",
+      "Comodidad: se recomienda llevar una cobija viajera para los traslados en vehículo. La asignación de puestos se realiza por orden de inscripción, priorizando a personas con discapacidad y certificado médico.",
+      "Disponibilidad: el itinerario está sujeto a cambios por motivos operativos para garantizar el éxito de la experiencia."
+    ],
     "published": true,
     "order": 13,
     "fixedDeparture": true,
