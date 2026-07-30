@@ -905,27 +905,64 @@
     "id": "plan-sur-colombia-inolvidable",
     "name": "Sur de Colombia y Tulcán Inolvidable",
     "slug": "sur-de-colombia-inolvidable",
-    "shortDescription": "Explora los paisajes del sur de Colombia y cruza hasta Tulcán, Ecuador, en un viaje con salida programada desde Barranquilla.",
-    "fullDescription": "Recorre los paisajes andinos y la riqueza cultural del sur de Colombia, con una salida hasta Tulcán, Ecuador, en un viaje con salida programada durante todo el año desde Barranquilla. Itinerario, hospedaje y recorridos detallados próximamente.",
+    "shortDescription": "Cali, Pasto, Santuario de Las Lajas, Tulcán (Ecuador), Laguna de Cocha y Popayán: el suroccidente colombiano en un solo viaje con salidas programadas.",
+    "fullDescription": "Recorre la riqueza cultural y natural del suroccidente colombiano con una incursión cultural en Ecuador. Desde el imponente Santuario de Las Lajas —una de las siete maravillas de Colombia— hasta la Laguna de Cocha, la Ciudad Blanca de Popayán y la experiencia fronteriza de Tulcán, este viaje une historia, fe, gastronomía y paisajes andinos en una sola aventura.",
+    "itinerary": [
+      { "title": "Cali, la Sucursal del Cielo", "description": "Llegada y City Tour por los puntos emblemáticos: el tradicional barrio Alameda, el Bulevar del Río y la majestuosa Ermita. Finalizaremos el día con la cultura y gastronomía de San Antonio." },
+      { "title": "Rumbo al Sur", "description": "Salida hacia la ciudad de Pasto. Disfruta del cambio de paisaje mientras nos adentramos en las montañas andinas hasta llegar a la \"Ciudad Sorpresa\"." },
+      { "title": "Maravillas de Piedra y Frontera", "description": "Visita al imponente Santuario de Las Lajas. Posteriormente, cruzaremos a Tulcán (Ecuador) para un recorrido por su ciudad y el espectacular cementerio ornamental." },
+      { "title": "Naturaleza y Tradición", "description": "Exploraremos la Laguna de Cocha, un epicentro ecológico de gran belleza, seguido de un City Tour por Pasto, donde conoceremos la Plaza de Nariño y sus alrededores." },
+      { "title": "La Ciudad Blanca", "description": "Viaje hacia Popayán. Caminata histórica por el centro, visitando el Puente del Humilladero y las emblemáticas iglesias coloniales que le dan su renombre a la capital del Cauca." },
+      { "title": "Fe y Despedida", "description": "Mañana de visita a la Basílica Menor del Señor de los Milagros en Buga antes de realizar el traslado final al aeropuerto de Cali." }
+    ],
     "images": [
       "/images/destinos/sur-colombia/portada.jpg",
       "https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1547825716-bc338cbdc5a8?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1520637836862-4d197d17c75a?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1543429776-2782fc8e1acd?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1559511260-66a654ae982a?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1518398046578-8cca57782e17?w=800&h=600&fit=crop"
     ],
     "price": 2600000,
     "priceRange": "$2.600.000 COP",
     "duration": "6 días, 5 noches",
-    "location": "Sur de Colombia y Tulcán, Ecuador",
+    "location": "Cali, Pasto, Popayán y Tulcán (Ecuador)",
     "category": "Nacional",
-    "includes": [],
-    "excludes": [],
-    "highlights": [],
+    "includes": [
+      "Tiquetes aéreos ida y regreso",
+      "Traslados en vehículos de turismo desde el aeropuerto de Cali y a todos los puntos de interés",
+      "Alojamiento: 5 noches y 6 días (1 noche en Cali, 3 en Pasto, 1 en Popayán)",
+      "Alimentación: 5 desayunos y 5 cenas",
+      "Tarjeta de asistencia médica",
+      "Guía acompañante experto durante todo el recorrido",
+      "Integración cultural con grupo de música andina en Pasto"
+    ],
+    "excludes": [
+      "Gastos personales o servicios no especificados en el programa"
+    ],
+    "highlights": [
+      "Santuario de Las Lajas, una de las siete maravillas de Colombia",
+      "Cementerio ornamental de Tulcán (Ecuador), arte mundial en topiaria",
+      "Laguna de Cocha, epicentro ecológico",
+      "Popayán, la Ciudad Blanca: Puente del Humilladero e iglesias coloniales",
+      "Cali: barrio Alameda, Bulevar del Río, Ermita y San Antonio",
+      "Basílica del Señor de los Milagros en Buga"
+    ],
     "rating": 0,
     "reviewCount": 0,
     "maxGuests": 30,
     "difficulty": "Fácil",
     "schedule": "Salidas programadas de agosto a enero",
-    "meeting": "Por confirmar",
+    "meeting": "Aeropuerto Alfonso Bonilla Aragón, Cali (llegada antes de las 8:00 a.m.; vuelos de regreso después de las 4:00 p.m.)",
+    "notes": [
+      "Recomendación de vuelos: es vital que sus vuelos de llegada estén programados antes de las 8:00 a.m. y los vuelos de regreso después de las 4:00 p.m.",
+      "Normas de convivencia: para garantizar el bienestar de todos, está prohibido el uso de parlantes en vehículos y habitaciones. Recomendamos el uso de audífonos personales.",
+      "Conducta: no se permite el consumo de cigarrillos, licor ni sustancias alucinógenas. El comportamiento que interfiera con el desarrollo normal del programa puede conllevar al retiro del mismo.",
+      "Menores de edad: es obligatorio presentar el registro civil del menor y la documentación que acredite el parentesco (o permiso autenticado en notaría si viaja con terceros).",
+      "Consejos de viaje: recomendamos llevar una cobija viajera para los desplazamientos. La asignación de puestos se realiza bajo orden de inscripción, dando prioridad a personas con condiciones especiales."
+    ],
     "published": true,
     "order": 14,
     "fixedDeparture": true,
