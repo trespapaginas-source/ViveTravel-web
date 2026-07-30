@@ -710,26 +710,65 @@
     "id": "plan-huila-inolvidable",
     "name": "Huila al Límite",
     "slug": "huila-al-limite",
-    "shortDescription": "Naturaleza, historia y paisajes únicos del Huila en un viaje fascinante con salidas programadas.",
-    "fullDescription": "Descubre los paisajes y la riqueza cultural del Huila en un viaje con salida programada durante todo el año desde cualquier ciudad de Colombia. Itinerario, hospedaje y recorridos detallados próximamente.",
+    "shortDescription": "San Agustín, Desierto de la Tatacoa, Mano del Gigante y Salto del Mortiño: historia milenaria y paisajes de ensueño en el Huila con salidas programadas.",
+    "fullDescription": "El Huila no es solo un destino; es una experiencia que despierta todos tus sentidos. Desde los misterios arqueológicos de San Agustín hasta los atardeceres color ocre en el Desierto de la Tatacoa, este viaje es la mezcla perfecta de historia milenaria, paisajes de ensueño y aventura. Ven a descubrir por qué nuestra tierra es un tesoro oculto donde cada rincón te invita a explorar algo nuevo y fascinante.",
+    "itinerary": [
+      { "title": "Llegada a Neiva", "description": "Recepción y traslado al hotel. Tarde libre para descansar y aclimatarse." },
+      { "title": "Desierto de la Tatacoa", "description": "Salida hacia esta joya natural. Recorreremos los sectores rojo y gris, culminando la noche en el observatorio astronómico para explorar las estrellas." },
+      { "title": "Del Gigante a la Historia", "description": "Visita al Ecoparque \"Mano del Gigante\". Por la tarde, exploraremos La Jagua, el pueblo de las brujas, mitos y leyendas, antes de llegar a San Agustín." },
+      { "title": "Patrimonio de la Humanidad", "description": "Día dedicado a explorar el Parque Arqueológico de San Agustín y el majestuoso Estrecho del Magdalena." },
+      { "title": "Tradición y Despedida", "description": "Recorrido por el Salto del Mortiño y los pueblos de Timaná y Altamira. Finalizaremos con un City Tour en Neiva antes de nuestra última noche." },
+      { "title": "Regreso", "description": "Desayuno y traslado al aeropuerto." }
+    ],
     "images": [
       "/images/destinos/huila-al-limite/portada.jpg",
-      "https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=800&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1532978879514-6cac7b25b6f8?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1473580044384-7ba9967e16a0?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1518398046578-8cca57782e17?w=800&h=600&fit=crop"
     ],
     "price": 2600000,
     "priceRange": "$2.600.000 COP",
     "duration": "6 días, 5 noches",
-    "location": "Huila, Colombia",
+    "location": "Huila",
     "category": "Nacional",
-    "includes": [],
-    "excludes": [],
-    "highlights": [],
+    "includes": [
+      "Tiquetes aéreos ida y regreso",
+      "Traslados desde el aeropuerto de Neiva y hacia todos los sitios de interés en vehículos de turismo",
+      "Guía acompañante experto durante todo el recorrido",
+      "Alojamiento: 5 noches y 6 días en hoteles tipo turista",
+      "Alimentación: 5 desayunos y 5 cenas",
+      "Tarjeta de asistencia médica",
+      "Todos los tours mencionados: Desierto de la Tatacoa, Parque Arqueológico de San Agustín, Mano del Gigante, Estrecho del Magdalena, Salto del Mortiño, City Tour Neiva, entre otros"
+    ],
+    "excludes": [
+      "Gastos personales o servicios no especificados en el programa",
+      "Actividades opcionales con costo adicional (ej. Tobogán de colores y otras atracciones en el Salto del Mortiño)"
+    ],
+    "highlights": [
+      "Parque Arqueológico de San Agustín (patrimonio UNESCO)",
+      "Desierto de la Tatacoa y observatorio astronómico",
+      "Ecoparque \"Mano del Gigante\" y puentes de cristal",
+      "Estrecho del Magdalena",
+      "Salto del Mortiño",
+      "La Jagua (pueblo de las brujas) y achiras de Altamira"
+    ],
     "rating": 0,
     "reviewCount": 0,
     "maxGuests": 30,
     "difficulty": "Fácil",
     "schedule": "Salidas programadas de junio a enero",
-    "meeting": "Por confirmar",
+    "meeting": "Aeropuerto Benito Salas, Neiva (llegada a partir de las 9:00 a.m.; vuelos de regreso después de las 12:00 m.)",
+    "notes": [
+      "Gestión de vuelos: para garantizar el cumplimiento del itinerario, su llegada a Neiva debe ser a partir de las 9:00 a.m. y su vuelo de regreso debe programarse después de las 12:00 m.",
+      "Reglas de convivencia: para asegurar una experiencia armoniosa para todos, está prohibido el uso de parlantes en vehículos y habitaciones. Recomendamos el uso de audífonos personales.",
+      "Bienestar: está prohibido el consumo de licor, sustancias psicoactivas o cigarrillos (incluyendo electrónicos) en vehículos y hoteles. El incumplimiento de estas normas conlleva al retiro del programa.",
+      "Requisitos para menores: es obligatorio presentar el Registro Civil y la documentación que acredite el parentesco. Si el menor viaja sin sus padres, se requiere permiso autenticado ante notaría.",
+      "Recomendaciones: sugerimos llevar una cobija viajera para los recorridos en vehículo. La asignación de puestos se realiza bajo orden de inscripción, con prioridad para personas con discapacidad certificada."
+    ],
     "published": true,
     "order": 10,
     "fixedDeparture": true,
