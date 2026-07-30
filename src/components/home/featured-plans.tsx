@@ -160,8 +160,8 @@ export function FeaturedPlans() {
           subtitle={featured.subtitle}
         />
 
-        {/* Mobile: horizontal carousel (one card at a time). Desktop: 3×2 grid. */}
-        <div className="flex gap-4 overflow-x-auto sm:grid sm:grid-cols-2 lg:grid-cols-3 sm:overflow-visible sm:gap-6 scroll-smooth snap-x snap-mandatory px-4 sm:px-0 -mx-4 sm:mx-0 pb-4 sm:pb-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+        {/* Grid 3×2 on desktop, single column on mobile — no horizontal drag. */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
           {featuredPlans.map((plan, index) => {
             return (
               <motion.div
@@ -174,7 +174,7 @@ export function FeaturedPlans() {
                   ease: [0.16, 1, 0.3, 1],
                   delay: index * 0.1,
                 }}
-                className="flex-none w-[85vw] max-w-[320px] snap-start shrink-0 sm:w-full sm:max-w-none flex"
+                className="w-full flex"
               >
                 <PlanCard plan={plan} onNavigate={handleNavigate} />
               </motion.div>
