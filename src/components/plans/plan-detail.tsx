@@ -1069,7 +1069,7 @@ export function PlanDetail({ planId }: { planId?: string } = {}) {
                           </AccordionTrigger>
                           <AccordionContent>
                             <p className="text-muted-foreground text-sm leading-relaxed">
-                              {day.description || day.activities?.join(", ")}
+                              {day.description}
                             </p>
                           </AccordionContent>
                         </AccordionItem>
