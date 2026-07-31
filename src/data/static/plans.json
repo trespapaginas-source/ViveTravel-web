@@ -732,35 +732,39 @@
     "lugares": [
       {
         "name": "Villa de Leyva",
-        "image": "/images/lugares/villa-de-leyva.png"
+        "image": "/images/lugares/villa-de-leyva.webp"
       },
       {
         "name": "Laguna de Tota",
-        "image": "/images/lugares/laguna-de-tota.png"
+        "image": "/images/lugares/laguna-de-tota.webp"
       },
       {
         "name": "Pueblito Boyacense",
-        "image": "/images/lugares/pueblito-boyacense.png"
+        "image": "/images/lugares/pueblito-boyacense.webp"
       },
       {
         "name": "Pozos Azules",
-        "image": "/images/lugares/pozos-azules.png"
+        "image": "/images/lugares/pozos-azules.webp"
       },
       {
         "name": "Puente de Boyacá",
-        "image": "/images/lugares/puente-de-boyaca.png"
+        "image": "/images/lugares/puente-de-boyaca.webp"
       },
       {
         "name": "Pantano de Vargas",
-        "image": "/images/lugares/pantano-de-vargas.png"
+        "image": "/images/lugares/pantano-de-vargas.webp"
       },
       {
         "name": "Catedral de Sal",
-        "image": "/images/lugares/catedral-de-sal.png"
+        "image": "/images/lugares/catedral-de-sal.webp"
       },
       {
         "name": "Raquira",
-        "image": "/images/lugares/raquira.png"
+        "image": "/images/lugares/raquira.webp"
+      },
+      {
+        "name": "Monguí",
+        "image": "/images/lugares/mongui.webp"
       }
     ]
   },
