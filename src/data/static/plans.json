@@ -765,6 +765,18 @@
       {
         "name": "Monguí",
         "image": "/images/lugares/mongui.webp"
+      },
+      {
+        "name": "Nobsa",
+        "image": "/images/lugares/nobsa.webp"
+      },
+      {
+        "name": "Sogamoso",
+        "image": "/images/lugares/sogamoso.webp"
+      },
+      {
+        "name": "Tunja",
+        "image": "/images/lugares/tunja.webp"
       }
     ]
   },
