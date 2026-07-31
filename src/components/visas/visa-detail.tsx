@@ -151,9 +151,8 @@ export function VisaDetail({ visa }: VisaDetailProps) {
         <div className="space-y-10 max-w-3xl">
           {/* Requisitos Obligatorios */}
           <section className="space-y-4">
-            <h2 className="text-lg font-semibold text-slate-900 tracking-tight flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-slate-700" />
-              <span>Requisitos Obligatorios de Ingreso</span>
+            <h2 className="text-lg font-semibold text-slate-900 tracking-tight">
+              Requisitos Obligatorios de Ingreso
             </h2>
 
             <ul className="space-y-3">
@@ -206,9 +205,8 @@ export function VisaDetail({ visa }: VisaDetailProps) {
           {/* Información Consular & CAS si existe */}
           {visa.embassyInfo && (
             <section className="space-y-3 p-5 rounded-2xl border border-slate-200/80 bg-white shadow-2xs">
-              <h3 className="text-sm font-semibold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-2">
-                <Building2 className="w-4 h-4 text-slate-600" />
-                <span>Sede Consular y Centro de Atención en Bogotá</span>
+              <h3 className="text-sm font-semibold text-slate-900 border-b border-slate-100 pb-2">
+                Sede Consular y Centro de Atención en Bogotá
               </h3>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
@@ -237,9 +235,8 @@ export function VisaDetail({ visa }: VisaDetailProps) {
           {/* Documentos a Presentar si existen */}
           {visa.documents && visa.documents.length > 0 && (
             <section className="space-y-4">
-              <h2 className="text-lg font-semibold text-slate-900 tracking-tight flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-slate-700" />
-                <span>Documentos Físicos y Digitales a Presentar</span>
+              <h2 className="text-lg font-semibold text-slate-900 tracking-tight">
+                Documentos Físicos y Digitales a Presentar
               </h2>
 
               <ul className="space-y-2.5">
@@ -256,9 +253,8 @@ export function VisaDetail({ visa }: VisaDetailProps) {
           {/* Recomendaciones y Tips (Sobrio, No Orange) */}
           {visa.tips && visa.tips.length > 0 && (
             <section className="border-l-2 border-slate-300 bg-slate-100/50 p-4 rounded-r-xl space-y-2.5 my-6">
-              <h3 className="text-sm font-semibold text-slate-900 flex items-center gap-2">
-                <Lightbulb className="w-4 h-4 text-slate-600" />
-                <span>Recomendaciones Clave para Viajeros</span>
+              <h3 className="text-sm font-semibold text-slate-900">
+                Recomendaciones Clave para Viajeros
               </h3>
 
               <ul className="space-y-2 text-xs sm:text-sm text-slate-600 font-normal leading-relaxed">

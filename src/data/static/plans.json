@@ -732,23 +732,35 @@
     "lugares": [
       {
         "name": "Villa de Leyva",
-        "image": "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&h=400&fit=crop&q=80"
-      },
-      {
-        "name": "Paipa",
-        "image": "https://images.unsplash.com/photo-1569164139804-a628955c3a47?w=600&h=400&fit=crop&q=80"
+        "image": "/images/lugares/villa-de-leyva.png"
       },
       {
         "name": "Laguna de Tota",
-        "image": "https://images.unsplash.com/photo-1439066615861-d1af74d74000?w=600&h=400&fit=crop&q=80"
+        "image": "/images/lugares/laguna-de-tota.png"
       },
       {
-        "name": "Monguí",
-        "image": "https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=600&h=400&fit=crop&q=80"
+        "name": "Pueblito Boyacense",
+        "image": "/images/lugares/pueblito-boyacense.png"
       },
       {
-        "name": "Ruta Libertadora",
-        "image": "https://images.unsplash.com/photo-1504198453319-5ce911bafcde?w=600&h=400&fit=crop&q=80"
+        "name": "Pozos Azules",
+        "image": "/images/lugares/pozos-azules.png"
+      },
+      {
+        "name": "Puente de Boyacá",
+        "image": "/images/lugares/puente-de-boyaca.png"
+      },
+      {
+        "name": "Pantano de Vargas",
+        "image": "/images/lugares/pantano-de-vargas.png"
+      },
+      {
+        "name": "Catedral de Sal",
+        "image": "/images/lugares/catedral-de-sal.png"
+      },
+      {
+        "name": "Raquira",
+        "image": "/images/lugares/raquira.png"
       }
     ]
   },

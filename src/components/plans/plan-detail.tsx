@@ -47,6 +47,7 @@ import { cn } from "@/lib/utils";
 import { format, addDays } from "date-fns";
 import { es } from "date-fns/locale";
 import { Calendar as CalendarUI } from "@/components/ui/calendar";
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Plus, Minus } from "lucide-react";
@@ -951,13 +952,15 @@ export function PlanDetail({ planId }: { planId?: string } = {}) {
 
             {/* Lugares a Conocer — carousel (national fixed-departure plans only) */}
             {plan.lugares && plan.lugares.length > 0 && (
-              <LugaresCarousel lugares={plan.lugares} />
+              <>
+                <LugaresCarousel lugares={plan.lugares} />
+                <Separator className="my-5" />
+              </>
             )}
 
             {/* Incluye / No Incluye */}
             <div id="incluye" className="scroll-mt-24">
-              <h2 className="text-xl md:text-2xl font-bold text-foreground mb-3.5 flex items-center gap-2">
-                <Check className="w-4 h-4 text-emerald-600" />
+              <h2 className="text-xl md:text-2xl font-bold text-foreground mb-3.5">
                 Qué incluye este plan
               </h2>
               <ExpandableSection itemCount={plan.includes.length} maxHeight={210}>
@@ -975,8 +978,7 @@ export function PlanDetail({ planId }: { planId?: string } = {}) {
               </ExpandableSection>
 
               <div className="my-4" />
-              <h3 className="text-sm font-semibold text-muted-foreground mb-2 flex items-center gap-1.5">
-                <X className="w-3.5 h-3.5 text-muted-foreground" />
+              <h3 className="text-sm font-semibold text-muted-foreground mb-2">
                 No incluye
               </h3>
               <ExpandableSection itemCount={plan.excludes.length} maxHeight={160}>
@@ -998,8 +1000,7 @@ export function PlanDetail({ planId }: { planId?: string } = {}) {
 
             {/* Actividades incluidas */}
             <div>
-              <h2 className="text-xl md:text-2xl font-bold text-foreground mb-3.5 flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-foreground" />
+              <h2 className="text-xl md:text-2xl font-bold text-foreground mb-3.5">
                 Actividades incluidas
               </h2>
               <ExpandableSection itemCount={plan.highlights.length} maxHeight={210}>
@@ -1056,23 +1057,32 @@ export function PlanDetail({ planId }: { planId?: string } = {}) {
                   <h2 className="text-xl md:text-2xl font-bold text-foreground mb-4">
                     Itinerario
                   </h2>
-                  <div className="space-y-6">
-                    {(plan as any).itinerary ? (
-                      ((plan as any).itinerary as any[]).map((day: any, i: number) => (
-                        <div key={i} className="pl-4 border-l-2 border-ocean/20">
-                          <h3 className="font-bold text-base text-foreground">Día {i + 1}: {day.title || ""}</h3>
-                          <p className="text-muted-foreground text-sm mt-1">{day.description || day.activities?.join(", ")}</p>
-                        </div>
-                      ))
-                    ) : (
-                      <div className="pl-4 border-l-2 border-ocean/20">
-                        <p className="text-foreground text-sm font-medium">Itinerario detallado bajo solicitud</p>
-                        <p className="text-muted-foreground text-sm mt-1">
-                          El itinerario específico para este viaje está disponible y se entregará al momento de la reserva o previa solicitud con nuestros asesores.
-                        </p>
-                      </div>
-                    )}
-                  </div>
+                  {plan.itinerary && plan.itinerary.length > 0 ? (
+                    <Accordion type="single" collapsible defaultValue="day-0" className="w-full">
+                      {plan.itinerary.map((day, i) => (
+                        <AccordionItem key={i} value={`day-${i}`}>
+                          <AccordionTrigger className="hover:no-underline">
+                            <span className="text-base text-foreground text-left">
+                              <span className="font-bold">Día {i + 1}:</span>{" "}
+                              <span className="font-normal">{day.title}</span>
+                            </span>
+                          </AccordionTrigger>
+                          <AccordionContent>
+                            <p className="text-muted-foreground text-sm leading-relaxed">
+                              {day.description || day.activities?.join(", ")}
+                            </p>
+                          </AccordionContent>
+                        </AccordionItem>
+                      ))}
+                    </Accordion>
+                  ) : (
+                    <div className="pl-4 border-l-2 border-ocean/20">
+                      <p className="text-foreground text-sm font-medium">Itinerario detallado bajo solicitud</p>
+                      <p className="text-muted-foreground text-sm mt-1">
+                        El itinerario específico para este viaje está disponible y se entregará al momento de la reserva o previa solicitud con nuestros asesores.
+                      </p>
+                    </div>
+                  )}
                 </div>
 
                 <Separator className="my-5" />

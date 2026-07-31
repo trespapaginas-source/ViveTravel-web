@@ -766,8 +766,7 @@ export function CabinDetail({ cabinId }: { cabinId?: string } = {}) {
 
             {/* Highlights */}
             <div>
-              <h2 className="text-xl md:text-2xl font-bold text-foreground mb-3.5 flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-ocean/60" />
+              <h2 className="text-xl md:text-2xl font-bold text-foreground mb-3.5">
                 Puntos destacados
               </h2>
               <ExpandableSection itemCount={cabin.highlights.length} maxHeight={290}>
@@ -795,8 +794,7 @@ export function CabinDetail({ cabinId }: { cabinId?: string } = {}) {
 
             {/* Amenities */}
             <div>
-              <h2 className="text-xl md:text-2xl font-bold text-foreground mb-3.5 flex items-center gap-2">
-                <Home className="w-4 h-4 text-ocean/60" />
+              <h2 className="text-xl md:text-2xl font-bold text-foreground mb-3.5">
                 Comodidades
               </h2>
               <ExpandableSection itemCount={cabin.amenities.length} maxHeight={200}>
@@ -822,8 +820,7 @@ export function CabinDetail({ cabinId }: { cabinId?: string } = {}) {
 
             {/* Rules */}
             <div>
-              <h2 className="text-xl md:text-2xl font-bold text-foreground mb-3.5 flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-ocean/60" />
+              <h2 className="text-xl md:text-2xl font-bold text-foreground mb-3.5">
                 Reglas de la cabaña
               </h2>
               <ExpandableSection itemCount={cabin.rules.length} maxHeight={230}>
